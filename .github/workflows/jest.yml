@@ -20,9 +20,11 @@ jobs:
           node-version: "20.16.0"
 
       - name: Install dependencies
+        working-directory: ./api
         run: npm install
 
       - name: Run Jest tests
+        working-directory: ./api
         env:
           GOOGLE_API_CREDENTIALS: ${{ secrets.GOOGLE_API_CREDENTIALS }}
           GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
