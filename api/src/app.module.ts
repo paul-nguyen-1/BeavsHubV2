@@ -10,4 +10,4 @@ import { CourseService } from './course/course.service';
   controllers: [AppController],
   providers: [AppService, CourseService],
 })
-export class AppModule {}dkfpadfkop
+export class AppModule {}
