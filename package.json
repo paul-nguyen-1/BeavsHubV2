@@ -4,14 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint-api": "cd api && npm run lint",
+    "lint-client": "cd client && npm run lint",
     "install-jest": "cd api && npm install",
     "jest": "cd api && npm run test",
     "install-playwright": "cd playwright && npm install -g yarn && yarn install --frozen-lockfile",
     "install-playwright-deps": "cd playwright && yarn playwright install --with-deps",
-    "playwright": "cd playwright && npx playwright test"
+    "playwright": "cd playwright && npx playwright test",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^8.0.0"
+  }
 }
