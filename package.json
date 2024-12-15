@@ -1,0 +1,14 @@
+{
+  "name": "beavshubv2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install-jest": "cd api && npm install",
+    "jest": "cd api && npm run test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
