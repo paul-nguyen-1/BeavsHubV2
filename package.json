@@ -1,0 +1,17 @@
+{
+  "name": "beavshubv2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install-jest": "cd api && npm install",
+    "jest": "cd api && npm run test",
+    "install-playwright": "cd playwright && npm install -g yarn && yarn install --frozen-lockfile",
+    "install-playwright-deps": "cd playwright && yarn playwright install --with-deps",
+    "playwright": "cd playwright && npx playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
