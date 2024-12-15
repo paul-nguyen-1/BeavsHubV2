@@ -20,7 +20,7 @@ jobs:
           node-version: "20.16.0"
 
       - name: Install dependencies
-        run: npm install
+        run: npm run install-jest
 
       - name: Run Jest tests
         env:
