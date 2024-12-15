@@ -23,6 +23,7 @@ jobs:
       - name: Run Playwright Tests
         run: |
           npm run install-playwright
+          npm run install-playwright-deps
           npm run playwright
 
       - name: Upload Playwright Report
