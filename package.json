@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "install-jest": "cd api && npm install",
-    "jest": "cd api && npm run test"
+    "jest": "cd api && npm run test",
+    "install-playwright": "cd playwright && npm install",
+    "playwright": "cd playwright && npx playwright test"
   },
   "keywords": [],
   "author": "",
