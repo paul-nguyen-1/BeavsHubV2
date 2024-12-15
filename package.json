@@ -8,6 +8,7 @@
     "install-jest": "cd api && npm install",
     "jest": "cd api && npm run test",
     "install-playwright": "cd playwright && npm install",
+    "install-playwright-dependencies":"cd playwright && npx playwright install",
     "playwright": "cd playwright && npx playwright test"
   },
   "keywords": [],
