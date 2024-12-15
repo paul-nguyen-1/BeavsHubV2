@@ -1,0 +1,40 @@
+name: Jest Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  jest-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.16.0"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Jest tests
+        env:
+          GOOGLE_API_CREDENTIALS: ${{ secrets.GOOGLE_API_CREDENTIALS }}
+          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          SHEETS_CREDENTIALS_TYPE: ${{ secrets.SHEETS_CREDENTIALS_TYPE }}
+          SHEETS_CREDENTIALS_PROJECT_ID: ${{ secrets.SHEETS_CREDENTIALS_PROJECT_ID }}
+          SHEETS_CREDENTIALS_PRIVATE_KEY_ID: ${{ secrets.SHEETS_CREDENTIALS_PRIVATE_KEY_ID }}
+          SHEETS_CREDENTIALS_PRIVATE_KEY: ${{ secrets.SHEETS_CREDENTIALS_PRIVATE_KEY }}
+          SHEETS_CREDENTIALS_CLIENT_EMAIL: ${{ secrets.SHEETS_CREDENTIALS_CLIENT_EMAIL }}
+          SHEETS_CREDENTIALS_CLIENT_ID: ${{ secrets.SHEETS_CREDENTIALS_CLIENT_ID }}
+          SHEETS_CREDENTIALS_AUTH_URI: ${{ secrets.SHEETS_CREDENTIALS_AUTH_URI }}
+          SHEETS_CREDENTIALS_TOKEN_URI: ${{ secrets.SHEETS_CREDENTIALS_TOKEN_URI }}
+          SHEETS_CREDENTIALS_AUTH_PROVIDER_CERT_URL: ${{ secrets.SHEETS_CREDENTIALS_AUTH_PROVIDER_CERT_URL }}
+          SHEETS_CREDENTIALS_CLIENT_CERT_URL: ${{ secrets.SHEETS_CREDENTIALS_CLIENT_CERT_URL }}
+          SHEETS_CREDENTIALS_UNIVERSE_DOMAIN: ${{ secrets.SHEETS_CREDENTIALS_UNIVERSE_DOMAIN }}
+        run: npm run jest

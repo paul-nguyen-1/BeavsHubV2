@@ -11,3 +11,4 @@ import { CourseService } from './course/course.service';
   providers: [AppService, CourseService],
 })
 export class AppModule {}
+SVGAnimatedPreserveAspectRatio;

@@ -25,6 +25,9 @@ const config = [
       'prettier/prettier': 'warn',
     },
   },
+  {
+    ignores: ['dist/**'],
+  },
 ];
 
 module.exports = config;
