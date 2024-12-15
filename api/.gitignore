@@ -58,4 +58,4 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # google sheets
 sheets_credentials.json
 
-/.vercel
+.vercel
