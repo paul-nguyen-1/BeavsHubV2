@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 export type CoursesDocument = HydratedDocument<Course>;
 
-@Schema()
+@Schema({ collection: process.env.ENV_COLLECTION })
 export class Course {
   @Prop({ required: true })
   name: string;
