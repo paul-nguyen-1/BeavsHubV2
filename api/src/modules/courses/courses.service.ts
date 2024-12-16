@@ -2,7 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { google, sheets_v4 } from 'googleapis';
 import { GoogleAuth, OAuth2Client } from 'google-auth-library';
 import { Model } from 'mongoose';
-import { Courses, CoursesDocument } from './courses.schema';
+import { Course, CoursesDocument } from '../../schemas/courses.schema';
+import { CreateCourseDto } from 'src/dto/create-course.dto';
 
 /*
 Refer to this doc 
@@ -14,8 +15,8 @@ export class CoursesService {
   private sheets: sheets_v4.Sheets;
 
   constructor(
-    @Inject(Courses.name)
-    private courseModel: Model<CoursesDocument>, 
+    @Inject('COURSE_MODEL')
+    private courseModel: Model<Course>,
   ) {
     this.init();
   }
@@ -70,7 +71,12 @@ export class CoursesService {
     }
   }
 
- async getAllCourses() {
+  async create(createCourseDto: CreateCourseDto): Promise<Course> {
+    const createdCat = new this.courseModel(createCourseDto);
+    return createdCat.save();
+  }
+
+  async findAll(): Promise<Course[]> {
     return this.courseModel.find().exec();
   }
 }

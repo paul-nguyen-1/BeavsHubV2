@@ -1,17 +1,11 @@
-import { Controller, Get, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { CoursesService } from './courses.service';
+import { Course } from 'src/schemas/courses.schema';
+import { CreateCourseDto } from 'src/dto/create-course.dto';
 
-@Controller('course')
+@Controller('courses')
 export class CoursesController {
-  constructor(private readonly courseService: CoursesService) {}
-
-  @Get('random')
-  async getRandomPath() {
-    return {
-      message: 'This is a random path!',
-      timestamp: new Date().toISOString(),
-    };
-  }
+  constructor(private courseService: CoursesService) {}
 
   @Get('all-values')
   async getAllValues(
@@ -19,5 +13,18 @@ export class CoursesController {
     @Query('sheetName') sheetName: string,
   ): Promise<any[][]> {
     return await this.courseService.getAllValues(spreadsheetId, sheetName);
+  }
+
+  @Get()
+  async findAllCourses() {
+    return await this.courseService.findAll();
+  }
+
+  @Post()
+  async createCourse(
+    @Body()
+    course: CreateCourseDto,
+  ): Promise<Course> {
+    return await this.courseService.create(course);
   }
 }
