@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { google, sheets_v4 } from 'googleapis';
 import { GoogleAuth, OAuth2Client } from 'google-auth-library';
 import { Model } from 'mongoose';
+import { Courses, CoursesDocument } from './courses.schema';
 
 /*
 Refer to this doc 
@@ -9,12 +10,12 @@ https://developers.google.com/sheets/api/reference/rest
 */
 
 @Injectable()
-export class CourseService {
+export class CoursesService {
   private sheets: sheets_v4.Sheets;
 
   constructor(
-    @Inject('courses')
-    private courseModel: Model<CourseService>,
+    @Inject(Courses.name)
+    private courseModel: Model<CoursesDocument>, 
   ) {
     this.init();
   }
@@ -69,7 +70,7 @@ export class CourseService {
     }
   }
 
-  // async getAllCourses() {
-  //   return this.courseModel.find().exec();
-  // }
+ async getAllCourses() {
+    return this.courseModel.find().exec();
+  }
 }

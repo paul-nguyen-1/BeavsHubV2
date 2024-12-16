@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CourseService } from './courses.service';
-import { CourseController } from './courses.controller';
+import { CoursesService } from './courses.service';
+import { CoursesController } from './courses.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Courses, CoursesSchema } from './courses.schema';
 
@@ -13,8 +13,8 @@ import { Courses, CoursesSchema } from './courses.schema';
       },
     ]),
   ],
-  providers: [CourseService],
-  controllers: [CourseController],
-  exports: [CourseService],
+  providers: [CoursesService],
+  controllers: [CoursesController],
+  exports: [CoursesService],
 })
-export class CourseModule {}
+export class CoursesModule {}
