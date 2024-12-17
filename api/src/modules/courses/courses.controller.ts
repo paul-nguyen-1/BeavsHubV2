@@ -12,6 +12,11 @@ export class CoursesController {
     return await this.courseService.findAll();
   }
 
+  @Get('/google-sheets')
+  async readMasterCourseSheet(){
+    return await this.courseService.readCourseReviews()
+  }
+
   @Post()
   async createCourse(
     @Body()
