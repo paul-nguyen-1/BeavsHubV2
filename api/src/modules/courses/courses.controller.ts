@@ -13,8 +13,13 @@ export class CoursesController {
   }
 
   @Get('/google-sheets')
-  async readMasterCourseSheet(){
-    return await this.courseService.readCourseReviews()
+  async readMasterCourseSheet() {
+    return await this.courseService.readCourseReviews();
+  }
+
+  @Get('/google-sheets/update')
+  async refreshMasterCourseSheet() {
+    return await this.courseService.refreshCourseReviews();
   }
 
   @Post()

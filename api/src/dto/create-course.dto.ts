@@ -7,13 +7,13 @@ export class CreateCourseDto {
   readonly course1_difficulty: number;
   readonly course1_time_spent_per_week: string;
   readonly course1_tips: string;
-  readonly course1_taken_date: Date;
-  readonly second_course_taken: boolean;
+  readonly course1_taken_date: string;
+  readonly second_course_taken: string;
   readonly course2_name: string;
   readonly course2_difficulty: number;
   readonly course2_time_spent_per_week: string;
   readonly course2_tips: string;
-  readonly third_course_taken: boolean;
+  readonly third_course_taken: string;
   readonly course3_name: string;
   readonly course3_difficulty: number;
   readonly course3_time_spent_per_week: string;

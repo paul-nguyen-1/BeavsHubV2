@@ -24,10 +24,10 @@ export class Course {
   course1_tips: string;
 
   @Prop()
-  course1_taken_date: Date;
+  course1_taken_date: string;
 
   @Prop()
-  second_course_taken: boolean;
+  second_course_taken: string;
 
   @Prop()
   course2_name: string;
@@ -42,7 +42,7 @@ export class Course {
   course2_tips: string;
 
   @Prop()
-  third_course_taken: boolean;
+  third_course_taken: string;
 
   @Prop()
   course3_name: string;
