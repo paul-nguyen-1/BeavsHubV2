@@ -18,6 +18,19 @@ export class CoursesService {
     private readonly httpService: HttpService,
   ) {}
 
+  async cleanHeaders(headers: string[]): Promise<string[]> {
+    const seenHeaders: Record<string, number> = {};
+    return headers.map((header) => {
+      if (seenHeaders[header]) {
+        seenHeaders[header] += 1;
+        return `${header} ${seenHeaders[header]}`;
+      } else {
+        seenHeaders[header] = 1;
+        return `${header} 1`;
+      }
+    });
+  }
+
   async readCourseReviews() {
     const response = await this.httpService.axiosRef.get(
       process.env.MASTER_SHEET_URL,
@@ -25,45 +38,50 @@ export class CoursesService {
     const data = response.data;
     const [headerRow, ...dataRows] = data.values;
 
-    const rowObjects = dataRows.map((row) => {
-      const obj: Record<string, string> = {};
-      headerRow.forEach((header, i) => {
-        obj[header] = row[i];
-      });
-      return obj;
-    });
+    const cleanedHeaderRow = await this.cleanHeaders(headerRow);
+
+    const rowObjects = await Promise.all(
+      dataRows.map(async (row) => {
+        const obj: Record<string, string> = {};
+        cleanedHeaderRow.forEach((header, i) => {
+          obj[header] = row[i];
+        });
+        return obj;
+      }),
+    );
 
     const cleanData = rowObjects.map((row) => ({
       _id: uuidv4(),
-      timestamp: new Date(row['Timestamp'] || row['timestamp']),
-      course1_name: row['What Course Did You Take?'],
-      course1_difficulty: row['How hard was this class?'],
+      timestamp: new Date(row['Timestamp 1'] || row['timestamp 1']),
+      course1_name: row['What Course Did You Take? 1'],
+      course1_difficulty: row['How hard was this class? 1'],
       course1_time_spent_per_week:
         row[
-          'How much time did you spend on average (per week) for this class?'
+          'How much time did you spend on average (per week) for this class? 1'
         ],
       course1_tips:
-        row['What tips would you give students taking this course?'],
-      course1_taken_date: row['When did you take this course?'],
-      second_course_taken: row['Did You Take a Second Course This Quarter?'],
-      course2_name: row['What Course Did You Take?'],
-      course2_difficulty: row['How hard was this class?'],
+        row['What tips would you give students taking this course? 1'],
+      course1_taken_date: row['When did you take this course? 1'],
+      second_course_taken: row['Did You Take a Second Course This Quarter? 1'],
+      course2_name: row['What Course Did You Take? 2'],
+      course2_difficulty: row['How hard was this class? 2'],
       course2_time_spent_per_week:
         row[
-          'How much time did you spend on average (per week) for this class?'
+          'How much time did you spend on average (per week) for this class? 2'
         ],
       course2_tips:
-        row['What tips would you give students taking this course?'],
-      third_course_taken: row['Did You Take a Third Course This Quarter?'],
-      course3_name: row['What Course Did You Take?'],
-      course3_difficulty: row['How hard was this class?'],
+        row['What tips would you give students taking this course? 2'],
+      third_course_taken: row['Did You Take a Third Course This Quarter? 1'],
+      course3_name: row['What Course Did You Take? 3'],
+      course3_difficulty: row['How hard was this class? 3'],
       course3_time_spent_per_week:
         row[
-          'How much time did you spend on average (per week) for this class?'
+          'How much time did you spend on average (per week) for this class? 3'
         ],
       course3_tips:
-        row['What tips would you give students taking this course?'],
+        row['What tips would you give students taking this course? 3'],
     }));
+
     return cleanData;
   }
 
