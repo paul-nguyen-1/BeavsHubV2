@@ -9,25 +9,52 @@ export class Course {
   _id: Types.ObjectId;
 
   @Prop()
-  name: string;
+  timestamp: Date;
 
   @Prop()
-  course: string;
+  course1_name: string;
 
   @Prop()
-  date: Date;
+  course1_difficulty: number;
 
   @Prop()
-  classPairing: string;
+  course1_time_spent_per_week: string;
 
   @Prop()
-  comment: string;
+  course1_tips: string;
 
   @Prop()
-  timeSpent: string;
+  course1_taken_date: Date;
 
   @Prop()
-  difficulty: number;
+  second_course_taken: boolean;
+
+  @Prop()
+  course2_name: string;
+
+  @Prop()
+  course2_difficulty: number;
+
+  @Prop()
+  course2_time_spent_per_week: string;
+
+  @Prop()
+  course2_tips: string;
+
+  @Prop()
+  third_course_taken: boolean;
+
+  @Prop()
+  course3_name: string;
+
+  @Prop()
+  course3_difficulty: number;
+
+  @Prop()
+  course3_time_spent_per_week: string;
+
+  @Prop()
+  course3_tips: string;
 }
 
 export const CoursesSchema = SchemaFactory.createForClass(Course);

@@ -7,14 +7,6 @@ import { CreateCourseDto } from 'src/dto/create-course.dto';
 export class CoursesController {
   constructor(private courseService: CoursesService) {}
 
-  @Get('all-values')
-  async getAllValues(
-    @Query('spreadsheetId') spreadsheetId: string,
-    @Query('sheetName') sheetName: string,
-  ): Promise<any[][]> {
-    return await this.courseService.getAllValues(spreadsheetId, sheetName);
-  }
-
   @Get()
   async findAllCourses() {
     return await this.courseService.findAll();
