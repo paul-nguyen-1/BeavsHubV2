@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Course } from '../../schemas/courses.schema';
-import { CreateCourseDto } from 'src/dto/create-course.dto';
+
 import { HttpService } from '@nestjs/axios';
 import { v4 as uuidv4 } from 'uuid';
+import { CreateCourseDto } from '../../dto/create-course.dto'
 
 /*
 Refer to this doc 
