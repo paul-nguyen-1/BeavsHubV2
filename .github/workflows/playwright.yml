@@ -23,7 +23,7 @@ jobs:
       - name: Run Playwright Tests
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
-          PORT: ${{ secrets.PORT }}
+          API_URL: ${{ secrets.API_URL }}
         run: |
           npm run install-playwright
           npm run install-playwright-deps

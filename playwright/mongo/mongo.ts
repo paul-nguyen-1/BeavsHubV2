@@ -1,13 +1,9 @@
 import { MongoClient } from "mongodb";
-import { GoogleAuth, OAuth2Client } from "google-auth-library";
-import { google, sheets_v4 } from "googleapis";
 import { config } from "dotenv";
 
 config();
-const client = new MongoClient(process.env.MONGO_URI);
+const client = new MongoClient(process.env.MONGO_URI || 'mongodb://localhost:27017/');
 let isConnected = false;
-let sheets: sheets_v4.Sheets | null = null;
-
 export async function connectDB() {
   try {
     if (!isConnected) {
