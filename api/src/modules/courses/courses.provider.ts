@@ -1,5 +1,5 @@
 import { Connection } from 'mongoose';
-import { CoursesSchema } from 'src/schemas/courses.schema';
+import { CoursesSchema } from '../../schemas/courses.schema';
 
 export const coursesProviders = [
   {
