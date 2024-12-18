@@ -10,7 +10,6 @@ import {
   rem,
   Autocomplete,
 } from "@mantine/core";
-import { MantineLogo } from "@mantinex/mantine-logo";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import classes from "../styles/navbar.module.css";
@@ -44,7 +43,7 @@ export function Navbar() {
     let lastVal = 0;
     const handleScroll = () => {
       const y = window.scrollY;
-      if (y > lastVal) {
+      if (y > lastVal && y > 65) {
         setHeightState("scrollDown");
       } else if (y < lastVal) {
         setHeightState("scrollUp");
@@ -70,7 +69,7 @@ export function Navbar() {
         }`}
       >
         <Group justify="space-between" h="100%">
-          <MantineLogo size={30} />
+          <h1>BeavsHub</h1>
           <Autocomplete
             className={classes.search}
             placeholder="Search"
