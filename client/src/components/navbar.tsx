@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   Group,
   Button,
@@ -13,7 +13,8 @@ import {
 import { MantineLogo } from "@mantinex/mantine-logo";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
-import classes from "../styles/navbar.module.css"
+import classes from "../styles/navbar.module.css";
+
 const links = [
   { link: "/about", label: "Features" },
   { link: "/pricing", label: "Pricing" },
@@ -38,25 +39,20 @@ export function Navbar() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [heightState, setHeightState] = useState("pageTop");
-  const navbarRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const navbarHeight = navbarRef.current?.offsetHeight || 0;
-    let lastScrollY = 0;
-
+    let lastVal = 0;
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > navbarHeight && currentScrollY > lastScrollY) {
+      const y = window.scrollY;
+      if (y > lastVal) {
         setHeightState("scrollDown");
-      } else if (
-        currentScrollY <= navbarHeight ||
-        currentScrollY < lastScrollY
-      ) {
+      } else if (y < lastVal) {
         setHeightState("scrollUp");
       }
-
-      lastScrollY = currentScrollY;
+      if (y === 0) {
+        setHeightState("pageTop");
+      }
+      lastVal = y;
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -67,9 +63,8 @@ export function Navbar() {
   }, []);
 
   return (
-    <Box pb={120} style={{ position: "relative", zIndex: 999999 }}>
+    <Box pb={120}>
       <header
-        ref={navbarRef}
         className={`${classes.header} fixed w-full transition-transform duration-700 ease-in-out ${
           heightState === "scrollDown" ? "-translate-y-full" : "translate-y-0"
         }`}
