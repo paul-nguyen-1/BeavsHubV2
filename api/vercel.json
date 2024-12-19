@@ -20,7 +20,10 @@
         "HEAD",
         "CONNECT",
         "TRACE"
-      ]
+      ],
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      }
     }
   ]
 }
