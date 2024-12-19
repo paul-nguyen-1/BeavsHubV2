@@ -1,12 +1,13 @@
-import { getAllCourses } from "../const/const";
-import { useFetchData } from "../utils/utils";
+import { getAllCourses } from "../lib/const";
+import { CourseInfo } from "../lib/types";
+import { useFetchData } from "../lib/utils";
+import { Course } from "./course";
 
 function Courses() {
   const { isLoading, error, data } = useFetchData(
     ["allCoursesData"],
     getAllCourses
   );
-
   if (isLoading)
     return (
       <div className="p-2">
@@ -29,7 +30,21 @@ function Courses() {
 
   console.log("data", data);
 
-  return <div>Courses</div>;
+  return (
+    <div>
+      {data.map((course: CourseInfo) => (
+        <Course
+          key={course._id}
+          course={course.course1_name}
+          difficulty={course.course1_difficulty}
+          time_spent_per_week={course.course1_time_spent_per_week}
+          timestamp={new Date(course.course1_taken_date).toLocaleString()}
+          taken_date={course.course1_taken_date}
+          tips={course.course1_tips}
+        />
+      ))}
+    </div>
+  );
 }
 
 export default Courses;
