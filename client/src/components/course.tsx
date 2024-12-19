@@ -37,7 +37,13 @@ export function Course(props: CourseCard) {
         </div>
       </Group>
       <TypographyStylesProvider>
-        <div>{tips}</div>
+        <div>
+          {tips.length <= 0 ? (
+            <div>No tips available for this post.</div>
+          ) : (
+            <div>{tips}</div>
+          )}
+        </div>
       </TypographyStylesProvider>
     </Paper>
   );
