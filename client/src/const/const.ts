@@ -1,2 +1,2 @@
 // API Routes
-export const getAllCourses = `${process.env.API_BASE_URL}/courses`;
+export const getAllCourses = `${import.meta.env.VITE_API_BASE_URL}/courses`;
