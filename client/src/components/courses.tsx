@@ -27,7 +27,7 @@ function Courses() {
     queryKey: ["projects"],
     queryFn: fetchProjects,
     initialPageParam: 1,
-    getNextPageParam: (lastPage, pages) => pages.length + 1,
+    getNextPageParam: (_lastPage, pages) => pages.length + 1,
   });
 
   if (status === "error") {
