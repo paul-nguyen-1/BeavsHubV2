@@ -41,7 +41,7 @@ export class Course {
   @Prop({ type: [String] })
   pairs: string[];
 
-  @Prop({ type: String })
+  @Prop({ type: Date, required: true })
   timestamp: Date;
 }
 

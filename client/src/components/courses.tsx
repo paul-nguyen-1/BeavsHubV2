@@ -1,46 +1,75 @@
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../lib/const";
+import { Button } from "@mantine/core";
 import { CourseInfo } from "../lib/types";
-import { useFetchData } from "../lib/utils";
 import { Course } from "./course";
 
 function Courses() {
-  const { isLoading, error, data } = useFetchData(
-    ["allCoursesData"],
-    getAllCourses
+  const fetchProjects = async ({ pageParam = 1 }: { pageParam: number }) => {
+    const response = await fetch(`${getAllCourses}${pageParam}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    return response.json();
+  };
+
+  // https://stackoverflow.com/questions/75123685/how-to-achieve-infinite-scroll-in-react-with-react-query
+
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) => pages.length + 1,
+  });
+
+  if (status === "error") {
+    return <p>Error: {error?.message}</p>;
+  }
+
+  console.log(
+    "data",
+    data?.pages.map((course: CourseInfo) => course)
   );
-  if (isLoading)
-    return (
-      <div className="p-2">
-        <div className="p-4 space-y-4">
-          <div className="h-6 bg-gray-300 rounded w-1/3 animate-pulse"></div>
-
-          <div className="space-y-2">
-            <div className="h-4 bg-gray-300 rounded w-full animate-pulse"></div>
-            <div className="h-4 bg-gray-300 rounded w-5/6 animate-pulse"></div>
-            <div className="h-4 bg-gray-300 rounded w-3/4 animate-pulse"></div>
-          </div>
-
-          <div className="h-24 bg-gray-300 rounded-lg animate-pulse"></div>
-
-          <div className="h-10 bg-gray-300 rounded w-1/4 animate-pulse"></div>
-        </div>
-      </div>
-    );
-  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div>
-      {data.courseRecords.map((course: CourseInfo) => (
-        <Course
-          key={course._id}
-          difficulty={course.course_difficulty}
-          course={course.course_name}
-          taken_date={course.course_taken_date}
-          time_spent_per_week={course.course_time_spent_per_week}
-          timestamp={new Date(course.timestamp).toLocaleString()}
-          tips={course.course_tips}
-        />
-      ))}
+      {data?.pages.map((page, pageIndex) =>
+        page.map((course: CourseInfo) => (
+          <Course
+            key={`${pageIndex}-${course._id}`}
+            difficulty={course.course_difficulty}
+            course={course.course_name}
+            taken_date={course.course_taken_date}
+            time_spent_per_week={course.course_time_spent_per_week}
+            timestamp={new Date(course.timestamp).toLocaleString()}
+            tips={course.course_tips}
+          />
+        ))
+      )}
+
+      <div>
+        <Button
+          onClick={() => fetchNextPage()}
+          disabled={!hasNextPage || isFetchingNextPage}
+        >
+          {isFetchingNextPage
+            ? "Loading more..."
+            : hasNextPage
+              ? "Load More"
+              : "Nothing more to load"}
+        </Button>
+      </div>
+
+      {/* Additional fetching state */}
+      {isFetching && !isFetchingNextPage && <p>Fetching...</p>}
     </div>
   );
 }

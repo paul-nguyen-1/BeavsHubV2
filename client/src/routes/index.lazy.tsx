@@ -9,8 +9,6 @@ function Index() {
   return (
     <>
       <Courses />
-      <div className="each h-screen"></div>
-      <div className="each h-screen"></div>
     </>
   );
 }

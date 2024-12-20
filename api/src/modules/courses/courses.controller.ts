@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CourseDto, ParentCourseDto } from '../../dto/create-course.dto';
+import { Query as ExpressQuery } from 'express-serve-static-core';
 
 @Controller('masterCourses')
 export class masterCoursesController {}
@@ -10,8 +11,8 @@ export class CoursesController {
   constructor(private courseService: CoursesService) {}
 
   @Get()
-  async getAllRecords() {
-    return await this.courseService.readCourseReviews();
+  async getAllRecords(@Query() query: ExpressQuery): Promise<CourseDto[]> {
+    return await this.courseService.findAll(query);
   }
 
   @Get('/refresh')

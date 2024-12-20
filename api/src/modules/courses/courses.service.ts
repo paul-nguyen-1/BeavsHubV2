@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Query } from 'mongoose';
 import { Course, ParentCourse } from '../../schemas/courses.schema';
 import { HttpService } from '@nestjs/axios';
 import { v4 as uuidv4 } from 'uuid';
 import { ParentCourseDto, CourseDto } from 'src/dto/create-course.dto';
+import { Query as ExpressQuery } from 'express-serve-static-core';
 
 @Injectable()
 export class CoursesService {
@@ -145,7 +146,25 @@ export class CoursesService {
     return this.courseModel.insertMany(createCourseDtos);
   }
 
-  async findAll(): Promise<Course[]> {
-    return this.courseModel.find().exec();
+  async findAll(query: ExpressQuery): Promise<Course[]> {
+    const resPerPage = 10;
+    const currentPage = Number(query.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+
+    const keyword = query.keyword
+      ? {
+          title: {
+            $regex: query.keyword,
+            $options: 'i',
+          },
+        }
+      : {};
+
+    const courses = await this.courseModel
+      .find({ ...keyword })
+      .sort({ timestamp: -1 })
+      .limit(resPerPage)
+      .skip(skip);
+    return courses;
   }
 }
