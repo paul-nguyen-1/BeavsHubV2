@@ -27,7 +27,7 @@ export function Course(props: CourseCard) {
         <div>
           <Text fz="sm">{course}</Text>
           <Text fz="sm">Difficulty: {difficulty}</Text>
-          <Text fz="sm">Timme Spent Per Week: {time_spent_per_week}</Text>
+          <Text fz="sm">Time Spent Per Week: {time_spent_per_week}</Text>
           <Text fz="xs" c="dimmed">
             Posted: {timestamp}
           </Text>
@@ -38,7 +38,7 @@ export function Course(props: CourseCard) {
       </Group>
       <TypographyStylesProvider>
         <div>
-          {tips.length <= 0 ? (
+          {tips == '' ? (
             <div>No tips available for this post.</div>
           ) : (
             <div>{tips}</div>

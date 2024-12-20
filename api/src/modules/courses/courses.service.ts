@@ -1,19 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Course } from '../../schemas/courses.schema';
-
+import { Course, ParentCourse } from '../../schemas/courses.schema';
 import { HttpService } from '@nestjs/axios';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateCourseDto } from '../../dto/create-course.dto'
-
-/*
-Refer to this doc 
-https://developers.google.com/sheets/api/reference/rest
-*/
+import { ParentCourseDto, CourseDto } from 'src/dto/create-course.dto';
 
 @Injectable()
 export class CoursesService {
   constructor(
+    @Inject('PARENT_COURSE_MODEL')
+    private parentCourseModel: Model<ParentCourse>,
     @Inject('COURSE_MODEL')
     private courseModel: Model<Course>,
     private readonly httpService: HttpService,
@@ -32,7 +28,10 @@ export class CoursesService {
     });
   }
 
-  async readCourseReviews() {
+  async readCourseReviews(): Promise<{
+    parentRecords: ParentCourseDto[];
+    courseRecords: CourseDto[];
+  }> {
     const response = await this.httpService.axiosRef.get(
       process.env.MASTER_SHEET_URL,
     );
@@ -41,83 +40,109 @@ export class CoursesService {
 
     const cleanedHeaderRow = await this.cleanHeaders(headerRow);
 
-    const rowObjects = await Promise.all(
-      dataRows.map(async (row) => {
-        const obj: Record<string, string> = {};
-        cleanedHeaderRow.forEach((header, i) => {
-          obj[header] = row[i];
+    const parentRecords: ParentCourseDto[] = [];
+    const courseRecords: CourseDto[] = [];
+
+    for (const row of dataRows) {
+      const obj: Record<string, string> = {};
+      cleanedHeaderRow.forEach((header, i) => {
+        obj[header] = row[i];
+      });
+
+      const parentId = uuidv4();
+      const timestamp = new Date(obj['Timestamp 1'] || obj['timestamp 1']);
+
+      parentRecords.push({
+        _id: parentId,
+        timestamp,
+      });
+
+      const courses = [1, 2, 3]
+        .map((courseNumber) => {
+          const courseName = obj[`What Course Did You Take? ${courseNumber}`];
+          if (courseName) {
+            return {
+              parent_id: parentId,
+              course_name: courseName,
+              course_difficulty:
+                parseInt(obj[`How hard was this class? ${courseNumber}`]) ||
+                null,
+              course_time_spent_per_week:
+                obj[
+                  `How much time did you spend on average (per week) for this class? ${courseNumber}`
+                ],
+              course_tips:
+                obj[
+                  `What tips would you give students taking this course? ${courseNumber}`
+                ],
+              course_taken_date:
+                obj[`When did you take this course? ${courseNumber}`],
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
+
+      courses.forEach((course, index) => {
+        const pairs = courses
+          .filter((_, pairIndex) => pairIndex !== index)
+          .map((pairCourse) => pairCourse.course_name);
+
+        courseRecords.push({
+          _id: uuidv4(),
+          parent_id: parentId,
+          timestamp,
+          ...course,
+          pairs,
         });
-        return obj;
-      }),
-    );
-
-    const cleanData = rowObjects.map((row) => ({
-      _id: uuidv4(),
-      timestamp: new Date(row['Timestamp 1'] || row['timestamp 1']),
-      course1_name: row['What Course Did You Take? 1'],
-      course1_difficulty: row['How hard was this class? 1'],
-      course1_time_spent_per_week:
-        row[
-          'How much time did you spend on average (per week) for this class? 1'
-        ],
-      course1_tips:
-        row['What tips would you give students taking this course? 1'],
-      course1_taken_date: row['When did you take this course? 1'],
-      second_course_taken: row['Did You Take a Second Course This Quarter? 1'],
-      course2_name: row['What Course Did You Take? 2'],
-      course2_difficulty: row['How hard was this class? 2'],
-      course2_time_spent_per_week:
-        row[
-          'How much time did you spend on average (per week) for this class? 2'
-        ],
-      course2_tips:
-        row['What tips would you give students taking this course? 2'],
-      third_course_taken: row['Did You Take a Third Course This Quarter? 1'],
-      course3_name: row['What Course Did You Take? 3'],
-      course3_difficulty: row['How hard was this class? 3'],
-      course3_time_spent_per_week:
-        row[
-          'How much time did you spend on average (per week) for this class? 3'
-        ],
-      course3_tips:
-        row['What tips would you give students taking this course? 3'],
-    }));
-
-    return cleanData;
+      });
+    }
+    return { parentRecords, courseRecords };
   }
 
   async refreshCourseReviews(): Promise<void> {
-    try {
-      const latestRecord = await this.courseModel
-        .findOne()
-        .sort({ timestamp: -1 })
-        .exec();
+    const latestParent = await this.parentCourseModel
+      .findOne()
+      .sort({ timestamp: -1 })
+      .exec();
+    const latestTimestamp = latestParent
+      ? new Date(latestParent.timestamp)
+      : new Date(0);
 
-      const latestTimestamp = latestRecord
-        ? new Date(latestRecord.timestamp)
-        : new Date(0);
+    const { parentRecords, courseRecords } = await this.readCourseReviews();
 
-      const cleanData = await this.readCourseReviews();
+    const newParentRecords = parentRecords.filter(
+      (record) => new Date(record.timestamp) > latestTimestamp,
+    );
 
-      const newValues = cleanData.filter(
-        (record) => new Date(record.timestamp) > latestTimestamp,
+    const newParentIds = newParentRecords.map((record) => record._id);
+
+    const newCourseRecords = courseRecords.filter((record) =>
+      newParentIds.includes(record.parent_id),
+    );
+
+    if (newParentRecords.length > 0) {
+      await this.parentCourseModel.insertMany(newParentRecords, {
+        ordered: true,
+      });
+      await this.courseModel.insertMany(newCourseRecords, { ordered: true });
+      console.log(
+        `Inserted ${newParentRecords.length} parent records and ${newCourseRecords.length} courses.`,
       );
-
-      if (newValues.length > 0) {
-        await this.courseModel.insertMany(newValues);
-        console.log(`Inserted ${newValues.length} new course reviews.`);
-      } else {
-        console.log('No new course reviews to insert.');
-      }
-    } catch (error) {
-      console.error('Error updating course reviews:', error.message);
-      throw error;
+    } else {
+      console.log('No new course reviews to insert.');
     }
   }
 
-  async create(createCourseDto: CreateCourseDto): Promise<Course> {
-    const createdCat = new this.courseModel(createCourseDto);
-    return createdCat.save();
+  async createParentCourse(
+    createParentCourseDto: ParentCourseDto,
+  ): Promise<Course> {
+    const createdParentCourse = new this.courseModel(createParentCourseDto);
+    return createdParentCourse.save();
+  }
+
+  async createChildCourses(createCourseDtos: CourseDto[]): Promise<Course[]> {
+    return this.courseModel.insertMany(createCourseDtos);
   }
 
   async findAll(): Promise<Course[]> {

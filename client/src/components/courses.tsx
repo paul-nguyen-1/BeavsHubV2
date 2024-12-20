@@ -28,19 +28,17 @@ function Courses() {
     );
   if (error) return <div>Error: {error.message}</div>;
 
-  console.log("data", data);
-
   return (
     <div>
-      {data.map((course: CourseInfo) => (
+      {data.courseRecords.map((course: CourseInfo) => (
         <Course
           key={course._id}
-          course={course.course1_name}
-          difficulty={course.course1_difficulty}
-          time_spent_per_week={course.course1_time_spent_per_week}
-          timestamp={new Date(course.course1_taken_date).toLocaleString()}
-          taken_date={course.course1_taken_date}
-          tips={course.course1_tips}
+          difficulty={course.course_difficulty}
+          course={course.course_name}
+          taken_date={course.course_taken_date}
+          time_spent_per_week={course.course_time_spent_per_week}
+          timestamp={new Date(course.timestamp).toLocaleString()}
+          tips={course.course_tips}
         />
       ))}
     </div>
