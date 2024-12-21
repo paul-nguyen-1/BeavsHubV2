@@ -1,26 +1,25 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../lib/const";
-import { Button } from "@mantine/core";
 import { CourseInfo } from "../lib/types";
 import { Course } from "./course";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 
 function Courses() {
-  const fetchProjects = async ({ pageParam = 1 }: { pageParam: number }) => {
+  const { ref, inView } = useInView();
+  const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
     const response = await fetch(`${getAllCourses}${pageParam}`);
     if (!response.ok) {
-      throw new Error("Failed to fetch data");
+      throw new Error("Failed to fetch courses data");
     }
     return response.json();
   };
-
-  // https://stackoverflow.com/questions/75123685/how-to-achieve-infinite-scroll-in-react-with-react-query
 
   const {
     data,
     error,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
@@ -30,14 +29,19 @@ function Courses() {
     getNextPageParam: (_lastPage, pages) => pages.length + 1,
   });
 
-  if (status === "error") {
-    return <p>Error: {error?.message}</p>;
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
+
+  if (status === "pending") {
+    return <p>Loading...</p>;
   }
 
-  console.log(
-    "data",
-    data?.pages.map((course: CourseInfo) => course)
-  );
+  if (status === "error") {
+    return <p>Error: {error.message}</p>;
+  }
 
   return (
     <div>
@@ -55,21 +59,15 @@ function Courses() {
         ))
       )}
 
-      <div>
-        <Button
-          onClick={() => fetchNextPage()}
-          disabled={!hasNextPage || isFetchingNextPage}
-        >
-          {isFetchingNextPage
-            ? "Loading more..."
-            : hasNextPage
-              ? "Load More"
-              : "Nothing more to load"}
-        </Button>
-      </div>
-
-      {/* Additional fetching state */}
-      {isFetching && !isFetchingNextPage && <p>Fetching...</p>}
+      {hasNextPage && (
+        <div ref={ref} style={{ padding: "20px", textAlign: "center" }}>
+          {isFetchingNextPage ? (
+            <p>Loading more...</p>
+          ) : (
+            <p>Scroll to load more</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
