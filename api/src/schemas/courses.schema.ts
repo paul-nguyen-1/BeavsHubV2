@@ -1,60 +1,48 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, ObjectId, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
-export type CoursesDocument = HydratedDocument<Course>;
+export type ParentCourseDocument = HydratedDocument<ParentCourse>;
+export type CourseDocument = HydratedDocument<Course>;
+
+@Schema({ collection: 'parent_courses' })
+export class ParentCourse {
+  @Prop({ type: String, required: true })
+  _id: string;
+
+  @Prop({ type: Date, required: true })
+  timestamp: Date;
+}
+
+export const ParentCourseSchema = SchemaFactory.createForClass(ParentCourse);
 
 @Schema({ collection: 'courses' })
 export class Course {
-  @Prop({ type: Types.ObjectId, required: true })
-  _id: Types.ObjectId;
+  @Prop({ type: String, required: true })
+  _id: string;
 
-  @Prop()
+  @Prop({ type: String, required: true })
+  parent_id: string;
+
+  @Prop({ type: String, required: true })
+  course_name: string;
+
+  @Prop({ type: Number })
+  course_difficulty: number;
+
+  @Prop({ type: String })
+  course_time_spent_per_week: string;
+
+  @Prop({ type: String })
+  course_tips: string;
+
+  @Prop({ type: String })
+  course_taken_date: string;
+
+  @Prop({ type: [String] })
+  pairs: string[];
+
+  @Prop({ type: Date, required: true })
   timestamp: Date;
-
-  @Prop()
-  course1_name: string;
-
-  @Prop()
-  course1_difficulty: number;
-
-  @Prop()
-  course1_time_spent_per_week: string;
-
-  @Prop()
-  course1_tips: string;
-
-  @Prop()
-  course1_taken_date: string;
-
-  @Prop()
-  second_course_taken: string;
-
-  @Prop()
-  course2_name: string;
-
-  @Prop()
-  course2_difficulty: number;
-
-  @Prop()
-  course2_time_spent_per_week: string;
-
-  @Prop()
-  course2_tips: string;
-
-  @Prop()
-  third_course_taken: string;
-
-  @Prop()
-  course3_name: string;
-
-  @Prop()
-  course3_difficulty: number;
-
-  @Prop()
-  course3_time_spent_per_week: string;
-
-  @Prop()
-  course3_tips: string;
 }
 
-export const CoursesSchema = SchemaFactory.createForClass(Course);
+export const CourseSchema = SchemaFactory.createForClass(Course);

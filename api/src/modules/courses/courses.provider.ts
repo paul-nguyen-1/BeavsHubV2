@@ -1,11 +1,17 @@
 import { Connection } from 'mongoose';
-import { CoursesSchema } from '../../schemas/courses.schema';
+import { ParentCourseSchema, CourseSchema } from '../../schemas/courses.schema';
 
 export const coursesProviders = [
   {
+    provide: 'PARENT_COURSE_MODEL',
+    useFactory: (connection: Connection) =>
+      connection.model('ParentCourse', ParentCourseSchema),
+    inject: ['DATABASE_CONNECTION'],
+  },
+  {
     provide: 'COURSE_MODEL',
     useFactory: (connection: Connection) =>
-      connection.model('Course', CoursesSchema),
+      connection.model('Course', CourseSchema),
     inject: ['DATABASE_CONNECTION'],
   },
 ];

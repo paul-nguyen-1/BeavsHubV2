@@ -1,35 +1,75 @@
-import { getAllCourses } from "../const/const";
-import { useFetchData } from "../utils/utils";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getAllCourses } from "../lib/const";
+import { CourseInfo } from "../lib/types";
+import { Course } from "./course";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 
 function Courses() {
-  const { isLoading, error, data } = useFetchData(
-    ["allCoursesData"],
-    getAllCourses
-  );
+  const { ref, inView } = useInView();
+  const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
+    const response = await fetch(`${getAllCourses}${pageParam}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch courses data");
+    }
+    return response.json();
+  };
 
-  if (isLoading)
-    return (
-      <div className="p-2">
-        <div className="p-4 space-y-4">
-          <div className="h-6 bg-gray-300 rounded w-1/3 animate-pulse"></div>
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+    initialPageParam: 1,
+    getNextPageParam: (_lastPage, pages) => pages.length + 1,
+  });
 
-          <div className="space-y-2">
-            <div className="h-4 bg-gray-300 rounded w-full animate-pulse"></div>
-            <div className="h-4 bg-gray-300 rounded w-5/6 animate-pulse"></div>
-            <div className="h-4 bg-gray-300 rounded w-3/4 animate-pulse"></div>
-          </div>
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
 
-          <div className="h-24 bg-gray-300 rounded-lg animate-pulse"></div>
+  if (status === "pending") {
+    return <p>Loading...</p>;
+  }
 
-          <div className="h-10 bg-gray-300 rounded w-1/4 animate-pulse"></div>
+  if (status === "error") {
+    return <p>Error: {error.message}</p>;
+  }
+
+  return (
+    <div>
+      {data?.pages.map((page, pageIndex) =>
+        page.map((course: CourseInfo) => (
+          <Course
+            key={`${pageIndex}-${course._id}`}
+            difficulty={course.course_difficulty}
+            course={course.course_name}
+            taken_date={course.course_taken_date}
+            time_spent_per_week={course.course_time_spent_per_week}
+            timestamp={new Date(course.timestamp).toLocaleString()}
+            tips={course.course_tips}
+          />
+        ))
+      )}
+
+      {hasNextPage && (
+        <div ref={ref} style={{ padding: "20px", textAlign: "center" }}>
+          {isFetchingNextPage ? (
+            <p>Loading more...</p>
+          ) : (
+            <p>Scroll to load more</p>
+          )}
         </div>
-      </div>
-    );
-  if (error) return <div>Error: {error.message}</div>;
-
-  console.log("data", data);
-
-  return <div>Courses</div>;
+      )}
+    </div>
+  );
 }
 
 export default Courses;
