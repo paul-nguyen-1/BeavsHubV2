@@ -37,3 +37,34 @@
   color: light-dark(var(--mantine-color-white), var(--mantine-color-black));
   border-radius: var(--mantine-radius-xl);
 }
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+  z-index: 1000; /* Ensure it is above other elements */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlayContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
