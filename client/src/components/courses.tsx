@@ -4,6 +4,7 @@ import { CourseInfo } from "../lib/types";
 import { Course } from "./course";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
+import { Loader } from "@mantine/core";
 
 function Courses() {
   const { ref, inView } = useInView();
@@ -35,16 +36,19 @@ function Courses() {
     }
   }, [inView, hasNextPage, fetchNextPage]);
 
-  if (status === "pending") {
-    return <p>Loading...</p>;
-  }
-
   if (status === "error") {
-    return <p>Error: {error.message}</p>;
+    alert("Error: " + error.message);
   }
 
   return (
-    <div>
+    <div
+      className={`flex flex-col items-center px-5 ${
+        status === "pending" ? "opacity-50" : ""
+      }`}
+    >
+      {status === "pending" && (
+        <Loader color="blue" style={{ margin: "20px" }} />
+      )}
       {data?.pages.map((page, pageIndex) =>
         page.map((course: CourseInfo) => (
           <Course
@@ -61,11 +65,7 @@ function Courses() {
 
       {hasNextPage && (
         <div ref={ref} style={{ padding: "20px", textAlign: "center" }}>
-          {isFetchingNextPage ? (
-            <p>Loading more...</p>
-          ) : (
-            <p>Scroll to load more</p>
-          )}
+          {isFetchingNextPage && <Loader color="blue" />}
         </div>
       )}
     </div>
