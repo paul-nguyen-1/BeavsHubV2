@@ -55,8 +55,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
-  z-index: 1000; /* Ensure it is above other elements */
+  background-color: rgba(0, 0, 0, 0.8); 
+  z-index: 1000; 
   display: flex;
   justify-content: center;
   align-items: center;
