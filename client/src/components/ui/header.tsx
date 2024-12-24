@@ -21,9 +21,9 @@ export type HeaderLink = {
 
 const HEADER_LINKS: HeaderLink[] = [
   { label: "Courses", href: "/" },
-  { label: "Planner", href: "/about" },
-  { label: "Resumes", href: "/pricing" },
-  { label: "BeavsAI", href: "/contact" },
+  { label: "Planner", href: "/planner" },
+  { label: "Resumes", href: "/resumes" },
+  { label: "BeavsAI", href: "/prompt" },
 ];
 
 type Header01Props = ContainerProps & {
@@ -126,7 +126,7 @@ export const TitaniumHeader = ({
       <Anchor
         href={callToActionUrl}
         className={classes.cta}
-        style={{ flexShrink: 0, padding:"5px 20px" }}
+        style={{ flexShrink: 0, padding: "5px 20px" }}
       >
         {callToActionTitle}
       </Anchor>

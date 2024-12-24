@@ -5,6 +5,7 @@ import { Course } from "./course";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import { Loader } from "@mantine/core";
+import { motion } from "framer-motion";
 
 function Courses() {
   const { ref, inView } = useInView();
@@ -40,26 +41,49 @@ function Courses() {
     alert("Error: " + error.message);
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div
+    <motion.div
       className={`flex flex-col items-center px-5 ${
         status === "pending" ? "opacity-50" : ""
       }`}
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
     >
       {status === "pending" && (
         <Loader color="blue" style={{ margin: "20px" }} />
       )}
       {data?.pages.map((page, pageIndex) =>
         page.map((course: CourseInfo) => (
-          <Course
+          <div
             key={`${pageIndex}-${course._id}`}
-            difficulty={course.course_difficulty}
-            course={course.course_name}
-            taken_date={course.course_taken_date}
-            time_spent_per_week={course.course_time_spent_per_week}
-            timestamp={new Date(course.timestamp).toLocaleString()}
-            tips={course.course_tips}
-          />
+            className="w-full flex justify-center"
+          >
+            <motion.div
+              variants={itemVariants}
+              className="w-full md:w-3/4 flex justify-center"
+            >
+              <Course
+                key={`${pageIndex}-${course._id}`}
+                difficulty={course.course_difficulty}
+                course={course.course_name}
+                taken_date={course.course_taken_date}
+                time_spent_per_week={course.course_time_spent_per_week}
+                timestamp={new Date(course.timestamp).toLocaleString()}
+                tips={course.course_tips}
+              />
+            </motion.div>
+          </div>
         ))
       )}
 
@@ -68,7 +92,7 @@ function Courses() {
           {isFetchingNextPage && <Loader color="blue" />}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
