@@ -5,31 +5,21 @@ const awsmobile = {
   aws_project_region: import.meta.env.VITE_AWS_PROJECT_REGION,
   aws_cognito_identity_pool_id: import.meta.env
     .VITE_AWS_COGNITO_IDENTITY_POOL_ID,
-  aws_cognito_region: import.meta.env.VITE_AWS_COGNITO_REGION,
+  aws_cognito_region: import.meta.env.VITE_AWS_PROJECT_REGION,
   aws_user_pools_id: import.meta.env.VITE_AWS_USER_POOLS_ID,
   aws_user_pools_web_client_id: import.meta.env
     .VITE_AWS_USER_POOLS_WEB_CLIENT_ID,
-  aws_cognito_username_attributes:
-    import.meta.env.VITE_AWS_COGNITO_USERNAME_ATTRIBUTES.split(","),
-  aws_cognito_social_providers: JSON.parse(
-    import.meta.env.VITE_AWS_COGNITO_SOCIAL_PROVIDERS || "[]"
-  ),
-  aws_cognito_signup_attributes:
-    import.meta.env.VITE_AWS_COGNITO_SIGNUP_ATTRIBUTES.split(","),
-  aws_cognito_mfa_configuration: import.meta.env
-    .VITE_AWS_COGNITO_MFA_CONFIGURATION,
-  aws_cognito_mfa_types: import.meta.env.VITE_AWS_COGNITO_MFA_TYPES.split(","),
+  oauth: {},
+  aws_cognito_username_attributes: ["EMAIL"],
+  aws_cognito_social_providers: [],
+  aws_cognito_signup_attributes: ["EMAIL"],
+  aws_cognito_mfa_configuration: "OFF",
+  aws_cognito_mfa_types: ["SMS"],
   aws_cognito_password_protection_settings: {
-    passwordPolicyMinLength: parseInt(
-      import.meta.env.VITE_AWS_COGNITO_PASSWORD_POLICY_MIN_LENGTH,
-      10
-    ),
-    passwordPolicyCharacters: JSON.parse(
-      import.meta.env.VITE_AWS_COGNITO_PASSWORD_POLICY_CHARACTERS || "[]"
-    ),
+    passwordPolicyMinLength: 8,
+    passwordPolicyCharacters: [],
   },
-  aws_cognito_verification_mechanisms:
-    import.meta.env.VITE_AWS_COGNITO_VERIFICATION_MECHANISMS.split(","),
+  aws_cognito_verification_mechanisms: ["EMAIL"],
 };
 
 export default awsmobile;
