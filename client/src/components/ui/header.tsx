@@ -43,7 +43,7 @@ export const TitaniumHeader = ({
     </Text>
   ),
   callToActionTitle = "Login",
-  callToActionUrl = "#",
+  callToActionUrl = "/login",
   links = HEADER_LINKS,
   h = 60,
   radius = 30,
