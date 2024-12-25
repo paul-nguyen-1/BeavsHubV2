@@ -41,4 +41,5 @@ export function Login() {
   );
 }
 
-export default withAuthenticator(Login);
+const AppWithAuth = withAuthenticator(Login);
+export default AppWithAuth;
