@@ -1,5 +1,6 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import Courses from "../components/courses";
+// import Courses from "../components/courses";
+import Login from "../login";
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
@@ -8,7 +9,8 @@ export const Route = createLazyFileRoute("/")({
 function Index() {
   return (
     <>
-      <Courses />
+      <Login />
+      {/* <Courses /> */}
     </>
   );
 }

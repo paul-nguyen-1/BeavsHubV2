@@ -15,7 +15,7 @@ import awsExports from "./aws-exports.ts";
 // Configures the Amplify library with the settings from aws-exports.js, which includes all the AWS service configurations for this project.
 Amplify.configure(awsExports);
 
-function Login() {
+export function Login() {
   return (
     <div className="App">
       <Authenticator>
