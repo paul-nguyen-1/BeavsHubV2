@@ -1,5 +1,6 @@
 // Imports the Amplify library from 'aws-amplify' package. This is used to configure your app to interact with AWS services.
 import { Amplify } from "aws-amplify";
+import { fetchAuthSession } from "@aws-amplify/auth";
 
 // Imports the Authenticator and withAuthenticator components from '@aws-amplify/ui-react'.
 // Authenticator is a React component that provides a ready-to-use sign-in and sign-up UI.
@@ -14,6 +15,16 @@ import awsExports from "./aws-exports.ts";
 
 // Configures the Amplify library with the settings from aws-exports.js, which includes all the AWS service configurations for this project.
 Amplify.configure(awsExports);
+
+const printUserAttributes = async () => {
+  try {
+    const userAuth = await fetchAuthSession();
+    console.log("auth:", userAuth);
+  } catch (e) {
+    console.log(e);
+  }
+};
+printUserAttributes();
 
 export function Login() {
   return (
