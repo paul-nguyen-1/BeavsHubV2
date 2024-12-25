@@ -6,7 +6,7 @@ BeavsHub is a modern web application designed to provide an interactive experien
 
 ## Features
 
-- **Course Explorer**: A dynamic, interactive platform for exploring courses, inspired by OSU-CS-CA and Course Explorer.
+- **Course Explorer**: A dynamic, interactive platform for exploring courses.
 <!-- - **Resume Builder**: Tools to craft, refine, and export professional resumes.
 - **Community Features**: Commenting and collaborative tools on course posts.
 - **Interactive Visuals**: Graphs, flowcharts, and side panels to enhance data representation. -->
