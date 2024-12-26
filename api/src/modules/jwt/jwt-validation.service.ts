@@ -1,13 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import * as jwksClient from 'jwks-rsa';
+import * as jwks from 'jwks-rsa';
 
 @Injectable()
 export class JwtValidationService {
   private readonly cognitoIssuer = `https://cognito-idp.us-east-2.amazonaws.com/${process.env.AWS_USER_POOLS_ID}`;
 
   // JWKS client for fetching public keys
-  private readonly jwksClient = jwksClient({
+  private readonly jwksClient = jwks({
     jwksUri: `${this.cognitoIssuer}/.well-known/jwks.json`,
   });
 
