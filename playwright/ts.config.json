@@ -1,11 +1,9 @@
 {
-    "compilerOptions": {
-      "target": "ES2020",
-      "lib": ["DOM", "ES2020"],
-      "types": ["node", "playwright"],
-      "moduleResolution": "node",
-      "esModuleInterop": true,
-      "strict": true
-    }
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["DOM", "ES2020"],
+    "types": ["node", "playwright"],
+    "moduleResolution": "node",
+    "strict": true
   }
-  
+}
