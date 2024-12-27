@@ -1,5 +1,6 @@
 // Imports the Amplify library from 'aws-amplify' package. This is used to configure your app to interact with AWS services.
 import { Amplify } from "aws-amplify";
+import { fetchAuthSession } from "@aws-amplify/auth";
 
 // Imports the Authenticator and withAuthenticator components from '@aws-amplify/ui-react'.
 // Authenticator is a React component that provides a ready-to-use sign-in and sign-up UI.
@@ -14,6 +15,52 @@ import awsExports from "./aws-exports.ts";
 
 // Configures the Amplify library with the settings from aws-exports.js, which includes all the AWS service configurations for this project.
 Amplify.configure(awsExports);
+
+const getJwtToken = async () => {
+  try {
+    const cognitoTokens = await fetchAuthSession();
+    const rawToken = cognitoTokens?.tokens?.idToken?.toString();
+
+    if (!rawToken) {
+      throw new Error("JWT token is undefined");
+    }
+
+    return rawToken;
+  } catch (e) {
+    console.error("Error fetching JWT token:", e);
+  }
+};
+
+async function fetchProtectedData() {
+  try {
+    const token = await getJwtToken();
+    console.log("JWT Token:", token);
+    if (!token) {
+      throw new Error("Unable to retrieve JWT token");
+    }
+
+    const response = await fetch("http://localhost:8000/jwt/protected", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("Response:", response);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch protected data: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Protected data:", data);
+  } catch (error) {
+    console.error("Error fetching protected data:", error);
+  }
+}
+
+fetchProtectedData();
+
 
 export function Login() {
   return (
