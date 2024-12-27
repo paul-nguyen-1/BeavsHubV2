@@ -1,15 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import jwksRsa from "jwks-rsa";
+import jwksRsa from 'jwks-rsa';
 
 @Injectable()
 export class JwtValidationService {
   private readonly cognitoIssuer = `https://cognito-idp.us-east-2.amazonaws.com/${process.env.AWS_USER_POOLS_ID}`;
-
-  // JWKS client for fetching public keys
-  private readonly jwksClient = jwksRsa({
-    jwksUri: `${this.cognitoIssuer}/.well-known/jwks.json`,
-  });
 
   async validateToken(token: string): Promise<any> {
     try {
@@ -52,8 +47,11 @@ export class JwtValidationService {
   }
 
   private async getPublicKey(kid: string): Promise<string> {
+    const jwksClient = jwksRsa({
+      jwksUri: `${this.cognitoIssuer}/.well-known/jwks.json`,
+    });
     return new Promise((resolve, reject) => {
-      this.jwksClient.getSigningKey(kid, (err, key) => {
+      jwksClient.getSigningKey(kid, (err, key) => {
         if (err) {
           return reject(new UnauthorizedException('Unable to get public key'));
         }
