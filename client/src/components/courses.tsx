@@ -6,6 +6,8 @@ import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import { Loader } from "@mantine/core";
 import { motion } from "framer-motion";
+import SelectMantine from "./ui/select";
+import { MantineInput } from "./ui/input";
 
 function Courses() {
   const { ref, inView } = useInView();
@@ -60,6 +62,13 @@ function Courses() {
       animate="visible"
       variants={containerVariants}
     >
+      <motion.div variants={itemVariants}>
+        <div>
+          <SelectMantine />
+          <MantineInput />
+        </div>
+      </motion.div>
+
       {status === "pending" && (
         <Loader color="blue" style={{ margin: "20px" }} />
       )}
