@@ -20,7 +20,7 @@ BeavsHub is a modern web application designed to provide an interactive experien
 - **Mantine**: Highly customizable component library.
 - **Tailwind CSS**: Utility-first CSS framework for responsive and modern design.
 - **Framer Motion**: Powerful animation library for React.
-<!-- - **React Flow**: A library for building node-based graphs and diagrams. -->
+- **React Flow**: A library for building node-based graphs and diagrams.
 - **TanStack Query**: Advanced state management and server-state synchronization.
 
 ### Backend
@@ -29,7 +29,7 @@ BeavsHub is a modern web application designed to provide an interactive experien
 - **MongoDB**: Document-based NoSQL database for flexible and efficient data storage.
 
 ### Authentication
-
+- **AWS Cognito**: Used for user authentication, ensuring a secure and scalable way to manage user sign-ups, log-ins, and access control.
 - **JWT (JSON Web Tokens)**: Secure and stateless authentication mechanism.
 
 ### Testing and CI/CD
@@ -48,7 +48,7 @@ BeavsHub is a modern web application designed to provide an interactive experien
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/paul-nguyen-1/BeavsHubV2.git
    cd BeavsHub
    ```
 
