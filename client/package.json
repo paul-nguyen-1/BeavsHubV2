@@ -16,7 +16,7 @@
     "@mantine/hooks": "^7.15.1",
     "@mantinex/mantine-logo": "^1.1.0",
     "@tabler/icons-react": "^3.26.0",
-    "@tanstack/react-query": "^5.62.8",
+    "@tanstack/react-query": "^5.62.15",
     "@tanstack/react-router": "^1.95.1",
     "aws-amplify": "^6.11.0",
     "axios": "^1.7.9",
