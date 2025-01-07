@@ -12,12 +12,8 @@ export class CoursesController {
 
   @Get()
   async getAllRecords(@Query() query: ExpressQuery): Promise<CourseDto[]> {
+    await this.courseService.refreshCourseReviews();
     return await this.courseService.findAll(query);
-  }
-
-  @Get('/refresh')
-  async refreshRecords() {
-    return await this.courseService.refreshCourseReviews();
   }
 }
 
