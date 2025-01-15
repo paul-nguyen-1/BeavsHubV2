@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CourseDto, ParentCourseDto } from '../../dto/create-course.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
@@ -14,6 +14,14 @@ export class CoursesController {
   async getAllRecords(@Query() query: ExpressQuery): Promise<CourseDto[]> {
     await this.courseService.refreshCourseReviews();
     return await this.courseService.findAll(query);
+  }
+
+  @Get(':id')
+  async getCourseById(
+    @Param('id') id: string,
+    @Query() query: ExpressQuery,
+  ): Promise<CourseDto[]> {
+    return await this.courseService.findCourse(id, query);
   }
 }
 

@@ -3,16 +3,19 @@ import { getAllCourses } from "../lib/const";
 import { CourseInfo } from "../lib/types";
 import { Course } from "./course";
 import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Loader } from "@mantine/core";
 import { motion } from "framer-motion";
 import SelectMantine from "./ui/select";
 import { MantineInput } from "./ui/input";
 
 function Courses() {
+  const [course, setCourse] = useState<string | null>("");
+  const [review, setReview] = useState<string | null>("");
+
   const { ref, inView } = useInView();
   const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
-    const response = await fetch(`${getAllCourses}${pageParam}`);
+    const response = await fetch(`${getAllCourses}/courses/${course ?? ''}?page=${pageParam}`);
     if (!response.ok) {
       throw new Error("Failed to fetch courses data");
     }
@@ -27,7 +30,7 @@ function Courses() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["projects"],
+    queryKey: ["projects", course],
     queryFn: fetchProjects,
     initialPageParam: 1,
     getNextPageParam: (_lastPage, pages) => pages.length + 1,
@@ -53,6 +56,14 @@ function Courses() {
     visible: { opacity: 1, y: 0 },
   };
 
+  const handleCourseChange = (value: string | null) => {
+    setCourse(value);
+  };
+
+  const handleReviewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReview(e.target.value);
+  };
+
   return (
     <motion.div
       className={`flex flex-col items-center px-5 ${
@@ -64,8 +75,8 @@ function Courses() {
     >
       <motion.div variants={itemVariants}>
         <div>
-          <SelectMantine />
-          <MantineInput />
+          <SelectMantine value={course} onChange={handleCourseChange} charSize={3}/>
+          <MantineInput value={review ?? ""} onChange={handleReviewChange} />
         </div>
       </motion.div>
 

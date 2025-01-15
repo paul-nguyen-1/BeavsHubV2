@@ -1,5 +1,5 @@
 // API Routes
-export const getAllCourses = `${import.meta.env.VITE_API_BASE_URL ?? process.env.API_BASE_URL}/courses?page=`;
+export const getAllCourses = `${import.meta.env.VITE_API_BASE_URL ?? process.env.API_BASE_URL}`;
 
 export const lowerDivisionOne = ["161", "162"];
 export const lowerDivisionTwo = ["261", "271", "290"];

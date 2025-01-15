@@ -146,6 +146,19 @@ export class CoursesService {
     return this.courseModel.insertMany(createCourseDtos);
   }
 
+  async findCourse(id: string, query: ExpressQuery): Promise<Course[]> {
+    const resPerPage = 10;
+    const currentPage = Number(query.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+
+    return await this.courseModel
+      .find({ course_name: { $regex: id, $options: 'i' } })
+      .sort({ timestamp: -1 })
+      .limit(resPerPage)
+      .skip(skip)
+      .exec();
+  }
+
   async findAll(query: ExpressQuery): Promise<Course[]> {
     const resPerPage = 10;
     const currentPage = Number(query.page) || 1;
