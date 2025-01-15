@@ -10,12 +10,11 @@ export function MantineInput({ value, onChange }: MantineInputProps) {
   return (
     <TextInput
       label="Search"
-      placeholder="Search tips"
+      placeholder="Course reviews"
       leftSection={<IconAt size={16} />}
       value={value}
       onChange={onChange}
       rightSectionPointerEvents="all"
-      mt="md"
       rightSection={
         value ? (
           <CloseButton

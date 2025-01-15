@@ -77,7 +77,7 @@ function Courses() {
       variants={containerVariants}
     >
       <motion.div variants={itemVariants}>
-        <div>
+        <div className="flex flex-row items-center gap-4">
           <SelectMantine
             value={course}
             onChange={handleCourseChange}
