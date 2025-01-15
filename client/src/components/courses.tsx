@@ -15,7 +15,10 @@ function Courses() {
 
   const { ref, inView } = useInView();
   const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
-    const response = await fetch(`${getAllCourses}/courses/${course ?? ''}?page=${pageParam}`);
+    const defaultResponse = `${getAllCourses}/courses/${course ?? ""}?page=${pageParam}`;
+    const reviewResponse = `${getAllCourses}/courses/${course ?? ""}?course_tips=${review}&page=${pageParam}`;
+
+    const response = await fetch(review ? reviewResponse : defaultResponse);
     if (!response.ok) {
       throw new Error("Failed to fetch courses data");
     }
@@ -30,7 +33,7 @@ function Courses() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["projects", course],
+    queryKey: ["projects", course, review],
     queryFn: fetchProjects,
     initialPageParam: 1,
     getNextPageParam: (_lastPage, pages) => pages.length + 1,
@@ -75,7 +78,11 @@ function Courses() {
     >
       <motion.div variants={itemVariants}>
         <div>
-          <SelectMantine value={course} onChange={handleCourseChange} charSize={3}/>
+          <SelectMantine
+            value={course}
+            onChange={handleCourseChange}
+            charSize={3}
+          />
           <MantineInput value={review ?? ""} onChange={handleReviewChange} />
         </div>
       </motion.div>

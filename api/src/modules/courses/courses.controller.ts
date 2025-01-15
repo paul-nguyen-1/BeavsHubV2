@@ -11,17 +11,21 @@ export class CoursesController {
   constructor(private courseService: CoursesService) {}
 
   @Get()
-  async getAllRecords(@Query() query: ExpressQuery): Promise<CourseDto[]> {
+  async getAllRecords(
+    @Query() query: ExpressQuery,
+    @Query('course_tips') courseTips?: string,
+  ): Promise<CourseDto[]> {
     await this.courseService.refreshCourseReviews();
-    return await this.courseService.findAll(query);
+    return await this.courseService.findAll(query, courseTips);
   }
 
   @Get(':id')
   async getCourseById(
     @Param('id') id: string,
     @Query() query: ExpressQuery,
+    @Query('course_tips') courseTips?: string,
   ): Promise<CourseDto[]> {
-    return await this.courseService.findCourse(id, query);
+    return await this.courseService.findCourse(id, query, courseTips);
   }
 }
 

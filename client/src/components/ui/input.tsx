@@ -1,4 +1,4 @@
-import { Input, CloseButton } from "@mantine/core";
+import { TextInput, CloseButton } from "@mantine/core";
 import { IconAt } from "@tabler/icons-react";
 
 interface MantineInputProps {
@@ -8,7 +8,8 @@ interface MantineInputProps {
 
 export function MantineInput({ value, onChange }: MantineInputProps) {
   return (
-    <Input
+    <TextInput
+      label="Search"
       placeholder="Search tips"
       leftSection={<IconAt size={16} />}
       value={value}
@@ -16,14 +17,16 @@ export function MantineInput({ value, onChange }: MantineInputProps) {
       rightSectionPointerEvents="all"
       mt="md"
       rightSection={
-        <CloseButton
-          aria-label="Clear input"
-          onClick={() =>
-            onChange({
-              target: { value: "" },
-            } as React.ChangeEvent<HTMLInputElement>)
-          }
-        />
+        value ? (
+          <CloseButton
+            aria-label="Clear input"
+            onClick={() =>
+              onChange({
+                target: { value: "" },
+              } as React.ChangeEvent<HTMLInputElement>)
+            }
+          />
+        ) : null
       }
     />
   );
