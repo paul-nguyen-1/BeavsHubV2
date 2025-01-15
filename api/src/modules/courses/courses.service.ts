@@ -146,25 +146,50 @@ export class CoursesService {
     return this.courseModel.insertMany(createCourseDtos);
   }
 
-  async findAll(query: ExpressQuery): Promise<Course[]> {
+  async findCourse(
+    id: string,
+    query: ExpressQuery,
+    courseTips?: string,
+  ): Promise<Course[]> {
     const resPerPage = 10;
     const currentPage = Number(query.page) || 1;
     const skip = resPerPage * (currentPage - 1);
 
-    const keyword = query.keyword
-      ? {
-          title: {
-            $regex: query.keyword,
-            $options: 'i',
-          },
-        }
-      : {};
+    const filters: any = {
+      course_name: { $regex: id, $options: 'i' },
+    };
 
-    const courses = await this.courseModel
-      .find({ ...keyword })
+    if (courseTips) {
+      filters.course_tips = { $regex: courseTips, $options: 'i' };
+    }
+
+    return await this.courseModel
+      .find(filters)
       .sort({ timestamp: -1 })
       .limit(resPerPage)
-      .skip(skip);
-    return courses;
+      .skip(skip)
+      .exec();
+  }
+
+  async findAll(query: ExpressQuery, courseTips?: string): Promise<Course[]> {
+    const resPerPage = 10;
+    const currentPage = Number(query.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+    const filters: any = {};
+
+    if (query.keyword) {
+      filters.$or = [{ title: { $regex: query.keyword, $options: 'i' } }];
+    }
+
+    if (courseTips) {
+      filters.course_tips = { $regex: courseTips, $options: 'i' };
+    }
+
+    return await this.courseModel
+      .find(filters)
+      .sort({ timestamp: -1 })
+      .limit(resPerPage)
+      .skip(skip)
+      .exec();
   }
 }

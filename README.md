@@ -34,7 +34,7 @@ BeavsHub is a modern web application designed to provide an interactive experien
 
 ### Testing and CI/CD
 
-- **Jest**: Unit testing for
+- **Jest**: Unit testing framework for ensuring code reliability and correctness.
 - **Playwright**: End-to-end testing framework for reliable UI testing.
 - **GitHub Actions**: CI/CD pipeline for automated testing and deployment.
 
@@ -77,8 +77,4 @@ BeavsHub is a modern web application designed to provide an interactive experien
 
 ## License
 
-This project is licensed under the MIT License.
-
----
-
-Enjoy building with BeavsHub! 🚀
+This project is licensed under the MIT License. 🚀
