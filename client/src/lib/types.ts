@@ -29,3 +29,7 @@ export interface BarChartDataItem {
 export interface PieChartDataItem {
   course_difficulty: number; 
 }
+
+export interface DonutChartDataItem {
+  course_time_spent_per_week: string;
+}

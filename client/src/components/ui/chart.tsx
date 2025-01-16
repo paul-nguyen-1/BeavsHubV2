@@ -1,9 +1,14 @@
-import { BarChart, PieChart } from "@mantine/charts";
+import { BarChart, DonutChart, PieChart } from "@mantine/charts";
 import { Text } from "@mantine/core";
-import { BarChartDataItem, PieChartDataItem } from "../../lib/types";
+import {
+  BarChartDataItem,
+  PieChartDataItem,
+  DonutChartDataItem,
+} from "../../lib/types";
 
 const colorPalette = ["#6FCF97", "#F2C94C", "#F2994A", "#EB5757", "#D32F2F"];
 const difficultyType = ["Easy A", "Medium", "Hard", "Very Hard", "Insane"];
+const sortedTimeSpent = ["0-5 hours", "6-12 hours", "13-18 hours", "18+ hours"];
 
 export const getColor = (index: number, reverse?: boolean) => {
   const palette = reverse ? colorPalette.slice().reverse() : colorPalette;
@@ -34,7 +39,7 @@ export const BarChartMantine = (props: { data: BarChartDataItem[] }) => {
     .sort((a, b) => b.count - a.count);
 
   return (
-    <div>
+    <div className="md:w-[500px] w-[350px]">
       <Text fz="xs" mb="sm" ta="center">
         Bar Chart: Course Pairing Data
       </Text>
@@ -77,7 +82,7 @@ export const PieChartMantine = (props: { data: PieChartDataItem[] }) => {
   );
 
   return (
-    <div>
+    <div className="md:w-[500px] w-[350px]">
       <Text fz="xs" mb="sm" ta="center">
         Pie Chart: Course Difficulty Data
       </Text>
@@ -87,6 +92,41 @@ export const PieChartMantine = (props: { data: PieChartDataItem[] }) => {
         tooltipDataSource="segment"
         mx="auto"
       />
+    </div>
+  );
+};
+export const DonutChartMantine = (props: { data: DonutChartDataItem[] }) => {
+  const { data } = props;
+  const flattenedData = Array.isArray(data) ? data.flat() : [];
+
+  const timeSpentCounts = flattenedData.reduce<Record<string, number>>(
+    (count, item) => {
+      const timeSpentArray = Array.isArray(item.course_time_spent_per_week)
+        ? item.course_time_spent_per_week
+        : [item.course_time_spent_per_week];
+
+      timeSpentArray.forEach((time) => {
+        count[time] = (count[time] || 0) + 1;
+      });
+
+      return count;
+    },
+    {}
+  );
+
+  const donutChartData = sortedTimeSpent
+    .map((time, index) => ({
+      name: `Time Spent: ${time}`,
+      value: timeSpentCounts[time] || 0,
+      color: getColor(index),
+    }))
+
+  return (
+    <div className="md:w-[500px] w-[350px]">
+      <Text fz="xs" mb="sm" ta="center">
+        Donut Chart: Time Spent Per Week (Hours)
+      </Text>
+      <DonutChart tooltipDataSource="segment" mx="auto" data={donutChartData} />
     </div>
   );
 };

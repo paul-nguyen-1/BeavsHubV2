@@ -8,7 +8,11 @@ import { Loader } from "@mantine/core";
 import { motion } from "framer-motion";
 import SelectMantine from "./ui/select";
 import { MantineInput } from "./ui/input";
-import { BarChartMantine, PieChartMantine } from "./ui/chart";
+import {
+  BarChartMantine,
+  PieChartMantine,
+  DonutChartMantine,
+} from "./ui/chart";
 
 function Courses() {
   const [course, setCourse] = useState<string | null>("");
@@ -92,60 +96,65 @@ function Courses() {
   };
 
   return (
-    <motion.div
-      className={`flex flex-col items-center px-5 ${
-        status === "pending" ? "opacity-50" : ""
-      }`}
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      <BarChartMantine data={fetchedChartData} />
-      <PieChartMantine data={fetchedChartData} />
-      <motion.div variants={itemVariants}>
-        <div className="flex flex-row items-center gap-4">
-          <SelectMantine
-            value={course}
-            onChange={handleCourseChange}
-            charSize={3}
-          />
-          <MantineInput value={review ?? ""} onChange={handleReviewChange} />
-        </div>
-      </motion.div>
-
-      {status === "pending" && (
-        <Loader color="blue" style={{ margin: "20px" }} />
-      )}
-      {data?.pages.map((page, pageIndex) =>
-        page.map((course: CourseInfo) => (
-          <div
-            key={`${pageIndex}-${course._id}`}
-            className="w-full flex justify-center"
-          >
-            <motion.div
-              variants={itemVariants}
-              className="w-full md:w-3/4 flex justify-center"
-            >
-              <Course
-                key={`${pageIndex}-${course._id}`}
-                difficulty={course.course_difficulty}
-                course={course.course_name}
-                taken_date={course.course_taken_date}
-                time_spent_per_week={course.course_time_spent_per_week}
-                timestamp={new Date(course.timestamp).toLocaleString()}
-                tips={course.course_tips}
-              />
-            </motion.div>
+    <div className="flex md:flex-row flex-col gap-y-8">
+      <div className="flex flex-col gap-y-8">
+        <PieChartMantine data={fetchedChartData} />
+        <DonutChartMantine data={fetchedChartData} />
+        <BarChartMantine data={fetchedChartData} />
+      </div>
+      <motion.div
+        className={`flex flex-col items-center px-5 ${
+          status === "pending" ? "opacity-50" : ""
+        }`}
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <motion.div variants={itemVariants}>
+          <div className="flex flex-row items-center gap-4">
+            <SelectMantine
+              value={course}
+              onChange={handleCourseChange}
+              charSize={3}
+            />
+            <MantineInput value={review ?? ""} onChange={handleReviewChange} />
           </div>
-        ))
-      )}
+        </motion.div>
 
-      {hasNextPage && (
-        <div ref={ref} style={{ padding: "20px", textAlign: "center" }}>
-          {isFetchingNextPage && <Loader color="blue" />}
-        </div>
-      )}
-    </motion.div>
+        {status === "pending" && (
+          <Loader color="blue" style={{ margin: "20px" }} />
+        )}
+        {data?.pages.map((page, pageIndex) =>
+          page.map((course: CourseInfo) => (
+            <div
+              key={`${pageIndex}-${course._id}`}
+              className="w-full flex justify-center"
+            >
+              <motion.div
+                variants={itemVariants}
+                className="w-full flex justify-center"
+              >
+                <Course
+                  key={`${pageIndex}-${course._id}`}
+                  difficulty={course.course_difficulty}
+                  course={course.course_name}
+                  taken_date={course.course_taken_date}
+                  time_spent_per_week={course.course_time_spent_per_week}
+                  timestamp={new Date(course.timestamp).toLocaleString()}
+                  tips={course.course_tips}
+                />
+              </motion.div>
+            </div>
+          ))
+        )}
+
+        {hasNextPage && (
+          <div ref={ref} style={{ padding: "20px", textAlign: "center" }}>
+            {isFetchingNextPage && <Loader color="blue" />}
+          </div>
+        )}
+      </motion.div>
+    </div>
   );
 }
 
