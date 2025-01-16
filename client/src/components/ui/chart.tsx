@@ -38,7 +38,7 @@ export const BarChartMantine = (props: { data: BarChartDataItem[] }) => {
     }))
     .sort((a, b) => b.count - a.count);
 
-  return (
+  return barChartData.length > 0 ? (
     <div className="md:w-[500px] w-[350px]">
       <Text fz="xs" mb="sm" ta="center">
         Bar Chart: Course Pairing Data
@@ -57,7 +57,7 @@ export const BarChartMantine = (props: { data: BarChartDataItem[] }) => {
         ]}
       />
     </div>
-  );
+  ) : null;
 };
 
 export const PieChartMantine = (props: { data: PieChartDataItem[] }) => {
@@ -81,7 +81,7 @@ export const PieChartMantine = (props: { data: PieChartDataItem[] }) => {
     })
   );
 
-  return (
+  return pieChartData.length > 0 ? (
     <div>
       <Text fz="xs" mb="sm" ta="center">
         Pie Chart: Course Difficulty Data
@@ -93,7 +93,7 @@ export const PieChartMantine = (props: { data: PieChartDataItem[] }) => {
         mx="auto"
       />
     </div>
-  );
+  ) : null;
 };
 export const DonutChartMantine = (props: { data: DonutChartDataItem[] }) => {
   const { data } = props;
@@ -120,12 +120,12 @@ export const DonutChartMantine = (props: { data: DonutChartDataItem[] }) => {
     color: getColor(index),
   }));
 
-  return (
+  return donutChartData.length > 0 ? (
     <div>
       <Text fz="xs" mb="sm" ta="center">
         Donut Chart: Time Spent Per Week (Hours)
       </Text>
       <DonutChart tooltipDataSource="segment" mx="auto" data={donutChartData} />
     </div>
-  );
+  ) : null;
 };
