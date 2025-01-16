@@ -82,7 +82,7 @@ export const PieChartMantine = (props: { data: PieChartDataItem[] }) => {
   );
 
   return (
-    <div className="md:w-[500px] w-[350px]">
+    <div>
       <Text fz="xs" mb="sm" ta="center">
         Pie Chart: Course Difficulty Data
       </Text>
@@ -114,15 +114,14 @@ export const DonutChartMantine = (props: { data: DonutChartDataItem[] }) => {
     {}
   );
 
-  const donutChartData = sortedTimeSpent
-    .map((time, index) => ({
-      name: `Time Spent: ${time}`,
-      value: timeSpentCounts[time] || 0,
-      color: getColor(index),
-    }))
+  const donutChartData = sortedTimeSpent.map((time, index) => ({
+    name: `Time Spent: ${time}`,
+    value: timeSpentCounts[time] || 0,
+    color: getColor(index),
+  }));
 
   return (
-    <div className="md:w-[500px] w-[350px]">
+    <div>
       <Text fz="xs" mb="sm" ta="center">
         Donut Chart: Time Spent Per Week (Hours)
       </Text>

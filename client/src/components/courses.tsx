@@ -56,7 +56,9 @@ function Courses() {
 
   const fetchChartData = async () => {
     const response = await fetch(
-      `${getAllCourses}/courses/${course}/all_reviews`
+      course
+        ? `${getAllCourses}/courses/${course}/all_reviews?course_tips=${review}`
+        : `${getAllCourses}/courses/all?course_tips=${review}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch chart data");
@@ -66,15 +68,15 @@ function Courses() {
 
   const {
     data: fetchedChartData,
-    // isLoading,
+    isLoading,
     error: chartError,
   } = useQuery({
-    queryKey: ["chartData", course],
+    queryKey: ["chartData", course, review],
     queryFn: fetchChartData,
   });
 
   if (chartError) {
-    alert("Chart Error: " + chartError.message);
+    console.log("Chart Error: " + chartError.message);
   }
 
   const containerVariants = {
@@ -97,11 +99,20 @@ function Courses() {
 
   return (
     <div className="flex md:flex-row flex-col gap-y-8">
-      <div className="flex flex-col gap-y-8">
-        <PieChartMantine data={fetchedChartData} />
-        <DonutChartMantine data={fetchedChartData} />
-        <BarChartMantine data={fetchedChartData} />
+      <div className="flex flex-col gap-y-8 items-center">
+        {isLoading ? (
+          <div>Loading charts...</div>
+        ) : (
+          <>
+            <div className="flex flex-row gap-12">
+              <PieChartMantine data={fetchedChartData} />
+              <DonutChartMantine data={fetchedChartData} />
+            </div>
+            <BarChartMantine data={fetchedChartData} />
+          </>
+        )}
       </div>
+
       <motion.div
         className={`flex flex-col items-center px-5 ${
           status === "pending" ? "opacity-50" : ""

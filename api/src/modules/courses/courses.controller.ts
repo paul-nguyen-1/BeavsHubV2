@@ -20,9 +20,11 @@ export class CoursesController {
   }
 
   @Get('all')
-  async getAllCourses(): Promise<CourseDto[]> {
+  async getAllCourses(
+    @Query('course_tips') courseTips?: string,
+  ): Promise<CourseDto[]> {
     console.log('Getting all courses');
-    return await this.courseService.findAllCourses();
+    return await this.courseService.findAllCourses(courseTips);
   }
 
   @Get(':id')
