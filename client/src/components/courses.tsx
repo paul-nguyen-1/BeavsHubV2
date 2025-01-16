@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../lib/const";
 import { CourseInfo } from "../lib/types";
 import { Course } from "./course";
@@ -8,6 +8,7 @@ import { Loader } from "@mantine/core";
 import { motion } from "framer-motion";
 import SelectMantine from "./ui/select";
 import { MantineInput } from "./ui/input";
+import { BarChartMantine, PieChartMantine } from "./ui/chart";
 
 function Courses() {
   const [course, setCourse] = useState<string | null>("");
@@ -49,6 +50,29 @@ function Courses() {
     alert("Error: " + error.message);
   }
 
+  const fetchChartData = async () => {
+    const response = await fetch(
+      `${getAllCourses}/courses/${course}/all_reviews`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch chart data");
+    }
+    return response.json();
+  };
+
+  const {
+    data: fetchedChartData,
+    // isLoading,
+    error: chartError,
+  } = useQuery({
+    queryKey: ["chartData", course],
+    queryFn: fetchChartData,
+  });
+
+  if (chartError) {
+    alert("Chart Error: " + chartError.message);
+  }
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
@@ -76,6 +100,8 @@ function Courses() {
       animate="visible"
       variants={containerVariants}
     >
+      <BarChartMantine data={fetchedChartData} />
+      <PieChartMantine data={fetchedChartData} />
       <motion.div variants={itemVariants}>
         <div className="flex flex-row items-center gap-4">
           <SelectMantine

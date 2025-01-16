@@ -192,4 +192,31 @@ export class CoursesService {
       .skip(skip)
       .exec();
   }
+
+  // No Pagination -- Access Chart Data
+  async findAllCourses(): Promise<Course[]> {
+    return await this.courseModel.find().lean().exec();
+  }
+  
+
+  async findAllCourseReviews(
+    id: string,
+    query: ExpressQuery,
+    courseTips?: string,
+  ): Promise<Course[]> {
+ 
+
+    const filters: any = {
+      course_name: { $regex: id, $options: 'i' },
+    };
+
+    if (courseTips) {
+      filters.course_tips = { $regex: courseTips, $options: 'i' };
+    }
+
+    return await this.courseModel
+      .find(filters)
+      .sort({ timestamp: -1 })
+      .exec();
+  }
 }
