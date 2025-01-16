@@ -6,7 +6,6 @@ export interface CourseInfo {
   course_time_spent_per_week: string;
   course_tips: string;
   timestamp: string;
-
 }
 
 export interface CourseCard {
@@ -17,4 +16,20 @@ export interface CourseCard {
   time_spent_per_week: string;
   tips: string;
   timestamp: string;
+}
+
+export interface ChartData {
+  data: object[];
+}
+
+export interface BarChartDataItem {
+  pairs: string[]; 
+}
+
+export interface PieChartDataItem {
+  course_difficulty: number; 
+}
+
+export interface DonutChartDataItem {
+  course_time_spent_per_week: string;
 }

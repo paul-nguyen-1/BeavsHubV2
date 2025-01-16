@@ -19,6 +19,14 @@ export class CoursesController {
     return await this.courseService.findAll(query, courseTips);
   }
 
+  @Get('all')
+  async getAllCourses(
+    @Query('course_tips') courseTips?: string,
+  ): Promise<CourseDto[]> {
+    console.log('Getting all courses');
+    return await this.courseService.findAllCourses(courseTips);
+  }
+
   @Get(':id')
   async getCourseById(
     @Param('id') id: string,
@@ -26,6 +34,15 @@ export class CoursesController {
     @Query('course_tips') courseTips?: string,
   ): Promise<CourseDto[]> {
     return await this.courseService.findCourse(id, query, courseTips);
+  }
+
+  @Get(':id/all_reviews')
+  async getAllCourseById(
+    @Param('id') id: string,
+    @Query() query: ExpressQuery,
+    @Query('course_tips') courseTips?: string,
+  ): Promise<CourseDto[]> {
+    return await this.courseService.findAllCourseReviews(id, query, courseTips);
   }
 }
 

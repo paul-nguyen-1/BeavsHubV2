@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../lib/const";
 import { CourseInfo } from "../lib/types";
 import { Course } from "./course";
@@ -8,6 +8,11 @@ import { Loader } from "@mantine/core";
 import { motion } from "framer-motion";
 import SelectMantine from "./ui/select";
 import { MantineInput } from "./ui/input";
+import {
+  BarChartMantine,
+  PieChartMantine,
+  DonutChartMantine,
+} from "./ui/chart";
 
 function Courses() {
   const [course, setCourse] = useState<string | null>("");
@@ -49,6 +54,31 @@ function Courses() {
     alert("Error: " + error.message);
   }
 
+  const fetchChartData = async () => {
+    const response = await fetch(
+      course
+        ? `${getAllCourses}/courses/${course}/all_reviews?course_tips=${review}`
+        : `${getAllCourses}/courses/all?course_tips=${review}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch chart data");
+    }
+    return response.json();
+  };
+
+  const {
+    data: fetchedChartData,
+    isLoading,
+    error: chartError,
+  } = useQuery({
+    queryKey: ["chartData", course, review],
+    queryFn: fetchChartData,
+  });
+
+  if (chartError) {
+    console.log("Chart Error: " + chartError.message);
+  }
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
@@ -68,58 +98,74 @@ function Courses() {
   };
 
   return (
-    <motion.div
-      className={`flex flex-col items-center px-5 ${
-        status === "pending" ? "opacity-50" : ""
-      }`}
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      <motion.div variants={itemVariants}>
-        <div className="flex flex-row items-center gap-4">
-          <SelectMantine
-            value={course}
-            onChange={handleCourseChange}
-            charSize={3}
-          />
-          <MantineInput value={review ?? ""} onChange={handleReviewChange} />
-        </div>
-      </motion.div>
+    <div className="flex md:flex-row flex-col gap-y-8">
+      <div className="flex flex-col gap-y-8 items-center">
+        {isLoading ? (
+          <div>Loading charts...</div>
+        ) : (
+          <>
+            <div className="flex flex-row gap-12">
+              <PieChartMantine data={fetchedChartData} />
+              <DonutChartMantine data={fetchedChartData} />
+            </div>
+            <BarChartMantine data={fetchedChartData} />
+          </>
+        )}
+      </div>
 
-      {status === "pending" && (
-        <Loader color="blue" style={{ margin: "20px" }} />
-      )}
-      {data?.pages.map((page, pageIndex) =>
-        page.map((course: CourseInfo) => (
-          <div
-            key={`${pageIndex}-${course._id}`}
-            className="w-full flex justify-center"
-          >
-            <motion.div
-              variants={itemVariants}
-              className="w-full md:w-3/4 flex justify-center"
-            >
-              <Course
-                key={`${pageIndex}-${course._id}`}
-                difficulty={course.course_difficulty}
-                course={course.course_name}
-                taken_date={course.course_taken_date}
-                time_spent_per_week={course.course_time_spent_per_week}
-                timestamp={new Date(course.timestamp).toLocaleString()}
-                tips={course.course_tips}
-              />
-            </motion.div>
+      <motion.div
+        className={`flex flex-col items-center px-5 ${
+          status === "pending" ? "opacity-50" : ""
+        }`}
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <motion.div variants={itemVariants}>
+          <div className="flex flex-row items-center gap-4">
+            <SelectMantine
+              value={course}
+              onChange={handleCourseChange}
+              charSize={3}
+            />
+            <MantineInput value={review ?? ""} onChange={handleReviewChange} />
           </div>
-        ))
-      )}
+        </motion.div>
 
-      {hasNextPage && (
-        <div ref={ref} style={{ padding: "20px", textAlign: "center" }}>
-          {isFetchingNextPage && <Loader color="blue" />}
-        </div>
-      )}
-    </motion.div>
+        {status === "pending" && (
+          <Loader color="blue" style={{ margin: "20px" }} />
+        )}
+        {data?.pages.map((page, pageIndex) =>
+          page.map((course: CourseInfo) => (
+            <div
+              key={`${pageIndex}-${course._id}`}
+              className="w-full flex justify-center"
+            >
+              <motion.div
+                variants={itemVariants}
+                className="w-full flex justify-center"
+              >
+                <Course
+                  key={`${pageIndex}-${course._id}`}
+                  difficulty={course.course_difficulty}
+                  course={course.course_name}
+                  taken_date={course.course_taken_date}
+                  time_spent_per_week={course.course_time_spent_per_week}
+                  timestamp={new Date(course.timestamp).toLocaleString()}
+                  tips={course.course_tips}
+                />
+              </motion.div>
+            </div>
+          ))
+        )}
+
+        {hasNextPage && (
+          <div ref={ref} style={{ padding: "20px", textAlign: "center" }}>
+            {isFetchingNextPage && <Loader color="blue" />}
+          </div>
+        )}
+      </motion.div>
+    </div>
   );
 }
 
