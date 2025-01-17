@@ -78,7 +78,7 @@ function Courses() {
 
   const {
     data: fetchedChartData,
-    isLoading: isLoadingCharts,
+    // isLoading: isLoadingCharts, -- might need in future when not lazy but not used rn
     error: chartError,
   } = useQuery({
     queryKey: ["chartData", course, review],
@@ -137,16 +137,16 @@ function Courses() {
           <div className="flex flex-col md:flex-row gap-12 mt-2">
             <PieChartMantine
               data={fetchedChartData}
-              isLoading={isLoadingCharts}
+              isLoading={isLoadingCourses}
             />
             <DonutChartMantine
               data={fetchedChartData}
-              isLoading={isLoadingCharts}
+              isLoading={isLoadingCourses}
             />
           </div>
           <BarChartMantine
             data={fetchedChartData}
-            isLoading={isLoadingCharts}
+            isLoading={isLoadingCourses}
           />
         </div>
 
