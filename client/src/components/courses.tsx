@@ -13,10 +13,13 @@ import {
   PieChartMantine,
   DonutChartMantine,
 } from "./ui/chart";
+import { useDebouncedValue } from "@mantine/hooks";
 
 function Courses() {
   const [course, setCourse] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
+  const [debouncedCourse] = useDebouncedValue(course, 200);
+  const [debouncedReview] = useDebouncedValue(review, 200);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -26,8 +29,8 @@ function Courses() {
 
   const { ref, inView } = useInView();
   const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
-    const defaultResponse = `${getAllCourses}/courses/${course ?? ""}?page=${pageParam}`;
-    const reviewResponse = `${getAllCourses}/courses/${course ?? ""}?course_tips=${review}&page=${pageParam}`;
+    const defaultResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?page=${pageParam}`;
+    const reviewResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?course_tips=${debouncedReview}&page=${pageParam}`;
 
     const response = await fetch(review ? reviewResponse : defaultResponse);
     if (!response.ok) {
@@ -45,7 +48,7 @@ function Courses() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["projects", course, review],
+    queryKey: ["projects", debouncedCourse, debouncedReview],
     queryFn: fetchProjects,
     initialPageParam: 1,
     getNextPageParam: (_lastPage, pages) => pages.length + 1,
@@ -188,7 +191,6 @@ function Courses() {
                 </Skeleton>
               ))
             )}
-
             {hasNextPage && (
               <div ref={ref} className="p-5 text-center">
                 {isFetchingNextPage && <Loader color="blue" />}
