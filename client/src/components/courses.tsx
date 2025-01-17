@@ -99,89 +99,99 @@ function Courses() {
   };
 
   return (
-    <div className="flex md:flex-row flex-col items-center md:items-start justify-center gap-y-8">
-      <div className="flex flex-col gap-y-8 items-center">
-        <div className="flex flex-col md:flex-row gap-12">
-          <PieChartMantine
-            data={fetchedChartData}
-            isLoading={isLoadingCharts}
-          />
-          <DonutChartMantine
-            data={fetchedChartData}
-            isLoading={isLoadingCharts}
-          />
-        </div>
-        <BarChartMantine data={fetchedChartData} isLoading={isLoadingCharts} />
-      </div>
-
-      <motion.div
-        className={`flex flex-col items-center px-5 w-full md:w-3/5 ${
-          status === "pending" ? "opacity-50" : ""
-        }`}
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-      >
+    <>
+      <div>
         <motion.div variants={itemVariants}>
-          <div className="flex flex-row items-center gap-4 overflow-hidden md:overflow-visible mb-4">
-            <Skeleton visible={isLoadingCourses}>
-              <SelectMantine
-                value={course}
-                onChange={handleCourseChange}
-                charSize={3}
-              />
-            </Skeleton>
-            <Skeleton visible={isLoadingCourses}>
-              <MantineInput
-                value={review ?? ""}
-                onChange={handleReviewChange}
-              />
-            </Skeleton>
+          <div className="flex flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6">
+            <div className="w-full md:w-56">
+              <Skeleton visible={isLoadingCourses}>
+                <SelectMantine
+                  value={course}
+                  onChange={handleCourseChange}
+                  charSize={3}
+                />
+              </Skeleton>
+            </div>
+            <div className="w-full md:w-56">
+              <Skeleton visible={isLoadingCourses}>
+                <MantineInput
+                  value={review ?? ""}
+                  onChange={handleReviewChange}
+                />
+              </Skeleton>
+            </div>
           </div>
         </motion.div>
-
-        <div className="w-full flex flex-col gap-4 overflow-auto scrollbar-hide md:max-h-[80vh]">
-          {status === "pending" && (
-            <>
-              <Skeleton height={350} mt={8} width="100%" radius="xl" />
-              <Skeleton height={350} mt={8} width="100%" radius="xl" />
-              <Skeleton height={350} mt={8} width="100%" radius="xl" />
-            </>
-          )}
-          {data?.pages.map((page, pageIndex) =>
-            page.map((course: CourseInfo) => (
-              <Skeleton
-                visible={isLoadingCourses}
-                key={`${pageIndex}-${course._id}`}
-              >
-                <div className="w-full flex justify-center">
-                  <motion.div
-                    variants={itemVariants}
-                    className="w-full flex justify-center"
-                  >
-                    <Course
-                      key={`${pageIndex}-${course._id}`}
-                      difficulty={course.course_difficulty}
-                      course={course.course_name}
-                      taken_date={course.course_taken_date}
-                      time_spent_per_week={course.course_time_spent_per_week}
-                      timestamp={new Date(course.timestamp).toLocaleString()}
-                      tips={course.course_tips}
-                    />
-                  </motion.div>
-                </div>
-              </Skeleton>
-            ))
-          )}
-
-          {hasNextPage && (
-            <div ref={ref} className="p-5 text-center">
-              {isFetchingNextPage && <Loader color="blue" />}
-            </div>
-          )}
+      </div>
+      <div className="flex md:flex-row flex-col items-center md:items-start justify-center gap-y-8">
+        <div className="flex flex-col gap-y-8 items-center">
+          <div className="flex flex-col md:flex-row gap-12 mt-2">
+            <PieChartMantine
+              data={fetchedChartData}
+              isLoading={isLoadingCharts}
+            />
+            <DonutChartMantine
+              data={fetchedChartData}
+              isLoading={isLoadingCharts}
+            />
+          </div>
+          <BarChartMantine
+            data={fetchedChartData}
+            isLoading={isLoadingCharts}
+          />
         </div>
-      </motion.div>
-    </div>
+
+        <motion.div
+          className={`flex flex-col items-center px-5 w-full md:w-3/5 ${
+            status === "pending" ? "opacity-50" : ""
+          }`}
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
+          <div className="w-full flex flex-col gap-4 overflow-auto scrollbar-hide md:max-h-[80vh]">
+            {status === "pending" && (
+              <>
+                <Skeleton height={350} mt={8} width="100%" radius="xl" />
+                <Skeleton height={350} mt={8} width="100%" radius="xl" />
+                <Skeleton height={350} mt={8} width="100%" radius="xl" />
+              </>
+            )}
+            {data?.pages.map((page, pageIndex) =>
+              page.map((course: CourseInfo) => (
+                <Skeleton
+                  visible={isLoadingCourses}
+                  key={`${pageIndex}-${course._id}`}
+                >
+                  <div className="w-full flex justify-center">
+                    <motion.div
+                      variants={itemVariants}
+                      className="w-full flex justify-center"
+                    >
+                      <Course
+                        key={`${pageIndex}-${course._id}`}
+                        difficulty={course.course_difficulty}
+                        course={course.course_name}
+                        taken_date={course.course_taken_date}
+                        time_spent_per_week={course.course_time_spent_per_week}
+                        timestamp={new Date(course.timestamp).toLocaleString()}
+                        tips={course.course_tips}
+                      />
+                    </motion.div>
+                  </div>
+                </Skeleton>
+              ))
+            )}
+
+            {hasNextPage && (
+              <div ref={ref} className="p-5 text-center">
+                {isFetchingNextPage && <Loader color="blue" />}
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </div>
+    </>
   );
 }
 
