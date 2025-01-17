@@ -17,6 +17,12 @@ import {
 function Courses() {
   const [course, setCourse] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { ref, inView } = useInView();
   const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
@@ -104,7 +110,7 @@ function Courses() {
         <motion.div variants={itemVariants}>
           <div className="flex flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6">
             <div className="w-full md:w-56">
-              <Skeleton visible={isLoadingCourses}>
+              <Skeleton visible={isLoading}>
                 <SelectMantine
                   value={course}
                   onChange={handleCourseChange}
@@ -113,7 +119,7 @@ function Courses() {
               </Skeleton>
             </div>
             <div className="w-full md:w-56">
-              <Skeleton visible={isLoadingCourses}>
+              <Skeleton visible={isLoading}>
                 <MantineInput
                   value={review ?? ""}
                   onChange={handleReviewChange}
