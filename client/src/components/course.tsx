@@ -19,7 +19,7 @@ export function Course(props: CourseCard) {
   } = props;
   const isMobile = useMediaQuery("(max-width: 768px)");
   return (
-    <Paper withBorder radius="md" className="my-2.5 p-5 w-full md:w-3/4">
+    <Paper withBorder radius="md" className="my-2.5 p-5 w-full">
       <Group>
         <Avatar
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-2.png"

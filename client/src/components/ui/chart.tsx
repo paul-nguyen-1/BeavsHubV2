@@ -1,5 +1,5 @@
 import { BarChart, DonutChart, PieChart } from "@mantine/charts";
-import { Text } from "@mantine/core";
+import { Skeleton, Text } from "@mantine/core";
 import {
   BarChartDataItem,
   PieChartDataItem,
@@ -16,8 +16,11 @@ export const getColor = (index: number, reverse?: boolean) => {
   return palette[colorIndex];
 };
 
-export const BarChartMantine = (props: { data: BarChartDataItem[] }) => {
-  const { data } = props;
+export const BarChartMantine = (props: {
+  data: BarChartDataItem[];
+  isLoading: boolean;
+}) => {
+  const { data, isLoading } = props;
   const flattenedData = Array.isArray(data) ? data.flat() : [];
 
   const pairCounts = flattenedData.reduce<Record<string, number>>(
@@ -38,30 +41,35 @@ export const BarChartMantine = (props: { data: BarChartDataItem[] }) => {
     }))
     .sort((a, b) => b.count - a.count);
 
-  return barChartData.length > 0 ? (
-    <div className="md:w-[500px] w-[350px]">
-      <Text fz="xs" mb="sm" ta="center">
-        Bar Chart: Course Pairing Data
-      </Text>
-      <BarChart
-        h={300}
-        data={barChartData}
-        dataKey="pair"
-        getBarColor={(pairIndex) => {
-          return getColor(pairIndex, true);
-        }}
-        series={[
-          {
-            name: "count",
-          },
-        ]}
-      />
-    </div>
-  ) : null;
+  return (
+    <Skeleton visible={isLoading}>
+      <div className="w-[335px] md:w-full">
+        <Text fz="xs" mb="sm" ta="center">
+          Bar Chart: Course Pairing Data
+        </Text>
+        <BarChart
+          h={300}
+          data={barChartData}
+          dataKey="pair"
+          getBarColor={(pairIndex) => {
+            return getColor(pairIndex, true);
+          }}
+          series={[
+            {
+              name: "count",
+            },
+          ]}
+        />
+      </div>
+    </Skeleton>
+  );
 };
 
-export const PieChartMantine = (props: { data: PieChartDataItem[] }) => {
-  const { data } = props;
+export const PieChartMantine = (props: {
+  data: PieChartDataItem[];
+  isLoading: boolean;
+}) => {
+  const { data, isLoading } = props;
   const flattenedData = Array.isArray(data) ? data.flat() : [];
 
   const difficultyCounts = flattenedData.reduce<Record<number, number>>(
@@ -81,22 +89,27 @@ export const PieChartMantine = (props: { data: PieChartDataItem[] }) => {
     })
   );
 
-  return pieChartData.length > 0 ? (
-    <div>
-      <Text fz="xs" mb="sm" ta="center">
-        Pie Chart: Course Difficulty Data
-      </Text>
-      <PieChart
-        data={pieChartData}
-        withTooltip
-        tooltipDataSource="segment"
-        mx="auto"
-      />
-    </div>
-  ) : null;
+  return (
+    <Skeleton visible={isLoading}>
+      <div>
+        <Text fz="xs" mb="sm" ta="center">
+          Pie Chart: Course Difficulty Data
+        </Text>
+        <PieChart
+          data={pieChartData}
+          withTooltip
+          tooltipDataSource="segment"
+          mx="auto"
+        />
+      </div>
+    </Skeleton>
+  );
 };
-export const DonutChartMantine = (props: { data: DonutChartDataItem[] }) => {
-  const { data } = props;
+export const DonutChartMantine = (props: {
+  data: DonutChartDataItem[];
+  isLoading: boolean;
+}) => {
+  const { data, isLoading } = props;
   const flattenedData = Array.isArray(data) ? data.flat() : [];
 
   const timeSpentCounts = flattenedData.reduce<Record<string, number>>(
@@ -120,12 +133,18 @@ export const DonutChartMantine = (props: { data: DonutChartDataItem[] }) => {
     color: getColor(index),
   }));
 
-  return donutChartData.length > 0 ? (
-    <div>
-      <Text fz="xs" mb="sm" ta="center">
-        Donut Chart: Time Spent Per Week (Hours)
-      </Text>
-      <DonutChart tooltipDataSource="segment" mx="auto" data={donutChartData} />
-    </div>
-  ) : null;
+  return (
+    <Skeleton visible={isLoading}>
+      <div>
+        <Text fz="xs" mb="sm" ta="center">
+          Donut Chart: Hours Spent Per Week
+        </Text>
+        <DonutChart
+          tooltipDataSource="segment"
+          mx="auto"
+          data={donutChartData}
+        />
+      </div>
+    </Skeleton>
+  );
 };
