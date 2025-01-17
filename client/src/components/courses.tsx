@@ -13,15 +13,24 @@ import {
   PieChartMantine,
   DonutChartMantine,
 } from "./ui/chart";
+import { useDebouncedValue } from "@mantine/hooks";
 
 function Courses() {
   const [course, setCourse] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
+  const [debouncedCourse] = useDebouncedValue(course, 200);
+  const [debouncedReview] = useDebouncedValue(review, 200);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { ref, inView } = useInView();
   const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
-    const defaultResponse = `${getAllCourses}/courses/${course ?? ""}?page=${pageParam}`;
-    const reviewResponse = `${getAllCourses}/courses/${course ?? ""}?course_tips=${review}&page=${pageParam}`;
+    const defaultResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?page=${pageParam}`;
+    const reviewResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?course_tips=${debouncedReview}&page=${pageParam}`;
 
     const response = await fetch(review ? reviewResponse : defaultResponse);
     if (!response.ok) {
@@ -39,7 +48,7 @@ function Courses() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["projects", course, review],
+    queryKey: ["projects", debouncedCourse, debouncedReview],
     queryFn: fetchProjects,
     initialPageParam: 1,
     getNextPageParam: (_lastPage, pages) => pages.length + 1,
@@ -69,7 +78,7 @@ function Courses() {
 
   const {
     data: fetchedChartData,
-    isLoading: isLoadingCharts,
+    // isLoading: isLoadingCharts, -- might need in future when not lazy but not used rn
     error: chartError,
   } = useQuery({
     queryKey: ["chartData", course, review],
@@ -104,7 +113,7 @@ function Courses() {
         <motion.div variants={itemVariants}>
           <div className="flex flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6">
             <div className="w-full md:w-56">
-              <Skeleton visible={isLoadingCourses}>
+              <Skeleton visible={isLoading}>
                 <SelectMantine
                   value={course}
                   onChange={handleCourseChange}
@@ -113,7 +122,7 @@ function Courses() {
               </Skeleton>
             </div>
             <div className="w-full md:w-56">
-              <Skeleton visible={isLoadingCourses}>
+              <Skeleton visible={isLoading}>
                 <MantineInput
                   value={review ?? ""}
                   onChange={handleReviewChange}
@@ -128,16 +137,16 @@ function Courses() {
           <div className="flex flex-col md:flex-row gap-12 mt-2">
             <PieChartMantine
               data={fetchedChartData}
-              isLoading={isLoadingCharts}
+              isLoading={isLoadingCourses}
             />
             <DonutChartMantine
               data={fetchedChartData}
-              isLoading={isLoadingCharts}
+              isLoading={isLoadingCourses}
             />
           </div>
           <BarChartMantine
             data={fetchedChartData}
-            isLoading={isLoadingCharts}
+            isLoading={isLoadingCourses}
           />
         </div>
 
@@ -182,7 +191,6 @@ function Courses() {
                 </Skeleton>
               ))
             )}
-
             {hasNextPage && (
               <div ref={ref} className="p-5 text-center">
                 {isFetchingNextPage && <Loader color="blue" />}

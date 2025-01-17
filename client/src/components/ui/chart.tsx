@@ -51,9 +51,7 @@ export const BarChartMantine = (props: {
           h={300}
           data={barChartData}
           dataKey="pair"
-          getBarColor={(pairIndex) => {
-            return getColor(pairIndex, true);
-          }}
+          getBarColor={(pairIndex) => getColor(pairIndex, true)}
           series={[
             {
               name: "count",
@@ -105,6 +103,7 @@ export const PieChartMantine = (props: {
     </Skeleton>
   );
 };
+
 export const DonutChartMantine = (props: {
   data: DonutChartDataItem[];
   isLoading: boolean;
