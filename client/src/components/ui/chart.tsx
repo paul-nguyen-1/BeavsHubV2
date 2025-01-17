@@ -43,24 +43,22 @@ export const BarChartMantine = (props: {
 
   return (
     <Skeleton visible={isLoading}>
-      {data && data.length > 0 ? (
-        <div className="w-[335px] md:w-full">
-          <Text fz="xs" mb="sm" ta="center">
-            Bar Chart: Course Pairing Data
-          </Text>
-          <BarChart
-            h={300}
-            data={barChartData}
-            dataKey="pair"
-            getBarColor={(pairIndex) => getColor(pairIndex, true)}
-            series={[
-              {
-                name: "count",
-              },
-            ]}
-          />
-        </div>
-      ) : null}
+      <div className="w-[335px] md:w-full">
+        <Text fz="xs" mb="sm" ta="center">
+          Bar Chart: Course Pairing Data
+        </Text>
+        <BarChart
+          h={300}
+          data={barChartData}
+          dataKey="pair"
+          getBarColor={(pairIndex) => getColor(pairIndex, true)}
+          series={[
+            {
+              name: "count",
+            },
+          ]}
+        />
+      </div>
     </Skeleton>
   );
 };
@@ -91,19 +89,17 @@ export const PieChartMantine = (props: {
 
   return (
     <Skeleton visible={isLoading}>
-      {data && data.length > 0 ? (
-        <div>
-          <Text fz="xs" mb="sm" ta="center">
-            Pie Chart: Course Difficulty Data
-          </Text>
-          <PieChart
-            data={pieChartData}
-            withTooltip
-            tooltipDataSource="segment"
-            mx="auto"
-          />
-        </div>
-      ) : null}
+      <div>
+        <Text fz="xs" mb="sm" ta="center">
+          Pie Chart: Course Difficulty Data
+        </Text>
+        <PieChart
+          data={pieChartData}
+          withTooltip
+          tooltipDataSource="segment"
+          mx="auto"
+        />
+      </div>
     </Skeleton>
   );
 };
@@ -138,18 +134,16 @@ export const DonutChartMantine = (props: {
 
   return (
     <Skeleton visible={isLoading}>
-      {data && data.length > 0 ? (
-        <div>
-          <Text fz="xs" mb="sm" ta="center">
-            Donut Chart: Hours Spent Per Week
-          </Text>
-          <DonutChart
-            tooltipDataSource="segment"
-            mx="auto"
-            data={donutChartData}
-          />
-        </div>
-      ) : null}
+      <div>
+        <Text fz="xs" mb="sm" ta="center">
+          Donut Chart: Hours Spent Per Week
+        </Text>
+        <DonutChart
+          tooltipDataSource="segment"
+          mx="auto"
+          data={donutChartData}
+        />
+      </div>
     </Skeleton>
   );
 };
