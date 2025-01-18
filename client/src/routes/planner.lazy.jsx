@@ -1,4 +1,5 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { LayoutFlowWithProvider } from "../components/reactFlow/layoutFlow";
 
 export const Route = createLazyFileRoute("/planner")({
   component: Planner,
@@ -6,8 +7,8 @@ export const Route = createLazyFileRoute("/planner")({
 
 function Planner() {
   return (
-    <>
-    test
-    </>
+    <div style={{ width: "100vw", height: "100vh" }}>
+      <LayoutFlowWithProvider />
+    </div>
   );
 }
