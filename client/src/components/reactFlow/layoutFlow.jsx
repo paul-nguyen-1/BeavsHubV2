@@ -88,16 +88,26 @@ export const LayoutFlow = () => {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       fitView
+      panOnScroll
+      selectionOnDrag
       style={{ backgroundColor: "#F7F9FB", height: "100%", width: "100%" }}
     >
       <Panel position="top-right">
-        <button onClick={() => onLayout({ direction: "DOWN" })}>
-          vertical layout
-        </button>
+        <div className="flex space-x-2">
+          <button
+            className="px-3 py-1 bg-gray-800 text-gray-200 text-sm font-medium rounded-md shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition"
+            onClick={() => onLayout({ direction: "DOWN" })}
+          >
+            Vertical Layout
+          </button>
 
-        <button onClick={() => onLayout({ direction: "RIGHT" })}>
-          horizontal layout
-        </button>
+          <button
+            className="px-3 py-1 bg-gray-800 text-gray-200 text-sm font-medium rounded-md shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition"
+            onClick={() => onLayout({ direction: "RIGHT" })}
+          >
+            Horizontal Layout
+          </button>
+        </div>
       </Panel>
       <Background />
     </ReactFlow>
