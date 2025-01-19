@@ -22,7 +22,6 @@ const HEADER_LINKS: HeaderLink[] = [
   { label: "Courses", href: "/" },
   { label: "Planner", href: "/planner" },
   { label: "Resumes", href: "/resumes" },
-  { label: "BeavsAI", href: "/prompt" },
 ];
 
 type Header01Props = ContainerProps & {
