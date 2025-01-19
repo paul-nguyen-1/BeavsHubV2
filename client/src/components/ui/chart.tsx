@@ -16,7 +16,12 @@ export const getColor = (index: number, reverse?: boolean) => {
   return palette[colorIndex];
 };
 
-export const chartState = (chart: any[]) => {
+type ChartDataItem = {
+  name: string;
+  value: number;
+};
+
+export const chartState = (chart: ChartDataItem[]): boolean => {
   if (!chart || chart.length === 0) {
     return false;
   }
@@ -31,22 +36,22 @@ export const BarChartMantine = (props: {
   const flattenedData = Array.isArray(data) ? data.flat() : [];
 
   const pairCounts = flattenedData.reduce<Record<string, number>>(
-    (count, item) => {
+    (value, item) => {
       const pairs = item.pairs || [];
       pairs.forEach((pair: string) => {
-        count[pair] = (count[pair] || 0) + 1;
+        value[pair] = (value[pair] || 0) + 1;
       });
-      return count;
+      return value;
     },
     {}
   );
 
   const barChartData = Object.entries(pairCounts)
-    .map(([pair, count]) => ({
-      pair,
-      count: Number(count),
+    .map(([pair, value]) => ({
+      name: pair,
+      value: Number(value),
     }))
-    .sort((a, b) => b.count - a.count);
+    .sort((a, b) => b.value - a.value);
 
   return (
     <Skeleton visible={isLoading}>
@@ -58,11 +63,11 @@ export const BarChartMantine = (props: {
           <BarChart
             h={300}
             data={barChartData}
-            dataKey="pair"
+            dataKey="name"
             getBarColor={(pairIndex) => getColor(pairIndex, true)}
             series={[
               {
-                name: "count",
+                name: "value",
               },
             ]}
           />
