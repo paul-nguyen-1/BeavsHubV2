@@ -1,5 +1,5 @@
 import { BarChart, DonutChart, PieChart } from "@mantine/charts";
-import { Skeleton, Text } from "@mantine/core";
+import { Loader, Skeleton, Text } from "@mantine/core";
 import {
   BarChartDataItem,
   PieChartDataItem,
@@ -16,6 +16,18 @@ export const getColor = (index: number, reverse?: boolean) => {
   return palette[colorIndex];
 };
 
+type ChartDataItem = {
+  name: string;
+  value: number;
+};
+
+export const chartState = (chart: ChartDataItem[]): boolean => {
+  if (!chart || chart.length === 0) {
+    return false;
+  }
+  return chart.some((data) => data.value > 0);
+};
+
 export const BarChartMantine = (props: {
   data: BarChartDataItem[];
   isLoading: boolean;
@@ -24,40 +36,44 @@ export const BarChartMantine = (props: {
   const flattenedData = Array.isArray(data) ? data.flat() : [];
 
   const pairCounts = flattenedData.reduce<Record<string, number>>(
-    (count, item) => {
+    (value, item) => {
       const pairs = item.pairs || [];
       pairs.forEach((pair: string) => {
-        count[pair] = (count[pair] || 0) + 1;
+        value[pair] = (value[pair] || 0) + 1;
       });
-      return count;
+      return value;
     },
     {}
   );
 
   const barChartData = Object.entries(pairCounts)
-    .map(([pair, count]) => ({
-      pair,
-      count: Number(count),
+    .map(([pair, value]) => ({
+      name: pair,
+      value: Number(value),
     }))
-    .sort((a, b) => b.count - a.count);
+    .sort((a, b) => b.value - a.value);
 
   return (
-    <Skeleton visible={isLoading}>
-      <div className="w-[335px] md:w-full">
-        <Text fz="xs" mb="sm" ta="center">
-          Bar Chart: Course Pairing Data
-        </Text>
-        <BarChart
-          h={300}
-          data={barChartData}
-          dataKey="pair"
-          getBarColor={(pairIndex) => getColor(pairIndex, true)}
-          series={[
-            {
-              name: "count",
-            },
-          ]}
-        />
+    <Skeleton visible={isLoading} height={335} width={335}>
+      <div>
+        {chartState(barChartData) ? (
+          <>
+            <Text fz="xs" mb="sm" ta="center">
+              Bar Chart: Course Pairing Data
+            </Text>
+            <BarChart
+              h={300}
+              data={barChartData}
+              dataKey="name"
+              getBarColor={(pairIndex) => getColor(pairIndex, true)}
+              series={[
+                {
+                  name: "value",
+                },
+              ]}
+            />
+          </>
+        ) : null}
       </div>
     </Skeleton>
   );
@@ -88,8 +104,10 @@ export const PieChartMantine = (props: {
   );
 
   return (
-    <Skeleton visible={isLoading}>
-      <div>
+<Skeleton visible={isLoading} height={210}>
+  <div className="w-[190px]">
+    {chartState(pieChartData) ? (
+      <>
         <Text fz="xs" mb="sm" ta="center">
           Pie Chart: Course Difficulty Data
         </Text>
@@ -99,11 +117,23 @@ export const PieChartMantine = (props: {
           tooltipDataSource="segment"
           mx="auto"
         />
+      </>
+    ) : (
+      <div className="flex flex-col justify-center items-center gap-3 md:w-[85vw]">
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <Text fz="xs" mb="sm" ta="center">
+            No data available to display.
+          </Text>
+        )}
       </div>
-    </Skeleton>
+    )}
+  </div>
+</Skeleton>
+
   );
 };
-
 export const DonutChartMantine = (props: {
   data: DonutChartDataItem[];
   isLoading: boolean;
@@ -133,16 +163,20 @@ export const DonutChartMantine = (props: {
   }));
 
   return (
-    <Skeleton visible={isLoading}>
-      <div>
-        <Text fz="xs" mb="sm" ta="center">
-          Donut Chart: Hours Spent Per Week
-        </Text>
-        <DonutChart
-          tooltipDataSource="segment"
-          mx="auto"
-          data={donutChartData}
-        />
+    <Skeleton visible={isLoading} height={210}>
+      <div className="w-[190px]">
+        {chartState(donutChartData) ? (
+          <>
+            <Text fz="xs" mb="sm" ta="center">
+              Donut Chart: Hours Spent Per Week
+            </Text>
+            <DonutChart
+              tooltipDataSource="segment"
+              mx="auto"
+              data={donutChartData}
+            />
+          </>
+        ) : null}
       </div>
     </Skeleton>
   );
