@@ -1,6 +1,6 @@
 import { initialNodes, initialEdges } from "./initialElements.js";
 import ELK from "elkjs/lib/elk.bundled.js";
-import React, { useCallback, useLayoutEffect } from "react";
+import React, { useCallback, useState, useLayoutEffect } from "react";
 import {
   Background,
   ReactFlow,
@@ -19,6 +19,63 @@ const elkOptions = {
   "elk.algorithm": "layered",
   "elk.layered.spacing.nodeNodeBetweenLayers": "100",
   "elk.spacing.nodeNode": "80",
+};
+
+const getConnectedNodes = (nodeId, edges) => {
+  const connectedNodeIds = new Set();
+  edges.forEach(({ source, target }) => {
+    if (source === nodeId) connectedNodeIds.add(target);
+    if (target === nodeId) connectedNodeIds.add(source);
+  });
+  return connectedNodeIds;
+};
+
+const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
+  if (!hoveredNodeId) {
+    return nodes.map((node) => ({
+      ...node,
+      style: {
+        ...node.style,
+        backgroundColor: "#FFFFFF",
+        borderColor: "#000000",
+      },
+    }));
+  }
+
+  const connectedNodeIds = getConnectedNodes(hoveredNodeId, edges);
+
+  return nodes.map((node) => {
+    if (node.id === hoveredNodeId) {
+      return {
+        ...node,
+        style: {
+          ...node.style,
+          backgroundColor: "#D73F09", // Primary Node
+          borderColor: "#A32A00",
+          color: "#FFFFFF",
+        },
+      };
+    } else if (connectedNodeIds.has(node.id)) {
+      return {
+        ...node,
+        style: {
+          ...node.style,
+          backgroundColor: "#F4A261", // Secondary Nodes
+          borderColor: "#E76F51",
+          color: "#000000",
+        },
+      };
+    } else {
+      return {
+        ...node,
+        style: {
+          ...node.style,
+          backgroundColor: "#FFFFFF",
+          borderColor: "#000000",
+        },
+      };
+    }
+  });
 };
 
 const getLayoutedElements = (nodes, edges, options = {}) => {
@@ -52,7 +109,6 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
       nodes: layoutedGraph.children.map((node) => ({
         ...node,
         position: { x: node.x, y: node.y },
-        style: node.style,
       })),
       edges: layoutedGraph.edges,
     }))
@@ -62,12 +118,14 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
 export const LayoutFlow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [hoveredNodeId, setHoveredNodeId] = useState(null);
   const { fitView } = useReactFlow();
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
     []
   );
+
   const onLayout = useCallback(
     ({ direction, useInitialNodes = false }) => {
       const opts = { "elk.direction": direction, ...elkOptions };
@@ -78,7 +136,6 @@ export const LayoutFlow = () => {
         ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
           setNodes(layoutedNodes);
           setEdges(layoutedEdges);
-
           window.requestAnimationFrame(() => fitView());
         }
       );
@@ -90,9 +147,19 @@ export const LayoutFlow = () => {
     onLayout({ direction: "DOWN", useInitialNodes: true });
   }, []);
 
+  const handleNodeMouseEnter = (event, node) => {
+    setHoveredNodeId(node.id);
+  };
+
+  const handleNodeMouseLeave = () => {
+    setHoveredNodeId(null);
+  };
+
+  const highlightedNodes = getHighlightedNodes(nodes, edges, hoveredNodeId);
+
   return (
     <ReactFlow
-      nodes={nodes}
+      nodes={highlightedNodes}
       edges={edges}
       onConnect={onConnect}
       onNodesChange={onNodesChange}
@@ -100,7 +167,9 @@ export const LayoutFlow = () => {
       fitView
       panOnScroll
       selectionOnDrag
-      minZoom={0.001}
+      minZoom={0.1}
+      onNodeMouseEnter={handleNodeMouseEnter}
+      onNodeMouseLeave={handleNodeMouseLeave}
       style={{ backgroundColor: "transparent", height: "100%", width: "100%" }}
     >
       <Panel position="top-right">
