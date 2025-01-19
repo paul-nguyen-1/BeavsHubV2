@@ -48,10 +48,15 @@ export const BarChartMantine = (props: {
 
   const barChartData = Object.entries(pairCounts)
     .map(([pair, value]) => ({
-      name: pair,
+      name: pair.slice(0, 6).trim(),
       value: Number(value),
     }))
-    .sort((a, b) => b.value - a.value);
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5)
+    .map((item, index) => ({
+      ...item,
+      color: getColor(index),
+    }));
 
   return (
     <Skeleton visible={isLoading} height={335} width={335}>
@@ -59,13 +64,13 @@ export const BarChartMantine = (props: {
         {chartState(barChartData) ? (
           <>
             <Text fz="xs" mb="sm" ta="center">
-              Bar Chart: Course Pairing Data
+              Most Common Course Pairing
             </Text>
             <BarChart
               h={300}
               data={barChartData}
+              orientation="vertical"
               dataKey="name"
-              getBarColor={(pairIndex) => getColor(pairIndex, true)}
               series={[
                 {
                   name: "value",
@@ -104,34 +109,33 @@ export const PieChartMantine = (props: {
   );
 
   return (
-<Skeleton visible={isLoading} height={210}>
-  <div className="w-[190px]">
-    {chartState(pieChartData) ? (
-      <>
-        <Text fz="xs" mb="sm" ta="center">
-          Pie Chart: Course Difficulty Data
-        </Text>
-        <PieChart
-          data={pieChartData}
-          withTooltip
-          tooltipDataSource="segment"
-          mx="auto"
-        />
-      </>
-    ) : (
-      <div className="flex flex-col justify-center items-center gap-3 md:w-[85vw]">
-        {isLoading ? (
-          <Loader />
+    <Skeleton visible={isLoading} height={210}>
+      <div className="w-[190px]">
+        {chartState(pieChartData) ? (
+          <>
+            <Text fz="xs" mb="sm" ta="center">
+              Course Difficulty Rating
+            </Text>
+            <PieChart
+              data={pieChartData}
+              withTooltip
+              tooltipDataSource="segment"
+              mx="auto"
+            />
+          </>
         ) : (
-          <Text fz="xs" mb="sm" ta="center">
-            No data available to display.
-          </Text>
+          <div className="flex flex-col justify-center items-center gap-3 md:w-[85vw]">
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <Text fz="xs" mb="sm" ta="center">
+                No data available to display.
+              </Text>
+            )}
+          </div>
         )}
       </div>
-    )}
-  </div>
-</Skeleton>
-
+    </Skeleton>
   );
 };
 export const DonutChartMantine = (props: {
@@ -168,7 +172,7 @@ export const DonutChartMantine = (props: {
         {chartState(donutChartData) ? (
           <>
             <Text fz="xs" mb="sm" ta="center">
-              Donut Chart: Hours Spent Per Week
+              Hours Spent Per Week
             </Text>
             <DonutChart
               tooltipDataSource="segment"
