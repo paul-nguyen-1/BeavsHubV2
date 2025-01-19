@@ -156,8 +156,10 @@ function Courses() {
           <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[75vh]">
             {data && fetchedChartData && (
               <div className="md:flex absolute justify-end text-xs font-medium mt-[-25px] text-gray-300">
-                {data.pages.length * 10} of {fetchedChartData?.length} course
-                reviews
+                {data.pages.length * 10 >= fetchedChartData?.length
+                  ? fetchedChartData?.length
+                  : data.pages.length * 10}{" "}
+                of {fetchedChartData?.length} course reviews
               </div>
             )}
             {status === "pending" && (
@@ -192,11 +194,13 @@ function Courses() {
                 </Skeleton>
               ))
             )}
-            {hasNextPage && (
-              <div ref={ref} className="p-5 text-center w-full">
-                {isFetchingNextPage && <Loader color="blue" />}
-              </div>
-            )}
+            {hasNextPage &&
+              data &&
+              fetchedChartData?.length > data.pages.length * 10 && (
+                <div ref={ref} className="p-5 text-center w-full">
+                  {isFetchingNextPage && <Loader color="blue" />}
+                </div>
+              )}
           </div>
         </motion.div>
       </div>
