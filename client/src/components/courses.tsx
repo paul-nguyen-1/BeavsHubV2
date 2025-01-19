@@ -129,8 +129,8 @@ function Courses() {
         </motion.div>
       </div>
       <div className="flex md:flex-row flex-col items-center md:items-start justify-center gap-y-8">
-        <div className="flex flex-col gap-y-8 items-center">
-          <div className="flex flex-col md:flex-row gap-6 mt-2">
+        <div className="flex gap-y-6 md:gap-y-2 flex-col items-center">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-2 mt-2">
             <PieChartMantine
               data={fetchedChartData}
               isLoading={isLoadingCourses}

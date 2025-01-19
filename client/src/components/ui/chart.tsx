@@ -5,6 +5,7 @@ import {
   PieChartDataItem,
   DonutChartDataItem,
 } from "../../lib/types";
+import { Legend } from "recharts";
 
 const colorPalette = ["#6FCF97", "#F2C94C", "#F2994A", "#EB5757", "#D32F2F"];
 const difficultyType = ["Easy A", "Medium", "Hard", "Very Hard", "Insane"];
@@ -102,14 +103,14 @@ export const PieChartMantine = (props: {
 
   const pieChartData = Object.entries(difficultyCounts).map(
     ([difficulty, count]) => ({
-      name: `Difficulty: ${difficultyType[Number(difficulty) - 1]} (${difficulty})`,
+      name: `${difficultyType[Number(difficulty) - 1]} (${difficulty})`,
       value: count,
       color: getColor(Number(difficulty) - 1),
     })
   );
 
   return (
-    <Skeleton visible={isLoading} height={210}>
+    <Skeleton visible={isLoading} height={250}>
       <div className="w-[190px]">
         {chartState(pieChartData) ? (
           <>
@@ -121,7 +122,19 @@ export const PieChartMantine = (props: {
               withTooltip
               tooltipDataSource="segment"
               mx="auto"
-            />
+            >
+              <Legend
+                verticalAlign="bottom"
+                height={1}
+                wrapperStyle={{
+                  fontSize: "12px",
+                  width: "190px",
+                  position: "relative",
+                  top: "0",
+                  right: "5px",
+                }}
+              />
+            </PieChart>
           </>
         ) : (
           <div className="flex flex-col justify-center items-center gap-3 md:w-[85vw]">
@@ -161,13 +174,12 @@ export const DonutChartMantine = (props: {
   );
 
   const donutChartData = sortedTimeSpent.map((time, index) => ({
-    name: `Time Spent: ${time}`,
+    name: `${time}`,
     value: timeSpentCounts[time] || 0,
     color: getColor(index),
   }));
-
   return (
-    <Skeleton visible={isLoading} height={210}>
+    <Skeleton visible={isLoading} height={250}>
       <div className="w-[190px]">
         {chartState(donutChartData) ? (
           <>
@@ -178,7 +190,19 @@ export const DonutChartMantine = (props: {
               tooltipDataSource="segment"
               mx="auto"
               data={donutChartData}
-            />
+            >
+              <Legend
+                verticalAlign="bottom"
+                height={1}
+                wrapperStyle={{
+                  fontSize: "12px",
+                  width: "190px",
+                  position: "relative",
+                  top: "5px",
+                  right: "7.5px",
+                }}
+              />
+            </DonutChart>
           </>
         ) : null}
       </div>
