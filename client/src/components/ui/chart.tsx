@@ -100,7 +100,6 @@ export const PieChartMantine = (props: {
       color: getColor(Number(difficulty) - 1),
     })
   );
-  console.log(chartState(pieChartData));
 
   return (
     <Skeleton visible={isLoading}>
