@@ -130,7 +130,7 @@ export const PieChartMantine = (props: {
                   fontSize: "12px",
                   width: "190px",
                   position: "relative",
-                  top: "0",
+                  top: "5px",
                   right: "5px",
                 }}
               />
