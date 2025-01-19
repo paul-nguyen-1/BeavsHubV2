@@ -5,6 +5,7 @@ import {
   PieChartDataItem,
   DonutChartDataItem,
 } from "../../lib/types";
+import { Legend } from "recharts";
 
 const colorPalette = ["#6FCF97", "#F2C94C", "#F2994A", "#EB5757", "#D32F2F"];
 const difficultyType = ["Easy A", "Medium", "Hard", "Very Hard", "Insane"];
@@ -48,10 +49,15 @@ export const BarChartMantine = (props: {
 
   const barChartData = Object.entries(pairCounts)
     .map(([pair, value]) => ({
-      name: pair,
+      name: pair.slice(0, 6).trim(),
       value: Number(value),
     }))
-    .sort((a, b) => b.value - a.value);
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5)
+    .map((item, index) => ({
+      ...item,
+      color: getColor(index),
+    }));
 
   return (
     <Skeleton visible={isLoading} height={335} width={335}>
@@ -59,13 +65,13 @@ export const BarChartMantine = (props: {
         {chartState(barChartData) ? (
           <>
             <Text fz="xs" mb="sm" ta="center">
-              Bar Chart: Course Pairing Data
+              Most Common Course Pairing
             </Text>
             <BarChart
               h={300}
               data={barChartData}
+              orientation="vertical"
               dataKey="name"
-              getBarColor={(pairIndex) => getColor(pairIndex, true)}
               series={[
                 {
                   name: "value",
@@ -97,41 +103,52 @@ export const PieChartMantine = (props: {
 
   const pieChartData = Object.entries(difficultyCounts).map(
     ([difficulty, count]) => ({
-      name: `Difficulty: ${difficultyType[Number(difficulty) - 1]} (${difficulty})`,
+      name: `${difficultyType[Number(difficulty) - 1]} (${difficulty})`,
       value: count,
       color: getColor(Number(difficulty) - 1),
     })
   );
 
   return (
-<Skeleton visible={isLoading} height={210}>
-  <div className="w-[190px]">
-    {chartState(pieChartData) ? (
-      <>
-        <Text fz="xs" mb="sm" ta="center">
-          Pie Chart: Course Difficulty Data
-        </Text>
-        <PieChart
-          data={pieChartData}
-          withTooltip
-          tooltipDataSource="segment"
-          mx="auto"
-        />
-      </>
-    ) : (
-      <div className="flex flex-col justify-center items-center gap-3 md:w-[85vw]">
-        {isLoading ? (
-          <Loader />
+    <Skeleton visible={isLoading} height={250}>
+      <div className="w-[190px]">
+        {chartState(pieChartData) ? (
+          <>
+            <Text fz="xs" mb="sm" ta="center">
+              Course Difficulty Rating
+            </Text>
+            <PieChart
+              data={pieChartData}
+              withTooltip
+              tooltipDataSource="segment"
+              mx="auto"
+            >
+              <Legend
+                verticalAlign="bottom"
+                height={1}
+                wrapperStyle={{
+                  fontSize: "12px",
+                  width: "190px",
+                  position: "relative",
+                  top: "5px",
+                  right: "5px",
+                }}
+              />
+            </PieChart>
+          </>
         ) : (
-          <Text fz="xs" mb="sm" ta="center">
-            No data available to display.
-          </Text>
+          <div className="flex flex-col justify-center items-center gap-3 md:w-[85vw]">
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <Text fz="xs" mb="sm" ta="center">
+                No data available to display.
+              </Text>
+            )}
+          </div>
         )}
       </div>
-    )}
-  </div>
-</Skeleton>
-
+    </Skeleton>
   );
 };
 export const DonutChartMantine = (props: {
@@ -157,24 +174,35 @@ export const DonutChartMantine = (props: {
   );
 
   const donutChartData = sortedTimeSpent.map((time, index) => ({
-    name: `Time Spent: ${time}`,
+    name: `${time}`,
     value: timeSpentCounts[time] || 0,
     color: getColor(index),
   }));
-
   return (
-    <Skeleton visible={isLoading} height={210}>
+    <Skeleton visible={isLoading} height={250}>
       <div className="w-[190px]">
         {chartState(donutChartData) ? (
           <>
             <Text fz="xs" mb="sm" ta="center">
-              Donut Chart: Hours Spent Per Week
+              Hours Spent Per Week
             </Text>
             <DonutChart
               tooltipDataSource="segment"
               mx="auto"
               data={donutChartData}
-            />
+            >
+              <Legend
+                verticalAlign="bottom"
+                height={1}
+                wrapperStyle={{
+                  fontSize: "12px",
+                  width: "190px",
+                  position: "relative",
+                  top: "5px",
+                  right: "7.5px",
+                }}
+              />
+            </DonutChart>
           </>
         ) : null}
       </div>

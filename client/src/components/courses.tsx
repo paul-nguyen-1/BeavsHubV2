@@ -129,8 +129,8 @@ function Courses() {
         </motion.div>
       </div>
       <div className="flex md:flex-row flex-col items-center md:items-start justify-center gap-y-8">
-        <div className="flex flex-col gap-y-8 items-center">
-          <div className="flex flex-col md:flex-row gap-6 mt-2">
+        <div className="flex gap-y-6 md:gap-y-2 flex-col items-center">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-2 mt-2">
             <PieChartMantine
               data={fetchedChartData}
               isLoading={isLoadingCourses}
@@ -145,16 +145,23 @@ function Courses() {
             isLoading={isLoadingCourses}
           />
         </div>
-
         <motion.div
-          className={`flex flex-col items-center px-5 w-full md:w-3/5 ${
+          className={`flex flex-col items-center px-5 w-full md:w-3/5 mt-2.5 ${
             status === "pending" ? "opacity-50" : ""
           }`}
           initial="hidden"
           animate="visible"
           variants={containerVariants}
         >
-          <div className="w-full flex flex-col gap-4 overflow-auto scrollbar-hide md:max-h-[80vh]">
+          <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[75vh]">
+            {data && fetchedChartData && (
+              <div className="md:flex absolute justify-end text-xs font-medium mt-[-25px] text-gray-300">
+                {data.pages.length * 10 >= fetchedChartData?.length
+                  ? fetchedChartData?.length
+                  : data.pages.length * 10}{" "}
+                of {fetchedChartData?.length} course reviews
+              </div>
+            )}
             {status === "pending" && (
               <>
                 <Skeleton height={350} mt={8} width="100%" radius="xl" />
@@ -187,11 +194,13 @@ function Courses() {
                 </Skeleton>
               ))
             )}
-            {hasNextPage && (
-              <div ref={ref} className="p-5 text-center">
-                {isFetchingNextPage && <Loader color="blue" />}
-              </div>
-            )}
+            {hasNextPage &&
+              data &&
+              fetchedChartData?.length > data.pages.length * 10 && (
+                <div ref={ref} className="p-5 text-center w-full">
+                  {isFetchingNextPage && <Loader color="blue" />}
+                </div>
+              )}
           </div>
         </motion.div>
       </div>

@@ -7,6 +7,7 @@ import {
 } from "@mantine/core";
 import { CourseCard } from "../lib/types";
 import { useMediaQuery } from "@mantine/hooks";
+import user from '/user.png?url'
 
 export function Course(props: CourseCard) {
   const {
@@ -19,10 +20,10 @@ export function Course(props: CourseCard) {
   } = props;
   const isMobile = useMediaQuery("(max-width: 768px)");
   return (
-    <Paper withBorder radius="md" className="my-2.5 p-5 w-full">
+    <Paper withBorder radius="md" className="p-5 w-full">
       <Group>
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-2.png"
+          src={user}
           alt="Avatar"
           radius="xl"
         />
@@ -41,7 +42,7 @@ export function Course(props: CourseCard) {
       <TypographyStylesProvider>
         <div>
           {tips == "" ? (
-            <div>No tips available for this post.</div>
+            <div>No comments were submitted for this post.</div>
           ) : (
             <div>{tips}</div>
           )}
