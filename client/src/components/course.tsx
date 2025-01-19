@@ -7,6 +7,7 @@ import {
 } from "@mantine/core";
 import { CourseCard } from "../lib/types";
 import { useMediaQuery } from "@mantine/hooks";
+import user from '../../public/user.png'
 
 export function Course(props: CourseCard) {
   const {
@@ -22,7 +23,7 @@ export function Course(props: CourseCard) {
     <Paper withBorder radius="md" className="my-2.5 p-5 w-full">
       <Group>
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-2.png"
+          src={user}
           alt="Avatar"
           radius="xl"
         />
