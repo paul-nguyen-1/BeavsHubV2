@@ -145,16 +145,21 @@ function Courses() {
             isLoading={isLoadingCourses}
           />
         </div>
-
         <motion.div
-          className={`flex flex-col items-center px-5 w-full md:w-3/5 ${
+          className={`flex flex-col items-center px-5 w-full md:w-3/5 mt-2.5 ${
             status === "pending" ? "opacity-50" : ""
           }`}
           initial="hidden"
           animate="visible"
           variants={containerVariants}
         >
-          <div className="w-full flex flex-col gap-4 overflow-auto scrollbar-hide md:max-h-[80vh]">
+          <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[75vh]">
+            {data && fetchedChartData && (
+              <div className="md:flex absolute justify-end text-xs font-medium mt-[-25px] text-gray-300">
+                {data.pages.length * 10} of {fetchedChartData?.length} course
+                reviews
+              </div>
+            )}
             {status === "pending" && (
               <>
                 <Skeleton height={350} mt={8} width="100%" radius="xl" />
@@ -188,7 +193,7 @@ function Courses() {
               ))
             )}
             {hasNextPage && (
-              <div ref={ref} className="p-5 text-center">
+              <div ref={ref} className="p-5 text-center w-full">
                 {isFetchingNextPage && <Loader color="blue" />}
               </div>
             )}
