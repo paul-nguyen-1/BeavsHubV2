@@ -100,6 +100,7 @@ export const LayoutFlow = () => {
       fitView
       panOnScroll
       selectionOnDrag
+      minZoom={0.001}
       style={{ backgroundColor: "transparent", height: "100%", width: "100%" }}
     >
       <Panel position="top-right">
