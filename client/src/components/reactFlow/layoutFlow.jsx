@@ -22,12 +22,15 @@ const elkOptions = {
 };
 
 const getConnectedNodes = (nodeId, edges) => {
-  const connectedNodeIds = new Set();
+  const prerequisites = new Set();
+  const unlocks = new Set();
+
   edges.forEach(({ source, target }) => {
-    if (source === nodeId) connectedNodeIds.add(target);
-    if (target === nodeId) connectedNodeIds.add(source);
+    if (source === nodeId) unlocks.add(target);
+    if (target === nodeId) prerequisites.add(source);
   });
-  return connectedNodeIds;
+
+  return { prerequisites, unlocks };
 };
 
 const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
@@ -42,30 +45,44 @@ const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
     }));
   }
 
-  const connectedNodeIds = getConnectedNodes(hoveredNodeId, edges);
+  const { prerequisites, unlocks } = getConnectedNodes(hoveredNodeId, edges);
 
   return nodes.map((node) => {
     if (node.id === hoveredNodeId) {
+      // Source Node
       return {
         ...node,
         style: {
           ...node.style,
-          backgroundColor: "#D73F09", // Primary Node
+          backgroundColor: "#D73F09",
           borderColor: "#A32A00",
           color: "#FFFFFF",
         },
       };
-    } else if (connectedNodeIds.has(node.id)) {
+    } else if (prerequisites.has(node.id)) {
+      // Highlight prerequisites
       return {
         ...node,
         style: {
           ...node.style,
-          backgroundColor: "#F4A261", // Secondary Nodes
+          backgroundColor: "#F4A261",
           borderColor: "#E76F51",
           color: "#000000",
         },
       };
+    } else if (unlocks.has(node.id)) {
+      // Highlight unlocked courses
+      return {
+        ...node,
+        style: {
+          ...node.style,
+          backgroundColor: "#A3E635",
+          borderColor: "#4CAF50",
+          color: "#000000",
+        },
+      };
     } else {
+      // Default
       return {
         ...node,
         style: {
