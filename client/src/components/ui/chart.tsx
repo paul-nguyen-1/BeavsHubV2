@@ -54,25 +54,27 @@ export const BarChartMantine = (props: {
     .sort((a, b) => b.value - a.value);
 
   return (
-    <Skeleton visible={isLoading}>
-      {chartState(barChartData) && (
-        <div className="w-[335px] md:w-full">
-          <Text fz="xs" mb="sm" ta="center">
-            Bar Chart: Course Pairing Data
-          </Text>
-          <BarChart
-            h={300}
-            data={barChartData}
-            dataKey="name"
-            getBarColor={(pairIndex) => getColor(pairIndex, true)}
-            series={[
-              {
-                name: "value",
-              },
-            ]}
-          />
-        </div>
-      )}
+    <Skeleton visible={isLoading} height={335} width={335}>
+      <div>
+        {chartState(barChartData) ? (
+          <>
+            <Text fz="xs" mb="sm" ta="center">
+              Bar Chart: Course Pairing Data
+            </Text>
+            <BarChart
+              h={300}
+              data={barChartData}
+              dataKey="name"
+              getBarColor={(pairIndex) => getColor(pairIndex, true)}
+              series={[
+                {
+                  name: "value",
+                },
+              ]}
+            />
+          </>
+        ) : null}
+      </div>
     </Skeleton>
   );
 };
@@ -102,24 +104,25 @@ export const PieChartMantine = (props: {
   );
 
   return (
-    <Skeleton visible={isLoading}>
-      {chartState(pieChartData) && (
-        <div>
-          <Text fz="xs" mb="sm" ta="center">
-            Pie Chart: Course Difficulty Data
-          </Text>
-          <PieChart
-            data={pieChartData}
-            withTooltip
-            tooltipDataSource="segment"
-            mx="auto"
-          />
-        </div>
-      )}
+    <Skeleton visible={isLoading} height={210}>
+      <div className="w-[190px]">
+        {chartState(pieChartData) ? (
+          <>
+            <Text fz="xs" mb="sm" ta="center">
+              Pie Chart: Course Difficulty Data
+            </Text>
+            <PieChart
+              data={pieChartData}
+              withTooltip
+              tooltipDataSource="segment"
+              mx="auto"
+            />
+          </>
+        ) : null}
+      </div>
     </Skeleton>
   );
 };
-
 export const DonutChartMantine = (props: {
   data: DonutChartDataItem[];
   isLoading: boolean;
@@ -149,19 +152,21 @@ export const DonutChartMantine = (props: {
   }));
 
   return (
-    <Skeleton visible={isLoading}>
-      {chartState(donutChartData) && (
-        <div>
-          <Text fz="xs" mb="sm" ta="center">
-            Donut Chart: Hours Spent Per Week
-          </Text>
-          <DonutChart
-            tooltipDataSource="segment"
-            mx="auto"
-            data={donutChartData}
-          />
-        </div>
-      )}
+    <Skeleton visible={isLoading} height={210}>
+      <div className="w-[190px]">
+        {chartState(donutChartData) ? (
+          <>
+            <Text fz="xs" mb="sm" ta="center">
+              Donut Chart: Hours Spent Per Week
+            </Text>
+            <DonutChart
+              tooltipDataSource="segment"
+              mx="auto"
+              data={donutChartData}
+            />
+          </>
+        ) : null}
+      </div>
     </Skeleton>
   );
 };

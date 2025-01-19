@@ -76,11 +76,7 @@ function Courses() {
     return response.json();
   };
 
-  const {
-    data: fetchedChartData,
-    // isLoading: isLoadingCharts, -- might need in future when not lazy but not used rn
-    error: chartError,
-  } = useQuery({
+  const { data: fetchedChartData, error: chartError } = useQuery({
     queryKey: ["chartData", course, review],
     queryFn: fetchChartData,
   });
@@ -134,7 +130,7 @@ function Courses() {
       </div>
       <div className="flex md:flex-row flex-col items-center md:items-start justify-center gap-y-8">
         <div className="flex flex-col gap-y-8 items-center">
-          <div className="flex flex-col md:flex-row gap-12 mt-2">
+          <div className="flex flex-col md:flex-row gap-6 mt-2">
             <PieChartMantine
               data={fetchedChartData}
               isLoading={isLoadingCourses}
