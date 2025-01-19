@@ -1,5 +1,5 @@
 import { BarChart, DonutChart, PieChart } from "@mantine/charts";
-import { Skeleton, Text } from "@mantine/core";
+import { Loader, Skeleton, Text } from "@mantine/core";
 import {
   BarChartDataItem,
   PieChartDataItem,
@@ -104,23 +104,34 @@ export const PieChartMantine = (props: {
   );
 
   return (
-    <Skeleton visible={isLoading} height={210}>
-      <div className="w-[190px]">
-        {chartState(pieChartData) ? (
-          <>
-            <Text fz="xs" mb="sm" ta="center">
-              Pie Chart: Course Difficulty Data
-            </Text>
-            <PieChart
-              data={pieChartData}
-              withTooltip
-              tooltipDataSource="segment"
-              mx="auto"
-            />
-          </>
-        ) : null}
+<Skeleton visible={isLoading} height={210}>
+  <div className="w-[190px]">
+    {chartState(pieChartData) ? (
+      <>
+        <Text fz="xs" mb="sm" ta="center">
+          Pie Chart: Course Difficulty Data
+        </Text>
+        <PieChart
+          data={pieChartData}
+          withTooltip
+          tooltipDataSource="segment"
+          mx="auto"
+        />
+      </>
+    ) : (
+      <div className="flex flex-col justify-center items-center gap-3 md:w-[85vw]">
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <Text fz="xs" mb="sm" ta="center">
+            No data available to display.
+          </Text>
+        )}
       </div>
-    </Skeleton>
+    )}
+  </div>
+</Skeleton>
+
   );
 };
 export const DonutChartMantine = (props: {
