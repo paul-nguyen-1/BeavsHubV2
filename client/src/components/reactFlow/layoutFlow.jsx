@@ -11,7 +11,6 @@ import {
   useEdgesState,
   useReactFlow,
 } from "@xyflow/react";
-
 import "@xyflow/react/dist/style.css";
 
 const elk = new ELK();
@@ -31,8 +30,18 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
       ...node,
       targetPosition: isHorizontal ? "left" : "top",
       sourcePosition: isHorizontal ? "right" : "bottom",
-      width: 150,
-      height: 50,
+      width: 300,
+      height: 150,
+      style: {
+        border: "2.5px solid #000",
+        color: "#000000",
+        borderRadius: "10px",
+        fontSize: "20px",
+        fontWeight: "bold",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      },
     })),
     edges: edges,
   };
@@ -43,6 +52,7 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
       nodes: layoutedGraph.children.map((node) => ({
         ...node,
         position: { x: node.x, y: node.y },
+        style: node.style,
       })),
       edges: layoutedGraph.edges,
     }))
