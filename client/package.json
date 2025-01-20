@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
-    "@tanstack/eslint-plugin-query": "^5.62.16",
+    "@tanstack/eslint-plugin-query": "^5.64.2",
     "@tanstack/router-devtools": "^1.95.5",
     "@tanstack/router-plugin": "^1.95.5",
     "@types/node": "^22.10.5",
