@@ -8,6 +8,15 @@ export class File extends Document {
 
   @Prop({ required: true, type: Buffer })
   fileData: Buffer;
+  
+  @Prop({type: String})
+  user: string;
+
+  @Prop({type: [String]})
+  companies: string[];
+
+  @Prop({ type: Date, required: true })
+  timestamp: Date;
 }
 
 export const FileSchema = SchemaFactory.createForClass(File);

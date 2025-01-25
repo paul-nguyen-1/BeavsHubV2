@@ -113,13 +113,13 @@ export const TitaniumHeader = ({
             ))}
           </Flex>
         </motion.div>
-        <Anchor
+        {/* <Anchor
           href={callToActionUrl}
           className={classes.cta}
           style={{ flexShrink: 0, padding: "5px 20px" }}
         >
           {callToActionTitle}
-        </Anchor>
+        </Anchor> */}
       </Flex>
 
       {isMenuOpen && (

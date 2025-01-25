@@ -17,8 +17,12 @@ export class ResumesController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const savedFile = await this.resumesService.uploadFile(file);
+  async uploadResume(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('username') username: string,
+    @Body('companies') companies: string[],
+  ) {
+    const savedFile = await this.resumesService.uploadFile(file, username, companies);
     return { message: 'File uploaded successfully', file: savedFile };
   }
 
@@ -43,6 +47,7 @@ export class ResumesController {
     return files.map((file) => ({
       filename: file.filename,
       data: file.data.toString('base64'),
+      companies: file.companies,
     }));
   }
 }
