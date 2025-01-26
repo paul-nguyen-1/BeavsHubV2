@@ -1,6 +1,6 @@
 import { useState } from "react";
-import ResumeModal from "./previewModal";
-import ResumeCard from "./card";
+import ResumeModal from "./resumeModal";
+import ResumeCard from "./resumeCard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UploadResumeForm from "./uploadResumeForm";
 import { useDisclosure } from "@mantine/hooks";
@@ -80,7 +80,7 @@ const Resume = () => {
         title="Upload Resume Content"
         centered
       >
-        <UploadResumeForm closeForm ={close}/>
+        <UploadResumeForm closeForm={close} />
       </Modal>
 
       {mutation.isError && (
