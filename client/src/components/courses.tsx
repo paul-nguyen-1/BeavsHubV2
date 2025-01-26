@@ -200,7 +200,6 @@ function Courses() {
                   <SelectMantine
                     value={course}
                     onChange={handleCourseChange}
-                    charSize={3}
                   />
                 </Skeleton>
               </div>
