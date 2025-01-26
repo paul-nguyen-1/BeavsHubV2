@@ -6,7 +6,8 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import "./styles/index.css";
 import "@mantine/core/styles.css";
-import '@mantine/charts/styles.css';
+import "@mantine/charts/styles.css";
+import { Analytics } from "@vercel/analytics/react";
 
 const queryClient = new QueryClient();
 const router = createRouter({ routeTree });
@@ -24,6 +25,7 @@ if (!rootElement.innerHTML) {
       <QueryClientProvider client={queryClient}>
         <MantineProvider theme={theme} defaultColorScheme="dark">
           <RouterProvider router={router} />
+          <Analytics />
         </MantineProvider>
       </QueryClientProvider>
     </StrictMode>
