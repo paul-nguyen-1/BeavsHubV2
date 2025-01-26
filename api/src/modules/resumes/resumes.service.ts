@@ -40,16 +40,12 @@ export class ResumesService {
     return await newFile.save();
   }
 
-  async getFile(filename: string, res: Response): Promise<void> {
+  async getFile(filename: string): Promise<Buffer> {
     const file = await this.fileModel.findOne({ filename });
     if (!file) {
       throw new Error('File not found');
     }
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'inline',
-    });
-    res.send(file.fileData);
+    return file.fileData;
   }
 
   async getFiles(filenames: string[]): Promise<
