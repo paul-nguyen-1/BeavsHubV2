@@ -197,10 +197,7 @@ function Courses() {
             <div className="flex flex-row gap-4">
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
-                  <SelectMantine
-                    value={course}
-                    onChange={handleCourseChange}
-                  />
+                  <SelectMantine value={course} onChange={handleCourseChange} />
                 </Skeleton>
               </div>
               <div className="w-full md:w-56">
@@ -262,7 +259,6 @@ function Courses() {
                       value ?? ""
                     );
                   }}
-                  clearable
                 />
                 <Textarea
                   placeholder="Enter Tips for the Course"
@@ -274,14 +270,34 @@ function Courses() {
                     handleCourseInputChange("course_tips", e.target.value)
                   }
                 />
-                <MantineInput
-                  value={formData.course_taken_date}
-                  onChange={(e) =>
-                    handleCourseInputChange("course_taken_date", e.target.value)
-                  }
-                  label="Course Taken Date"
-                  placeholder="E.g., WI 2025"
-                />
+                <div className="flex flex-row gap-4 w-full">
+                  <Select
+                    className="w-full"
+                    label="Course Taken Date"
+                    placeholder="Select term"
+                    data={["Spring", "Summer", "Winter", "Fall"]}
+                    value={formData.course_taken_date.split(" ")[0] || ""}
+                    onChange={(season) =>
+                      handleCourseInputChange(
+                        "course_taken_date",
+                        `${season} ${formData.course_taken_date.split(" ")[1] || ""}`.trim()
+                      )
+                    }
+                    clearable
+                  />
+                  <MantineInput
+                    label="Year"
+                    placeholder="E.g., 2025"
+                    value={formData.course_taken_date.split(" ")[1] || ""}
+                    onChange={(e) => {
+                      const year = e.target.value.slice(0, 4);
+                      handleCourseInputChange(
+                        "course_taken_date",
+                        `${formData.course_taken_date.split(" ")[0] || ""} ${year}`.trim()
+                      );
+                    }}
+                  />
+                </div>
                 <MultiSelect
                   label="Course Pairs (Select one or multiple courses)"
                   placeholder="Pick one or more courses"

@@ -22,6 +22,7 @@ export function MantineInput({
       value={value}
       onChange={onChange}
       rightSectionPointerEvents="all"
+      className="w-full"
       rightSection={
         value ? (
           <CloseButton
