@@ -16,11 +16,18 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const ResumesLazyImport = createFileRoute('/resumes')()
 const PlannerLazyImport = createFileRoute('/planner')()
 const LoginLazyImport = createFileRoute('/login')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const ResumesLazyRoute = ResumesLazyImport.update({
+  id: '/resumes',
+  path: '/resumes',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/resumes.lazy').then((d) => d.Route))
 
 const PlannerLazyRoute = PlannerLazyImport.update({
   id: '/planner',
@@ -65,6 +72,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlannerLazyImport
       parentRoute: typeof rootRoute
     }
+    '/resumes': {
+      id: '/resumes'
+      path: '/resumes'
+      fullPath: '/resumes'
+      preLoaderRoute: typeof ResumesLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -74,12 +88,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
+  '/resumes': typeof ResumesLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
+  '/resumes': typeof ResumesLazyRoute
 }
 
 export interface FileRoutesById {
@@ -87,14 +103,15 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
+  '/resumes': typeof ResumesLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/planner'
+  fullPaths: '/' | '/login' | '/planner' | '/resumes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/planner'
-  id: '__root__' | '/' | '/login' | '/planner'
+  to: '/' | '/login' | '/planner' | '/resumes'
+  id: '__root__' | '/' | '/login' | '/planner' | '/resumes'
   fileRoutesById: FileRoutesById
 }
 
@@ -102,12 +119,14 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
   PlannerLazyRoute: typeof PlannerLazyRoute
+  ResumesLazyRoute: typeof ResumesLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
   PlannerLazyRoute: PlannerLazyRoute,
+  ResumesLazyRoute: ResumesLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -122,7 +141,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/login",
-        "/planner"
+        "/planner",
+        "/resumes"
       ]
     },
     "/": {
@@ -133,6 +153,9 @@ export const routeTree = rootRoute
     },
     "/planner": {
       "filePath": "planner.lazy.jsx"
+    },
+    "/resumes": {
+      "filePath": "resumes.lazy.tsx"
     }
   }
 }

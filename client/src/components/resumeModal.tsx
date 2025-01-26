@@ -1,0 +1,63 @@
+type ResumeModalProps = {
+  file: {
+    positions: string[];
+    companies: string[];
+    filename: string;
+    data: string;
+  };
+  onClose: () => void;
+};
+
+const ResumeModal: React.FC<ResumeModalProps> = ({ file, onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white rounded-lg p-5 w-11/12 h-5/6 flex relative">
+        <div className="flex-[2] mr-2">
+          <iframe
+            src={`data:application/pdf;base64,${file.data}#toolbar=0&zoom=page-fit`}
+            title={file.filename}
+            className="w-full h-full border-none rounded-lg"
+          ></iframe>
+        </div>
+        <div className="flex-1 bg-gray-200 rounded-lg p-6 overflow-y-auto flex flex-col shadow-lg">
+          <div className="flex flex-row flex-wrap items-center gap-2 mb-4">
+            <h3 className="text-xl font-bold text-gray-800">Positions:</h3>
+            {file.positions.map((position, index) => (
+              <h2 key={index} className="text-gray-700 text-base">
+                {position}
+              </h2>
+            ))}
+          </div>
+          <div className="mt-6">
+            <p className="text-gray-800 font-semibold text-lg">
+              Passed Resume Screens
+            </p>
+            <hr className="border-gray-300 my-3" />
+            {file.companies.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {file.companies.map((company, index) => (
+                  <div
+                    key={index}
+                    className="text-gray-700 text-sm py-1 px-3 rounded-full bg-white shadow-md"
+                  >
+                    {company}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 italic">No companies listed</p>
+            )}
+          </div>
+          <button
+            onClick={onClose}
+            className="self-end bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 mt-auto shadow-md"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ResumeModal;

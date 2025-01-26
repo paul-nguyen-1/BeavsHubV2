@@ -21,7 +21,7 @@ export type HeaderLink = {
 const HEADER_LINKS: HeaderLink[] = [
   { label: "Courses", href: "/" },
   { label: "Planner", href: "/planner" },
-  // { label: "Resumes", href: "/resumes" },
+  { label: "Resumes", href: "/resumes" },
 ];
 
 type Header01Props = ContainerProps & {
@@ -113,13 +113,13 @@ export const TitaniumHeader = ({
             ))}
           </Flex>
         </motion.div>
-        <Anchor
+        {/* <Anchor
           href={callToActionUrl}
           className={classes.cta}
           style={{ flexShrink: 0, padding: "5px 20px" }}
         >
           {callToActionTitle}
-        </Anchor>
+        </Anchor> */}
       </Flex>
 
       {isMenuOpen && (

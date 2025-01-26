@@ -3,7 +3,7 @@ import { Model, Query } from 'mongoose';
 import { Course, ParentCourse } from '../../schemas/courses.schema';
 import { HttpService } from '@nestjs/axios';
 import { v4 as uuidv4 } from 'uuid';
-import { ParentCourseDto, CourseDto } from 'src/dto/create-course.dto';
+import { ParentCourseDto, CourseDto } from '../../dto/create-course.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 
 @Injectable()
@@ -169,6 +169,21 @@ export class CoursesService {
       .limit(resPerPage)
       .skip(skip)
       .exec();
+  }
+
+  async createCourse(body: CourseDto): Promise<CourseDto> {
+    console.log('Incoming body:', body);
+
+    const newCourse = new this.courseModel({
+      ...body,
+      _id: uuidv4(),
+      parent_id: uuidv4(),
+      timestamp: new Date(),
+      internal: true,
+    });
+
+    console.log('New course before saving:', newCourse);
+    return newCourse.save();
   }
 
   async findAll(query: ExpressQuery, courseTips?: string): Promise<Course[]> {
