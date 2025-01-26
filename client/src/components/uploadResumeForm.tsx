@@ -94,15 +94,18 @@ function UploadResumeForm({ closeForm }: UploadResumeFormProps) {
         required
       />
       <h2 className="mb-4">Passed Screening Companies</h2>
-      <div className="flex flex-row flex-wrap gap-5">
+      <div className="flex flex-row flex-wrap gap-2">
         {companies.length > 0 &&
           companies.map((company, index) => (
-            <div key={index} className="mb-2">
+            <div
+              key={index}
+              className="text-gray-700 text-sm py-1 px-3 rounded-full bg-gray-100 shadow-sm"
+            >
               {company}
             </div>
           ))}
       </div>
-      <div className="flex flex-row items-center gap-2">
+      <div className="flex flex-row items-center gap-2 mt-4">
         <Input
           placeholder="Add companies"
           value={value}
@@ -113,10 +116,10 @@ function UploadResumeForm({ closeForm }: UploadResumeFormProps) {
           type="button"
           onClick={addCompany}
           disabled={!value.trim()}
-          className={`flex items-center gap-1 px-4 py-1 text-sm rounded-xl ${
+          className={`flex items-center gap-1 px-4 py-1 text-sm rounded-xl transition-colors duration-300 shadow-md ${
             value.trim()
-              ? "bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600"
-              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+              ? "bg-blue-600 text-white hover:bg-blue-700"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
         >
           <IconPlus size={20} />
