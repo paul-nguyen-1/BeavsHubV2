@@ -3,7 +3,7 @@ type ResumeCardProps = {
     username: string;
     positions: string[];
     filename: string;
-    data: string;
+    url: string;
   };
   onClick: () => void;
 };
@@ -25,7 +25,7 @@ const ResumeCard = ({ file, onClick }: ResumeCardProps) => {
         ))}
       </div>
       <iframe
-        src={`data:application/pdf;base64,${file.data}`}
+        src={`${import.meta.env.VITE_API_BASE_URL ?? process.env.VITE_API_BASE_URL}${file.url}`}
         className="w-full h-36 border-none pointer-events-none rounded-md shadow-sm"
         title={file.filename}
       ></iframe>

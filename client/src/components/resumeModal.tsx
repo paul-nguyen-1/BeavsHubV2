@@ -3,7 +3,7 @@ type ResumeModalProps = {
     positions: string[];
     companies: string[];
     filename: string;
-    data: string;
+    url: string;
   };
   onClose: () => void;
 };
@@ -14,7 +14,7 @@ const ResumeModal: React.FC<ResumeModalProps> = ({ file, onClose }) => {
       <div className="bg-white rounded-lg p-5 w-11/12 h-5/6 flex relative">
         <div className="flex-[2] mr-2">
           <iframe
-            src={`data:application/pdf;base64,${file.data}#toolbar=0&zoom=page-fit`}
+            src={`${import.meta.env.VITE_API_BASE_URL ?? process.env.VITE_API_BASE_URL}${file.url}`}
             title={file.filename}
             className="w-full h-full border-none rounded-lg"
           ></iframe>

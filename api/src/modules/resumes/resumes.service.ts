@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Response } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { File } from '../../schemas/resumes.schema';
@@ -39,12 +40,16 @@ export class ResumesService {
     return await newFile.save();
   }
 
-  async getFile(filename: string): Promise<Buffer> {
+  async getFile(filename: string, res: Response): Promise<void> {
     const file = await this.fileModel.findOne({ filename });
     if (!file) {
       throw new Error('File not found');
     }
-    return file.fileData;
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'inline',
+    });
+    res.send(file.fileData);
   }
 
   async getFiles(filenames: string[]): Promise<
@@ -52,7 +57,7 @@ export class ResumesService {
       username: string;
       positions: string[];
       filename: string;
-      data: Buffer;
+      url: string;
       companies: string[];
     }[]
   > {
@@ -61,7 +66,7 @@ export class ResumesService {
     return files.map((file) => ({
       username: file.username,
       filename: file.filename,
-      data: file.fileData,
+      url: `/resumes/${file.filename}`,
       companies: file.companies,
       positions: file.positions,
     }));

@@ -9,10 +9,10 @@ import { IconPhoto } from "@tabler/icons-react";
 
 type File = {
   filename: string;
-  data: string;
   companies: string[];
   positions: string[];
   username: string;
+  url: string;
 };
 
 const fetchResumes = async (): Promise<File[]> => {
@@ -58,8 +58,6 @@ const Resume = () => {
       alert("Error uploading resume. Please try again.");
     },
   });
-
-  console.log(files);
 
   return (
     <div className="p-5">

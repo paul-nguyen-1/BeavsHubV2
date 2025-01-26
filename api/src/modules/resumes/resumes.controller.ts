@@ -35,7 +35,7 @@ export class ResumesController {
   @Get(':filename')
   async getFile(@Res() res, @Param('filename') filename: string) {
     try {
-      const fileData = await this.resumesService.getFile(filename);
+      const fileData = await this.resumesService.getFile(filename, res);
       res.set({
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
@@ -52,7 +52,7 @@ export class ResumesController {
     const files = await this.resumesService.getFiles([]);
     return files.map((file) => ({
       filename: file.filename,
-      data: file.data.toString('base64'),
+      url: file.url,
       companies: file.companies,
       positions: file.positions,
       username: file.username,
