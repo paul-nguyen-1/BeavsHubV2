@@ -15,6 +15,9 @@ export class File extends Document {
   @Prop({type: [String]})
   companies: string[];
 
+  @Prop({type: [String]})
+  positions: string[];
+
   @Prop({ type: Date, required: true })
   timestamp: Date;
 }

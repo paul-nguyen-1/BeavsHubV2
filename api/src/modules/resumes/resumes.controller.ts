@@ -21,8 +21,14 @@ export class ResumesController {
     @UploadedFile() file: Express.Multer.File,
     @Body('username') username: string,
     @Body('companies') companies: string[],
+    @Body('positions') positions: string[],
   ) {
-    const savedFile = await this.resumesService.uploadFile(file, username, companies);
+    const savedFile = await this.resumesService.uploadFile(
+      file,
+      username,
+      companies,
+      positions,
+    );
     return { message: 'File uploaded successfully', file: savedFile };
   }
 
@@ -48,6 +54,7 @@ export class ResumesController {
       filename: file.filename,
       data: file.data.toString('base64'),
       companies: file.companies,
+      positions: file.positions,
     }));
   }
 }

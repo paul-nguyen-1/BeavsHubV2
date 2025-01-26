@@ -11,6 +11,7 @@ type File = {
   filename: string;
   data: string;
   companies: string[];
+  positions: string[];
 };
 
 const fetchResumes = async (): Promise<File[]> => {

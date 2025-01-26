@@ -15,6 +15,7 @@ export class ResumesService {
     file: Express.Multer.File,
     username: string,
     companies: string[],
+    positions: string[],
   ): Promise<File> {
     const timestamp = new Date();
 
@@ -22,12 +23,17 @@ export class ResumesService {
     ? companies
     : JSON.parse(companies);
 
+    const resumesArray = Array.isArray(positions)
+    ? positions
+    : JSON.parse(positions);
+
   const newFile = new this.fileModel({
     filename: file.originalname,
     fileData: file.buffer,
     timestamp,
     user: username,
     companies: companiesArray,
+    positions: resumesArray,
   });
 
     return await newFile.save();
@@ -43,13 +49,16 @@ export class ResumesService {
 
   async getFiles(
     filenames: string[],
-  ): Promise<{ filename: string; data: Buffer, companies: string[] }[]> {
+  ): Promise<{
+    positions: any; filename: string; data: Buffer, companies: string[] 
+}[]> {
     const query = filenames.length ? { filename: { $in: filenames } } : {};
     const files = await this.fileModel.find(query);
     return files.map((file) => ({
       filename: file.filename,
       data: file.fileData,
       companies: file.companies,
+      positions: file.positions
     }));
   }
 }

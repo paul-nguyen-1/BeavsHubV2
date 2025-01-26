@@ -1,5 +1,6 @@
 type ResumeModalProps = {
   file: {
+    positions: string[];
     companies: string[];
     filename: string;
     data: string;
@@ -19,7 +20,9 @@ const ResumeModal: React.FC<ResumeModalProps> = ({ file, onClose }) => {
           ></iframe>
         </div>
         <div className="flex-1 bg-gray-100 rounded-lg p-5 overflow-y-auto flex flex-col">
-          <h3 className="text-lg font-bold">User</h3>
+          <h3 className="text-lg font-bold">{file.positions.map((position) => {
+            return <div>{position}</div>;
+          })}</h3>
           <div>
             <p>Passed Resume Screens</p>
             <hr />

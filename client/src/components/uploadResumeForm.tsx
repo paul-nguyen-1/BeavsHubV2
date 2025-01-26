@@ -1,4 +1,4 @@
-import { Button, Input } from "@mantine/core";
+import { Button, Input, MultiSelect } from "@mantine/core";
 import { IconPhoto, IconPlus } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -10,6 +10,8 @@ type UploadResumeFormProps = {
 function UploadResumeForm({ closeForm }: UploadResumeFormProps) {
   const [value, setValue] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [roles] = useState(["Intern", "New Grad", "Full Time"]);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [companies, setCompanies] = useState<string[]>([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const queryClient = useQueryClient();
@@ -45,6 +47,7 @@ function UploadResumeForm({ closeForm }: UploadResumeFormProps) {
     formData.append("file", file);
     formData.append("username", "Anonymous");
     formData.append("companies", JSON.stringify(companies));
+    formData.append("positions", JSON.stringify(selectedRoles));
     mutation.mutate(formData);
   };
 
@@ -63,8 +66,22 @@ function UploadResumeForm({ closeForm }: UploadResumeFormProps) {
     },
   });
 
+  const handleRoleChange = (selected: string[]) => {
+    setSelectedRoles(selected);
+  };
+
   return (
     <form onSubmit={handleSubmitForm}>
+      <h2>Role</h2>
+      <MultiSelect
+        label="Position(s) applied for with this resume"
+        placeholder={selectedRoles.length === 0 ? "Pick value" : undefined}
+        data={roles}
+        value={selectedRoles}
+        onChange={handleRoleChange}
+        clearable
+        required
+      />
       <h2 className="mb-4">Companies</h2>
       <div className="flex flex-row flex-wrap gap-5">
         {companies.length > 0 &&
