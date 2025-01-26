@@ -55,6 +55,7 @@ export class ResumesController {
       data: file.data.toString('base64'),
       companies: file.companies,
       positions: file.positions,
+      username: file.username,
     }));
   }
 }

@@ -10,7 +10,7 @@ export class File extends Document {
   fileData: Buffer;
   
   @Prop({type: String})
-  user: string;
+  username: string;
 
   @Prop({type: [String]})
   companies: string[];

@@ -20,21 +20,21 @@ export class ResumesService {
     const timestamp = new Date();
 
     const companiesArray = Array.isArray(companies)
-    ? companies
-    : JSON.parse(companies);
+      ? companies
+      : JSON.parse(companies);
 
     const resumesArray = Array.isArray(positions)
-    ? positions
-    : JSON.parse(positions);
+      ? positions
+      : JSON.parse(positions);
 
-  const newFile = new this.fileModel({
-    filename: file.originalname,
-    fileData: file.buffer,
-    timestamp,
-    user: username,
-    companies: companiesArray,
-    positions: resumesArray,
-  });
+    const newFile = new this.fileModel({
+      filename: file.originalname,
+      fileData: file.buffer,
+      timestamp,
+      username: username,
+      companies: companiesArray,
+      positions: resumesArray,
+    });
 
     return await newFile.save();
   }
@@ -47,18 +47,23 @@ export class ResumesService {
     return file.fileData;
   }
 
-  async getFiles(
-    filenames: string[],
-  ): Promise<{
-    positions: any; filename: string; data: Buffer, companies: string[] 
-}[]> {
+  async getFiles(filenames: string[]): Promise<
+    {
+      username: string;
+      positions: string[];
+      filename: string;
+      data: Buffer;
+      companies: string[];
+    }[]
+  > {
     const query = filenames.length ? { filename: { $in: filenames } } : {};
     const files = await this.fileModel.find(query);
     return files.map((file) => ({
+      username: file.username,
       filename: file.filename,
       data: file.fileData,
       companies: file.companies,
-      positions: file.positions
+      positions: file.positions,
     }));
   }
 }

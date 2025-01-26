@@ -4,13 +4,20 @@ import { IconAt } from "@tabler/icons-react";
 interface MantineInputProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  placeholder: string;
 }
 
-export function MantineInput({ value, onChange }: MantineInputProps) {
+export function MantineInput({
+  value,
+  onChange,
+  label,
+  placeholder,
+}: MantineInputProps) {
   return (
     <TextInput
-      label="Search"
-      placeholder="Course reviews"
+      label={label}
+      placeholder={placeholder}
       leftSection={<IconAt size={16} />}
       value={value}
       onChange={onChange}

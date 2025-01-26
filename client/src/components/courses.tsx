@@ -122,6 +122,8 @@ function Courses() {
                 <MantineInput
                   value={review ?? ""}
                   onChange={handleReviewChange}
+                  label="Search"
+                  placeholder="Course Reviews"
                 />
               </Skeleton>
             </div>
