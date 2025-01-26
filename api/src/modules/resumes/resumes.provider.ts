@@ -1,5 +1,5 @@
 import { Connection } from 'mongoose';
-import { FileSchema } from 'src/schemas/resumes.schema';
+import { FileSchema } from '../../schemas/resumes.schema';
 
 export const resumesProviders = [
   {

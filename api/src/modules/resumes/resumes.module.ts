@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ResumesService } from './resumes.service';
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from '../../database/database.module';
 import { HttpModule } from '@nestjs/axios';
 import { resumesProviders } from './resumes.provider';
 import { ResumesController } from './resumes.controller';

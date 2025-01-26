@@ -3,7 +3,7 @@ import { Model, Query } from 'mongoose';
 import { Course, ParentCourse } from '../../schemas/courses.schema';
 import { HttpService } from '@nestjs/axios';
 import { v4 as uuidv4 } from 'uuid';
-import { ParentCourseDto, CourseDto } from 'src/dto/create-course.dto';
+import { ParentCourseDto, CourseDto } from '../../dto/create-course.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 
 @Injectable()
