@@ -43,6 +43,9 @@ export class Course {
 
   @Prop({ type: Date, required: true })
   timestamp: Date;
+
+  @Prop({ type: Boolean, default: false })
+  internal: Boolean;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

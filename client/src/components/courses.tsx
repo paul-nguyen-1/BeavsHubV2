@@ -1,10 +1,29 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { getAllCourses } from "../lib/const";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  getAllCourses,
+  lowerDivisionOne,
+  lowerDivisionTwo,
+  upperDivisionOne,
+  upperDivisionTwo,
+} from "../lib/const";
 import { CourseInfo } from "../lib/types";
 import { Course } from "./course";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
-import { Loader, Skeleton } from "@mantine/core";
+import {
+  Button,
+  Loader,
+  Modal,
+  MultiSelect,
+  Select,
+  Skeleton,
+  Textarea,
+} from "@mantine/core";
 import { motion } from "framer-motion";
 import SelectMantine from "./ui/select";
 import { MantineInput } from "./ui/input";
@@ -13,14 +32,32 @@ import {
   PieChartMantine,
   DonutChartMantine,
 } from "./ui/chart";
-import { useDebouncedValue } from "@mantine/hooks";
+import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+
+interface CourseFormData {
+  course_name: string;
+  course_difficulty: string;
+  course_time_spent_per_week: string;
+  course_tips: string;
+  course_taken_date: string;
+  pairs: string[];
+}
 
 function Courses() {
   const [course, setCourse] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
   const [debouncedCourse] = useDebouncedValue(course, 200);
   const [debouncedReview] = useDebouncedValue(review, 200);
+  const [opened, { open, close }] = useDisclosure(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    course_name: "",
+    course_difficulty: "",
+    course_time_spent_per_week: "",
+    course_tips: "",
+    course_taken_date: "",
+    pairs: [],
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 400);
@@ -103,30 +140,175 @@ function Courses() {
     setReview(e.target.value);
   };
 
+  const handleCourseInputChange = (name: string, value: string | string[]) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleCourseSubmit = () => {
+    mutation.mutate(formData);
+  };
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<Response, Error, CourseFormData>({
+    mutationFn: (formData: CourseFormData) =>
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/courses/post`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to create course");
+        }
+        return response.json();
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({
+        queryKey: ["chartData", course, review],
+      });
+
+      close();
+      setFormData({
+        course_name: "",
+        course_difficulty: "",
+        course_time_spent_per_week: "",
+        course_tips: "",
+        course_taken_date: "",
+        pairs: [],
+      });
+    },
+    onError: () => {
+      alert("Error creating course. Please try again.");
+    },
+  });
+
   return (
     <>
       <div>
         <motion.div variants={itemVariants}>
           <div className="flex flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6">
-            <div className="w-full md:w-56">
-              <Skeleton visible={isLoading}>
-                <SelectMantine
-                  value={course}
-                  onChange={handleCourseChange}
-                  charSize={3}
-                />
-              </Skeleton>
+            <div className="flex flex-row gap-4">
+              <div className="w-full md:w-56">
+                <Skeleton visible={isLoading}>
+                  <SelectMantine
+                    value={course}
+                    onChange={handleCourseChange}
+                    charSize={3}
+                  />
+                </Skeleton>
+              </div>
+              <div className="w-full md:w-56">
+                <Skeleton visible={isLoading}>
+                  <MantineInput
+                    value={review ?? ""}
+                    onChange={handleReviewChange}
+                    label="Search"
+                    placeholder="Course Reviews"
+                  />
+                </Skeleton>
+              </div>
             </div>
-            <div className="w-full md:w-56">
-              <Skeleton visible={isLoading}>
+            <Modal
+              opened={opened}
+              onClose={close}
+              title="Create New Course Review"
+            >
+              <div className="flex flex-col gap-4">
+                <Select
+                  value={formData.course_name}
+                  onChange={(value) =>
+                    handleCourseInputChange("course_name", value ?? "")
+                  }
+                  label="Course Name"
+                  placeholder="Select Course Name"
+                  data={[
+                    ...lowerDivisionOne,
+                    ...lowerDivisionTwo,
+                    ...upperDivisionOne,
+                    ...upperDivisionTwo,
+                  ]}
+                  clearable
+                />
+                <Select
+                  label="Course Difficulty (1-5)"
+                  placeholder="Enter Course Difficulty"
+                  data={["1", " 2", "3", "4", "5"]}
+                  value={formData.course_difficulty}
+                  onChange={(value) => {
+                    const numericValue = Number(value);
+                    if (!isNaN(numericValue)) {
+                      handleCourseInputChange(
+                        "course_difficulty",
+                        numericValue.toString()
+                      );
+                    }
+                  }}
+                  clearable
+                />
+                <Select
+                  label="Time Spent Per Week"
+                  placeholder="E.g., 0-5 hours"
+                  data={["0-5 hours", "6-12 hours", "13-18 hours", "18+ hours"]}
+                  value={formData.course_time_spent_per_week}
+                  onChange={(value) => {
+                    handleCourseInputChange(
+                      "course_time_spent_per_week",
+                      value ?? ""
+                    );
+                  }}
+                  clearable
+                />
+                <Textarea
+                  placeholder="Enter Tips for the Course"
+                  label="Course Tips"
+                  autosize
+                  minRows={2}
+                  value={formData.course_tips}
+                  onChange={(e) =>
+                    handleCourseInputChange("course_tips", e.target.value)
+                  }
+                />
                 <MantineInput
-                  value={review ?? ""}
-                  onChange={handleReviewChange}
-                  label="Search"
-                  placeholder="Course Reviews"
+                  value={formData.course_taken_date}
+                  onChange={(e) =>
+                    handleCourseInputChange("course_taken_date", e.target.value)
+                  }
+                  label="Course Taken Date"
+                  placeholder="E.g., WI 2025"
                 />
-              </Skeleton>
-            </div>
+                <MultiSelect
+                  label="Course Pairs (Select one or multiple courses)"
+                  placeholder="Pick one or more courses"
+                  data={[
+                    ...lowerDivisionOne,
+                    ...lowerDivisionTwo,
+                    ...upperDivisionOne,
+                    ...upperDivisionTwo,
+                  ]}
+                  value={formData.pairs}
+                  onChange={(selected) =>
+                    handleCourseInputChange("pairs", selected)
+                  }
+                  clearable
+                  required
+                />
+              </div>
+
+              <Button className="mt-4" onClick={handleCourseSubmit}>
+                Submit
+              </Button>
+            </Modal>
+
+            <Button className="relative top-3" onClick={open}>
+              New Post
+            </Button>
           </div>
         </motion.div>
       </div>

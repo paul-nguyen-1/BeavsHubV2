@@ -27,6 +27,12 @@ export class CoursesController {
     return await this.courseService.findAllCourses(courseTips);
   }
 
+  @Post('post')
+  async postCourse(@Body() body: CourseDto): Promise<CourseDto> {
+    console.log('Received body:', body); 
+    return await this.courseService.createCourse(body);
+  }
+
   @Get(':id')
   async getCourseById(
     @Param('id') id: string,

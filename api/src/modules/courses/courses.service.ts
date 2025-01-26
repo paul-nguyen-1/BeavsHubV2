@@ -171,6 +171,21 @@ export class CoursesService {
       .exec();
   }
 
+  async createCourse(body: CourseDto): Promise<CourseDto> {
+    console.log('Incoming body:', body);
+
+    const newCourse = new this.courseModel({
+      ...body,
+      _id: uuidv4(),
+      parent_id: uuidv4(),
+      timestamp: new Date(),
+      internal: true,
+    });
+
+    console.log('New course before saving:', newCourse);
+    return newCourse.save();
+  }
+
   async findAll(query: ExpressQuery, courseTips?: string): Promise<Course[]> {
     const resPerPage = 10;
     const currentPage = Number(query.page) || 1;
