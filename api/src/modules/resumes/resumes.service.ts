@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { File } from 'src/schemas/resumes.schema';
+import { File } from '../../schemas/resumes.schema';
 
 @Injectable()
 export class ResumesService {
