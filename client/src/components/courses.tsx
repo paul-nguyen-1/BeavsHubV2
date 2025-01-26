@@ -320,10 +320,13 @@ function Courses() {
                 Submit
               </Button>
             </Modal>
-
-            <Button className="relative top-3" onClick={open}>
-              New Post
-            </Button>
+            <div>
+              <Skeleton visible={isLoading}>
+                <Button className="relative top-3" onClick={open}>
+                  New Post
+                </Button>
+              </Skeleton>
+            </div>
           </div>
         </motion.div>
       </div>
