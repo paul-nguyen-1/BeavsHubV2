@@ -1,3 +1,5 @@
+import ReactPDF from "./ReactPDF";
+
 type ResumeModalProps = {
   file: {
     positions: string[];
@@ -13,17 +15,22 @@ const ResumeModal: React.FC<ResumeModalProps> = ({ file, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg p-5 w-11/12 h-5/6 flex relative">
         <div className="flex-[2] mr-2">
-          <iframe
-            src={`${import.meta.env.VITE_API_BASE_URL ?? process.env.VITE_API_BASE_URL}${file.url}`}
-            title={file.filename}
-            className="w-full h-full border-none rounded-lg"
-          ></iframe>
+          <div>
+            <ReactPDF
+              file={`${import.meta.env.VITE_API_BASE_URL ?? process.env.VITE_API_BASE_URL}${file.url}`}
+            />
+          </div>
         </div>
         <div className="flex-1 bg-gray-200 rounded-lg p-6 overflow-y-auto flex flex-col shadow-lg">
           <div className="flex flex-row flex-wrap items-center gap-2 mb-4">
-            <h3 className="text-xl font-bold text-gray-800">Positions:</h3>
+            <h3 className="text-xl font-bold text-gray-800">
+              Positions Applied For:
+            </h3>
             {file.positions.map((position, index) => (
-              <h2 key={index} className="text-gray-700 text-base">
+              <h2
+                key={index}
+                className="text-gray-800 text-sm py-1 px-3 rounded-full bg-gray-300 shadow-sm"
+              >
                 {position}
               </h2>
             ))}

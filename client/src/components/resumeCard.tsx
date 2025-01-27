@@ -1,3 +1,5 @@
+import ReactPDF from "./ReactPDF";
+
 type ResumeCardProps = {
   file: {
     username: string;
@@ -24,11 +26,9 @@ const ResumeCard = ({ file, onClick }: ResumeCardProps) => {
           </div>
         ))}
       </div>
-      <iframe
-        src={`${import.meta.env.VITE_API_BASE_URL ?? process.env.VITE_API_BASE_URL}${file.url}`}
-        className="w-full h-36 border-none pointer-events-none rounded-md shadow-sm"
-        title={file.filename}
-      ></iframe>
+      <ReactPDF
+        file={`${import.meta.env.VITE_API_BASE_URL ?? process.env.VITE_API_BASE_URL}${file.url}`}
+      />
       <div className="mt-2 text-gray-800 text-sm font-medium">
         {file.username ?? "Anonymous"}
       </div>
