@@ -33,7 +33,7 @@
     "tailwind-scrollbar-hide": "^2.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.18.0",
+    "@eslint/js": "^9.19.0",
     "@tanstack/eslint-plugin-query": "^5.64.2",
     "@tanstack/router-devtools": "^1.97.3",
     "@tanstack/router-plugin": "^1.97.23",
