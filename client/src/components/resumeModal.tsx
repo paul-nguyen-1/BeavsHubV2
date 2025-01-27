@@ -12,9 +12,9 @@ type ResumeModalProps = {
 
 const ResumeModal: React.FC<ResumeModalProps> = ({ file, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-5 w-11/12 h-5/6 flex relative">
-        <div className="flex-[2] mr-2">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex flex-wrap justify-center items-center overflow-auto z-50">
+      <div className="bg-white p-5 rounded-lg flex flex-col md:flex-row relative md:overflow-hidden gap-4">
+        <div className="flex-[2]">
           <div>
             <ReactPDF
               file={`${import.meta.env.VITE_API_BASE_URL ?? process.env.VITE_API_BASE_URL}${file.url}`}

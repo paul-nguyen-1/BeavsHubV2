@@ -18,14 +18,19 @@ const options = {
 const resizeObserverOptions = {};
 const maxWidth = 800;
 
-export default function ReactPDF({ file }: { file: string }) {
+export default function ReactPDF({
+  file,
+  isCardPDF,
+}: {
+  file: string;
+  isCardPDF?: boolean;
+}) {
   const [numPages, setNumPages] = useState<number>();
   const [containerRef, setContainerRef] = useState<HTMLElement | null>(null);
   const [containerWidth, setContainerWidth] = useState<number>();
 
   const onResize = useCallback<ResizeObserverCallback>((entries) => {
     const [entry] = entries;
-
     if (entry) {
       setContainerWidth(entry.contentRect.width);
     }
@@ -39,22 +44,25 @@ export default function ReactPDF({ file }: { file: string }) {
   }
 
   return (
-    <div ref={setContainerRef}>
-      <Document
-        file={file}
-        onLoadSuccess={onDocumentLoadSuccess}
-        options={options}
-      >
-        {Array.from(new Array(numPages), (_el, index) => (
-          <Page
-            key={`page_${index + 1}`}
-            pageNumber={index + 1}
-            width={
-              containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth
-            }
-          />
-        ))}
-      </Document>
+    <div>
+      <div className="PDF__container__document" ref={setContainerRef}>
+        <Document
+          file={file}
+          onLoadSuccess={onDocumentLoadSuccess}
+          options={options}
+        >
+          {Array.from(new Array(numPages), (_el, index) => (
+            <Page
+              key={`page_${index + 1}`}
+              pageNumber={index + 1}
+              width={
+                containerWidth ? Math.min(containerWidth, maxWidth) : maxWidth
+              }
+              className={isCardPDF ? "cardSizingPDF" : ""}
+            />
+          ))}
+        </Document>
+      </div>
     </div>
   );
 }

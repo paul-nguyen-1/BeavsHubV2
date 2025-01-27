@@ -28,6 +28,7 @@ const ResumeCard = ({ file, onClick }: ResumeCardProps) => {
       </div>
       <ReactPDF
         file={`${import.meta.env.VITE_API_BASE_URL ?? process.env.VITE_API_BASE_URL}${file.url}`}
+        isCardPDF={true}
       />
       <div className="mt-2 text-gray-800 text-sm font-medium">
         {file.username ?? "Anonymous"}
