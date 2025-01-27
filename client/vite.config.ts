@@ -6,20 +6,13 @@ import autoprefixer from "autoprefixer";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    TanStackRouterVite(),
-  ],
+  plugins: [react(), TanStackRouterVite()],
   css: {
     postcss: {
-      plugins: [
-        tailwindcss,
-        autoprefixer(),
-      ],
+      plugins: [tailwindcss, autoprefixer()],
     },
   },
-  
   optimizeDeps: {
-    exclude: ['react-intersection-observer'],
+    exclude: ["react-intersection-observer"],
   },
 });
