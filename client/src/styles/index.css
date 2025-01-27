@@ -2,3 +2,4 @@
 @import url("./xy-theme.css");
 
 @tailwind utilities;
+@import "tailwindcss"
