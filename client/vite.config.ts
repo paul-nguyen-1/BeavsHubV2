@@ -6,6 +6,6 @@ import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 export default defineConfig({
   plugins: [react(), TanStackRouterVite()],
   optimizeDeps: {
-    exclude: ['react-intersection-observer']
-  }
+    exclude: ["react-intersection-observer"],
+  },
 });
