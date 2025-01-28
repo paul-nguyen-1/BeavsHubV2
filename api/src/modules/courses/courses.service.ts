@@ -172,8 +172,6 @@ export class CoursesService {
   }
 
   async createCourse(body: CourseDto): Promise<CourseDto> {
-    console.log('Incoming body:', body);
-
     const newCourse = new this.courseModel({
       ...body,
       _id: uuidv4(),
@@ -181,8 +179,6 @@ export class CoursesService {
       timestamp: new Date(),
       internal: true,
     });
-
-    console.log('New course before saving:', newCourse);
     return newCourse.save();
   }
 

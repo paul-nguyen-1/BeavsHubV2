@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Response } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { File } from '../../schemas/resumes.schema';
@@ -52,7 +53,7 @@ export class ResumesService {
       username: string;
       positions: string[];
       filename: string;
-      data: Buffer;
+      url: string;
       companies: string[];
     }[]
   > {
@@ -61,7 +62,7 @@ export class ResumesService {
     return files.map((file) => ({
       username: file.username,
       filename: file.filename,
-      data: file.fileData,
+      url: `/resumes/${file.filename}`,
       companies: file.companies,
       positions: file.positions,
     }));
