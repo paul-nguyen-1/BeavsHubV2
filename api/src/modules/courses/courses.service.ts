@@ -72,6 +72,8 @@ export class CoursesService {
                 obj[
                   `How much time did you spend on average (per week) for this class? ${courseNumber}`
                 ],
+              course_enjoyability:
+                obj[`How much did you enjoy this class?`],
               course_tips:
                 obj[
                   `What tips would you give students taking this course? ${courseNumber}`

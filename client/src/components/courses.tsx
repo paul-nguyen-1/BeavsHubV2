@@ -38,6 +38,7 @@ interface CourseFormData {
   course_name: string;
   course_difficulty: string;
   course_time_spent_per_week: string;
+  course_enjoyability: string;
   course_tips: string;
   course_taken_date: string;
   pairs: string[];
@@ -55,6 +56,7 @@ function Courses() {
     course_difficulty: "",
     course_time_spent_per_week: "",
     course_tips: "",
+    course_enjoyability: "",
     course_taken_date: "",
     pairs: [],
   });
@@ -180,6 +182,7 @@ function Courses() {
         course_difficulty: "",
         course_time_spent_per_week: "",
         course_tips: "",
+        course_enjoyability: "",
         course_taken_date: "",
         pairs: [],
       });
@@ -259,6 +262,16 @@ function Courses() {
                       value ?? ""
                     );
                   }}
+                />
+                <Select
+                  value={formData.course_enjoyability}
+                  onChange={(value) =>
+                    handleCourseInputChange("course_enjoyability", value ?? "")
+                  }
+                  label="Course Enjoyability"
+                  placeholder="Select Course Enjoyability"
+                  data={["Enjoyable", "Meh", "Not Enjoyable"]}
+                  clearable
                 />
                 <Textarea
                   placeholder="Enter Tips for the Course"
@@ -387,6 +400,7 @@ function Courses() {
                         difficulty={course.course_difficulty}
                         course={course.course_name}
                         taken_date={course.course_taken_date}
+                        enjoyability={course.course_enjoyability}
                         time_spent_per_week={course.course_time_spent_per_week}
                         timestamp={new Date(course.timestamp).toLocaleString()}
                         tips={course.course_tips}

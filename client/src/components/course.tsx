@@ -7,7 +7,7 @@ import {
 } from "@mantine/core";
 import { CourseCard } from "../lib/types";
 import { useMediaQuery } from "@mantine/hooks";
-import user from '/user.png?url'
+import user from "/user.png?url";
 
 export function Course(props: CourseCard) {
   const {
@@ -15,6 +15,7 @@ export function Course(props: CourseCard) {
     difficulty,
     time_spent_per_week,
     taken_date,
+    enjoyability,
     tips,
     timestamp,
   } = props;
@@ -22,14 +23,11 @@ export function Course(props: CourseCard) {
   return (
     <Paper withBorder radius="md" className="p-5 w-full">
       <Group>
-        <Avatar
-          src={user}
-          alt="Avatar"
-          radius="xl"
-        />
+        <Avatar src={user} alt="Avatar" radius="xl" />
         <div>
           <Text fz="sm">{isMobile ? course.slice(0, 30) : course}</Text>
           <Text fz="sm">Difficulty: {difficulty}</Text>
+          <Text fz="sm">Enjoyability: {enjoyability}</Text>
           <Text fz="sm">Time Spent Per Week: {time_spent_per_week}</Text>
           <Text fz="xs" c="dimmed">
             Posted: {new Date(timestamp).toLocaleDateString()}

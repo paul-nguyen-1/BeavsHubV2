@@ -4,7 +4,7 @@ export const getAllCourses = `${import.meta.env.VITE_API_BASE_URL ?? process.env
 export const lowerDivisionOne = [
   "161 - Intro to Computer Science I",
   "162 - Intro to Computer Science II",
-  "165 - Intro to Computer Science (Legacy)",
+  "165 - Intro to Computer Science",
   "199 - Companion Course",
 ];
 
@@ -34,7 +34,7 @@ export const upperDivisionOne = [
 
 export const upperDivisionTwo = [
   "406 - Projects",
-  "419 - Capstone (Legacy)",
+  "419 - Capstone",
   "427 - Cryptography",
   "450 - Intro to Computer Graphics",
   "464 - Open Source Software",

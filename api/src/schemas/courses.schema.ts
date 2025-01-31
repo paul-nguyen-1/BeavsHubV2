@@ -36,6 +36,9 @@ export class Course {
   course_tips: string;
 
   @Prop({ type: String })
+  course_enjoyability: string;
+
+  @Prop({ type: String })
   course_taken_date: string;
 
   @Prop({ type: [String] })
