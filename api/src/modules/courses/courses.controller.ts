@@ -23,7 +23,7 @@ export class CoursesController {
   @Get('all')
   async getAllCourses(
     @Query('course_tips') courseTips?: string,
-    date?: string,
+    @Query('date') date?: string,
   ): Promise<CourseDto[]> {
     console.log('Getting all courses');
     return await this.courseService.findAllCourses(courseTips, date);

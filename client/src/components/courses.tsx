@@ -69,12 +69,10 @@ function Courses() {
 
   const { ref, inView } = useInView();
   const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
-    const params = new URLSearchParams({ page: pageParam.toString() });
-    if (debouncedCourse) params.append("course", debouncedCourse);
-    if (debouncedReview) params.append("course_tips", debouncedReview);
-    if (date) params.append("date", encodeURIComponent(date.trim()));
-    const url = `${getAllCourses}/courses?${params.toString()}`;
-    const response = await fetch(url);
+    const defaultResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?date=${date}&page=${pageParam}`;
+    const reviewResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?course_tips=${debouncedReview}?date=${date}&page=${pageParam}`;
+
+    const response = await fetch(review ? reviewResponse : defaultResponse);
     if (!response.ok) {
       throw new Error("Failed to fetch courses data");
     }
@@ -107,29 +105,20 @@ function Courses() {
   }
 
   const fetchChartData = async () => {
-    let url;
-
-    if (debouncedCourse) {
-      const params = new URLSearchParams();
-      if (debouncedReview) params.append("course_tips", debouncedReview);
-      if (date) params.append("date", encodeURIComponent(date.trim()));
-      url = `${getAllCourses}/courses/${debouncedCourse}/all_reviews?${params.toString()}`;
-    } else {
-      const params = new URLSearchParams();
-      if (debouncedReview) params.append("course_tips", debouncedReview);
-      if (date) params.append("date", encodeURIComponent(date.trim()));
-      url = `${getAllCourses}/courses/all?${params.toString()}`;
-    }
-
-    const response = await fetch(url);
+    const response = await fetch(
+      course
+        ? `${getAllCourses}/courses/${course}/all_reviews?course_tips=${review}&date=${date}`
+        : `${getAllCourses}/courses/all?course_tips=${review}&date=${date}`
+    );
     if (!response.ok) {
+      console.error("Failed to fetch chart data:", response.statusText);
       throw new Error("Failed to fetch chart data");
     }
     return response.json();
   };
 
   const { data: fetchedChartData, error: chartError } = useQuery({
-    queryKey: ["chartData", course, review, date],
+    queryKey: ["chartData", debouncedCourse, debouncedReview, date],
     queryFn: fetchChartData,
   });
 
@@ -416,8 +405,7 @@ function Courses() {
             {data && fetchedChartData && (
               <div className="md:flex absolute justify-end text-xs font-medium mt-[-25px] text-gray-300">
                 {data?.pages.reduce((count, page) => count + page.length, 0)} of{" "}
-                {data?.pages.reduce((count, page) => count + page.length, 0)}{" "}
-                course reviews
+                {fetchedChartData.length} course reviews
               </div>
             )}
             {status === "pending" && (

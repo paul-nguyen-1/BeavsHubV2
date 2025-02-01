@@ -173,7 +173,6 @@ export class CoursesService {
 
       switch (normalizedDate) {
         case '1 month':
-        case 'one':
           dateFilter = subMonths(currentDate, 1);
           break;
         case '3 months':
@@ -188,8 +187,6 @@ export class CoursesService {
         case '2 years':
           dateFilter = subYears(currentDate, 2);
           break;
-        default:
-          console.warn(`Invalid date filter received: ${date}`);
       }
 
       if (dateFilter) {
@@ -241,7 +238,6 @@ export class CoursesService {
 
       switch (normalizedDate) {
         case '1 month':
-        case 'one':
           dateFilter = subMonths(currentDate, 1);
           break;
         case '3 months':
@@ -256,8 +252,6 @@ export class CoursesService {
         case '2 years':
           dateFilter = subYears(currentDate, 2);
           break;
-        default:
-          console.warn(`Invalid date filter received: ${date}`);
       }
 
       if (dateFilter) {
@@ -285,7 +279,7 @@ export class CoursesService {
       let dateFilter: Date | null = null;
 
       switch (date) {
-        case 'one':
+        case '1 Month':
           dateFilter = subMonths(currentDate, 1);
           break;
         case '3 Months':
@@ -331,7 +325,6 @@ export class CoursesService {
 
       switch (normalizedDate) {
         case '1 month':
-        case 'one':
           dateFilter = subMonths(currentDate, 1);
           break;
         case '3 months':
@@ -346,8 +339,6 @@ export class CoursesService {
         case '2 years':
           dateFilter = subYears(currentDate, 2);
           break;
-        default:
-          console.warn(`Invalid date filter received: ${date}`);
       }
 
       if (dateFilter) {
