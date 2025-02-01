@@ -69,10 +69,21 @@ function Courses() {
 
   const { ref, inView } = useInView();
   const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
-    const defaultResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?date=${date}&page=${pageParam}`;
-    const reviewResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?course_tips=${debouncedReview}?date=${date}&page=${pageParam}`;
+    const params = new URLSearchParams({
+      page: pageParam.toString(),
+    });
+    if (date) {
+      params.append("date", date);
+    }
+    if (debouncedReview) {
+      params.append("course_tips", debouncedReview);
+    }
 
-    const response = await fetch(review ? reviewResponse : defaultResponse);
+    const url = debouncedCourse
+      ? `${getAllCourses}/courses/${debouncedCourse}?${params.toString()}`
+      : `${getAllCourses}/courses?${params.toString()}`;
+
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error("Failed to fetch courses data");
     }
@@ -105,15 +116,18 @@ function Courses() {
   }
 
   const fetchChartData = async () => {
-    const response = await fetch(
-      course
-        ? `${getAllCourses}/courses/${course}/all_reviews?course_tips=${review}&date=${date}`
-        : `${getAllCourses}/courses/all?course_tips=${review}&date=${date}`
-    );
-    if (!response.ok) {
-      console.error("Failed to fetch chart data:", response.statusText);
-      throw new Error("Failed to fetch chart data");
-    }
+    const params = new URLSearchParams();
+    if (debouncedReview) params.append("course_tips", debouncedReview);
+    if (date) params.append("date", date);
+    const encodedCourse = debouncedCourse
+      ? encodeURIComponent(debouncedCourse)
+      : "";
+    let url = debouncedCourse
+      ? `${getAllCourses}/courses/${encodedCourse}/all_reviews?${params.toString()}`
+      : `${getAllCourses}/courses/all?${params.toString()}`;
+    url = url.replace(/\+/g, "%20");
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch chart data");
     return response.json();
   };
 
