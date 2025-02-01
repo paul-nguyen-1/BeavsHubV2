@@ -5,6 +5,7 @@ import { HttpService } from '@nestjs/axios';
 import { v4 as uuidv4 } from 'uuid';
 import { ParentCourseDto, CourseDto } from '../../dto/create-course.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
+import { subMonths, subYears } from 'date-fns';
 
 @Injectable()
 export class CoursesService {
@@ -72,8 +73,7 @@ export class CoursesService {
                 obj[
                   `How much time did you spend on average (per week) for this class? ${courseNumber}`
                 ],
-              course_enjoyability:
-                obj[`How much did you enjoy this class?`],
+              course_enjoyability: obj[`How much did you enjoy this class?`],
               course_tips:
                 obj[
                   `What tips would you give students taking this course? ${courseNumber}`
@@ -152,6 +152,7 @@ export class CoursesService {
     id: string,
     query: ExpressQuery,
     courseTips?: string,
+    date?: string,
   ): Promise<Course[]> {
     const resPerPage = 10;
     const currentPage = Number(query.page) || 1;
@@ -163,6 +164,37 @@ export class CoursesService {
 
     if (courseTips) {
       filters.course_tips = { $regex: courseTips, $options: 'i' };
+    }
+
+    if (date) {
+      const normalizedDate = decodeURIComponent(date).trim().toLowerCase();
+      const currentDate = new Date();
+      let dateFilter: Date | null = null;
+
+      switch (normalizedDate) {
+        case '1 month':
+        case 'one':
+          dateFilter = subMonths(currentDate, 1);
+          break;
+        case '3 months':
+          dateFilter = subMonths(currentDate, 3);
+          break;
+        case '6 months':
+          dateFilter = subMonths(currentDate, 6);
+          break;
+        case '1 year':
+          dateFilter = subYears(currentDate, 1);
+          break;
+        case '2 years':
+          dateFilter = subYears(currentDate, 2);
+          break;
+        default:
+          console.warn(`Invalid date filter received: ${date}`);
+      }
+
+      if (dateFilter) {
+        filters.timestamp = { $gte: dateFilter };
+      }
     }
 
     return await this.courseModel
@@ -184,7 +216,11 @@ export class CoursesService {
     return newCourse.save();
   }
 
-  async findAll(query: ExpressQuery, courseTips?: string): Promise<Course[]> {
+  async findAll(
+    query: ExpressQuery,
+    courseTips?: string,
+    date?: string,
+  ): Promise<Course[]> {
     const resPerPage = 10;
     const currentPage = Number(query.page) || 1;
     const skip = resPerPage * (currentPage - 1);
@@ -198,6 +234,37 @@ export class CoursesService {
       filters.course_tips = { $regex: courseTips, $options: 'i' };
     }
 
+    if (date) {
+      const normalizedDate = decodeURIComponent(date).trim().toLowerCase();
+      const currentDate = new Date();
+      let dateFilter: Date | null = null;
+
+      switch (normalizedDate) {
+        case '1 month':
+        case 'one':
+          dateFilter = subMonths(currentDate, 1);
+          break;
+        case '3 months':
+          dateFilter = subMonths(currentDate, 3);
+          break;
+        case '6 months':
+          dateFilter = subMonths(currentDate, 6);
+          break;
+        case '1 year':
+          dateFilter = subYears(currentDate, 1);
+          break;
+        case '2 years':
+          dateFilter = subYears(currentDate, 2);
+          break;
+        default:
+          console.warn(`Invalid date filter received: ${date}`);
+      }
+
+      if (dateFilter) {
+        filters.timestamp = { $gte: dateFilter };
+      }
+    }
+
     return await this.courseModel
       .find(filters)
       .sort({ timestamp: -1 })
@@ -207,11 +274,39 @@ export class CoursesService {
   }
 
   // No Pagination -- Access Chart Data
-  async findAllCourses(courseTips?: string): Promise<Course[]> {
+  async findAllCourses(courseTips?: string, date?: string): Promise<Course[]> {
     const filters: any = {};
     if (courseTips) {
       filters.course_tips = { $regex: courseTips, $options: 'i' };
     }
+
+    if (date) {
+      const currentDate = new Date();
+      let dateFilter: Date | null = null;
+
+      switch (date) {
+        case 'one':
+          dateFilter = subMonths(currentDate, 1);
+          break;
+        case '3 Months':
+          dateFilter = subMonths(currentDate, 3);
+          break;
+        case '6 Months':
+          dateFilter = subMonths(currentDate, 6);
+          break;
+        case '1 Year':
+          dateFilter = subYears(currentDate, 1);
+          break;
+        case '2 Years':
+          dateFilter = subYears(currentDate, 2);
+          break;
+      }
+
+      if (dateFilter) {
+        filters.timestamp = { $gte: dateFilter };
+      }
+    }
+
     return await this.courseModel.find(filters).lean().exec();
   }
 
@@ -219,6 +314,7 @@ export class CoursesService {
     id: string,
     query: ExpressQuery,
     courseTips?: string,
+    date?: string,
   ): Promise<Course[]> {
     const filters: any = {
       course_name: { $regex: id, $options: 'i' },
@@ -226,6 +322,37 @@ export class CoursesService {
 
     if (courseTips) {
       filters.course_tips = { $regex: courseTips, $options: 'i' };
+    }
+
+    if (date) {
+      const normalizedDate = decodeURIComponent(date).trim().toLowerCase();
+      const currentDate = new Date();
+      let dateFilter: Date | null = null;
+
+      switch (normalizedDate) {
+        case '1 month':
+        case 'one':
+          dateFilter = subMonths(currentDate, 1);
+          break;
+        case '3 months':
+          dateFilter = subMonths(currentDate, 3);
+          break;
+        case '6 months':
+          dateFilter = subMonths(currentDate, 6);
+          break;
+        case '1 year':
+          dateFilter = subYears(currentDate, 1);
+          break;
+        case '2 years':
+          dateFilter = subYears(currentDate, 2);
+          break;
+        default:
+          console.warn(`Invalid date filter received: ${date}`);
+      }
+
+      if (dateFilter) {
+        filters.timestamp = { $gte: dateFilter };
+      }
     }
 
     return await this.courseModel.find(filters).sort({ timestamp: -1 }).exec();

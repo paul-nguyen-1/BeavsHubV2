@@ -1,21 +1,21 @@
 import { Autocomplete, CloseButton } from "@mantine/core";
-import {
-  lowerDivisionOne,
-  lowerDivisionTwo,
-  upperDivisionOne,
-  upperDivisionTwo,
-} from "../../lib/const";
 
 interface SelectMantineProps {
   value: string | null;
   onChange: (value: string | null) => void;
   charSize?: number;
+  label?: string;
+  placeHolder?: string;
+  data: string[];
 }
 
 export default function SelectMantine({
   value,
   onChange,
   charSize,
+  label,
+  placeHolder,
+  data,
 }: SelectMantineProps) {
   const handleInputChange = (inputValue: string | null) => {
     if (inputValue && charSize) {
@@ -28,16 +28,11 @@ export default function SelectMantine({
 
   return (
     <Autocomplete
-      label="All Classes"
-      placeholder="Pick a class"
+      label={label}
+      placeholder={placeHolder}
       value={value || ""}
       onChange={handleInputChange}
-      data={[
-        { group: "100-199", items: lowerDivisionOne },
-        { group: "200-299", items: lowerDivisionTwo },
-        { group: "300-399", items: upperDivisionOne },
-        { group: "400-499", items: upperDivisionTwo },
-      ]}
+      data={data}
       rightSection={
         value ? (
           <CloseButton

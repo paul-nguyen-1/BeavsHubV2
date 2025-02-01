@@ -46,6 +46,7 @@ interface CourseFormData {
 
 function Courses() {
   const [course, setCourse] = useState<string | null>("");
+  const [date, setDate] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
   const [debouncedCourse] = useDebouncedValue(course, 200);
   const [debouncedReview] = useDebouncedValue(review, 200);
@@ -68,10 +69,12 @@ function Courses() {
 
   const { ref, inView } = useInView();
   const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
-    const defaultResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?page=${pageParam}`;
-    const reviewResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?course_tips=${debouncedReview}&page=${pageParam}`;
-
-    const response = await fetch(review ? reviewResponse : defaultResponse);
+    const params = new URLSearchParams({ page: pageParam.toString() });
+    if (debouncedCourse) params.append("course", debouncedCourse);
+    if (debouncedReview) params.append("course_tips", debouncedReview);
+    if (date) params.append("date", encodeURIComponent(date.trim()));
+    const url = `${getAllCourses}/courses?${params.toString()}`;
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error("Failed to fetch courses data");
     }
@@ -87,7 +90,7 @@ function Courses() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["projects", debouncedCourse, debouncedReview],
+    queryKey: ["projects", debouncedCourse, debouncedReview, date],
     queryFn: fetchProjects,
     initialPageParam: 1,
     getNextPageParam: (_lastPage, pages) => pages.length + 1,
@@ -104,11 +107,21 @@ function Courses() {
   }
 
   const fetchChartData = async () => {
-    const response = await fetch(
-      course
-        ? `${getAllCourses}/courses/${course}/all_reviews?course_tips=${review}`
-        : `${getAllCourses}/courses/all?course_tips=${review}`
-    );
+    let url;
+
+    if (debouncedCourse) {
+      const params = new URLSearchParams();
+      if (debouncedReview) params.append("course_tips", debouncedReview);
+      if (date) params.append("date", encodeURIComponent(date.trim()));
+      url = `${getAllCourses}/courses/${debouncedCourse}/all_reviews?${params.toString()}`;
+    } else {
+      const params = new URLSearchParams();
+      if (debouncedReview) params.append("course_tips", debouncedReview);
+      if (date) params.append("date", encodeURIComponent(date.trim()));
+      url = `${getAllCourses}/courses/all?${params.toString()}`;
+    }
+
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error("Failed to fetch chart data");
     }
@@ -116,7 +129,7 @@ function Courses() {
   };
 
   const { data: fetchedChartData, error: chartError } = useQuery({
-    queryKey: ["chartData", course, review],
+    queryKey: ["chartData", course, review, date],
     queryFn: fetchChartData,
   });
 
@@ -136,6 +149,10 @@ function Courses() {
 
   const handleCourseChange = (value: string | null) => {
     setCourse(value);
+  };
+
+  const handleDateChange = (value: string | null) => {
+    setDate(value);
   };
 
   const handleReviewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,10 +214,21 @@ function Courses() {
       <div>
         <motion.div variants={itemVariants}>
           <div className="flex flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6">
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-row flex-wrap gap-4">
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
-                  <SelectMantine value={course} onChange={handleCourseChange} />
+                  <SelectMantine
+                    label="Classes"
+                    placeHolder="Pick a class"
+                    value={course}
+                    onChange={handleCourseChange}
+                    data={[
+                      ...lowerDivisionOne,
+                      ...lowerDivisionTwo,
+                      ...upperDivisionOne,
+                      ...upperDivisionTwo,
+                    ]}
+                  />
                 </Skeleton>
               </div>
               <div className="w-full md:w-56">
@@ -209,7 +237,24 @@ function Courses() {
                     value={review ?? ""}
                     onChange={handleReviewChange}
                     label="Search"
-                    placeholder="Course Reviews"
+                    placeholder="Search for a review"
+                  />
+                </Skeleton>
+              </div>
+              <div className="w-full md:w-56">
+                <Skeleton visible={isLoading}>
+                  <SelectMantine
+                    label="Dates"
+                    placeHolder="Filter Date"
+                    value={date}
+                    data={[
+                      "1 Month",
+                      "3 Months",
+                      "6 Months",
+                      "1 Year",
+                      "2 Years",
+                    ]}
+                    onChange={handleDateChange}
                   />
                 </Skeleton>
               </div>
@@ -371,10 +416,9 @@ function Courses() {
           <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[75vh]">
             {data && fetchedChartData && (
               <div className="md:flex absolute justify-end text-xs font-medium mt-[-25px] text-gray-300">
-                {data.pages.length * 10 >= fetchedChartData?.length
-                  ? fetchedChartData?.length
-                  : data.pages.length * 10}{" "}
-                of {fetchedChartData?.length} course reviews
+                {data?.pages.reduce((count, page) => count + page.length, 0)} of{" "}
+                {data?.pages.reduce((count, page) => count + page.length, 0)}{" "}
+                course reviews
               </div>
             )}
             {status === "pending" && (
