@@ -449,6 +449,7 @@ function Courses() {
                         time_spent_per_week={course.course_time_spent_per_week}
                         timestamp={new Date(course.timestamp).toLocaleString()}
                         tips={course.course_tips}
+                        pairs={course.pairs}
                       />
                     </motion.div>
                   </div>

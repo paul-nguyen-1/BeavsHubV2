@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Badge,
   Group,
   Paper,
   Text,
@@ -18,6 +19,7 @@ export function Course(props: CourseCard) {
     enjoyability,
     tips,
     timestamp,
+    pairs,
   } = props;
   const isMobile = useMediaQuery("(max-width: 768px)");
   return (
@@ -27,8 +29,21 @@ export function Course(props: CourseCard) {
         <div>
           <Text fz="sm">{isMobile ? course.slice(0, 30) : course}</Text>
           <Text fz="sm">Difficulty: {difficulty}</Text>
-          <Text fz="sm">Enjoyability: {enjoyability}</Text>
+          {enjoyability && <Text fz="sm">Enjoyability: {enjoyability}</Text>}
           <Text fz="sm">Time Spent Per Week: {time_spent_per_week}</Text>
+          {pairs.length !== 0 && (
+            <div className="flex flex-row items-center flex-wrap gap-2">
+              <Text size="sm">Course Pairs:</Text>
+              <Group>
+                {pairs.map((pair, index) => (
+                  <Badge key={index} radius="xl" size="lg" variant="light">
+                    {pair}
+                  </Badge>
+                ))}
+              </Group>
+            </div>
+          )}
+
           <Text fz="xs" c="dimmed">
             Posted: {new Date(timestamp).toLocaleDateString()}
           </Text>
