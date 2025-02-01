@@ -373,10 +373,9 @@ function Courses() {
                   required
                 />
               </div>
-
-              <Button className="mt-4" onClick={handleCourseSubmit}>
-                Submit
-              </Button>
+              <div className="mt-4">
+                <Button onClick={handleCourseSubmit}>Submit</Button>
+              </div>
             </Modal>
             <div>
               <Skeleton visible={isLoading}>
