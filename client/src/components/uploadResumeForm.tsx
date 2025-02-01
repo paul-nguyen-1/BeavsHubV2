@@ -147,9 +147,9 @@ function UploadResumeForm({ closeForm }: UploadResumeFormProps) {
           <p className="text-red-500">Please select a file.</p>
         )}
       </div>
-      <Button type="submit" className="mt-4">
-        Submit
-      </Button>
+      <div className="mt-4">
+        <Button type="submit">Submit</Button>
+      </div>
     </form>
   );
 }

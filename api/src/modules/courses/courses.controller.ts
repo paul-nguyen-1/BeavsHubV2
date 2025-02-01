@@ -14,22 +14,24 @@ export class CoursesController {
   async getAllRecords(
     @Query() query: ExpressQuery,
     @Query('course_tips') courseTips?: string,
+    @Query('date') date?: string,
   ): Promise<CourseDto[]> {
     await this.courseService.refreshCourseReviews();
-    return await this.courseService.findAll(query, courseTips);
+    return await this.courseService.findAll(query, courseTips, date);
   }
 
   @Get('all')
   async getAllCourses(
     @Query('course_tips') courseTips?: string,
+    @Query('date') date?: string,
   ): Promise<CourseDto[]> {
     console.log('Getting all courses');
-    return await this.courseService.findAllCourses(courseTips);
+    return await this.courseService.findAllCourses(courseTips, date);
   }
 
   @Post('post')
   async postCourse(@Body() body: CourseDto): Promise<CourseDto> {
-    console.log('Received body:', body); 
+    console.log('Received body:', body);
     return await this.courseService.createCourse(body);
   }
 
@@ -38,8 +40,9 @@ export class CoursesController {
     @Param('id') id: string,
     @Query() query: ExpressQuery,
     @Query('course_tips') courseTips?: string,
+    @Query('date') date?: string,
   ): Promise<CourseDto[]> {
-    return await this.courseService.findCourse(id, query, courseTips);
+    return await this.courseService.findCourse(id, query, courseTips, date);
   }
 
   @Get(':id/all_reviews')
@@ -47,8 +50,14 @@ export class CoursesController {
     @Param('id') id: string,
     @Query() query: ExpressQuery,
     @Query('course_tips') courseTips?: string,
+    @Query('date') date?: string,
   ): Promise<CourseDto[]> {
-    return await this.courseService.findAllCourseReviews(id, query, courseTips);
+    return await this.courseService.findAllCourseReviews(
+      id,
+      query,
+      courseTips,
+      date,
+    );
   }
 }
 

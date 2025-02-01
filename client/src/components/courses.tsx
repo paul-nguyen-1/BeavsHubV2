@@ -38,6 +38,7 @@ interface CourseFormData {
   course_name: string;
   course_difficulty: string;
   course_time_spent_per_week: string;
+  course_enjoyability: string;
   course_tips: string;
   course_taken_date: string;
   pairs: string[];
@@ -45,6 +46,7 @@ interface CourseFormData {
 
 function Courses() {
   const [course, setCourse] = useState<string | null>("");
+  const [date, setDate] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
   const [debouncedCourse] = useDebouncedValue(course, 200);
   const [debouncedReview] = useDebouncedValue(review, 200);
@@ -55,6 +57,7 @@ function Courses() {
     course_difficulty: "",
     course_time_spent_per_week: "",
     course_tips: "",
+    course_enjoyability: "",
     course_taken_date: "",
     pairs: [],
   });
@@ -66,10 +69,21 @@ function Courses() {
 
   const { ref, inView } = useInView();
   const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
-    const defaultResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?page=${pageParam}`;
-    const reviewResponse = `${getAllCourses}/courses/${debouncedCourse ?? ""}?course_tips=${debouncedReview}&page=${pageParam}`;
+    const params = new URLSearchParams({
+      page: pageParam.toString(),
+    });
+    if (date) {
+      params.append("date", date);
+    }
+    if (debouncedReview) {
+      params.append("course_tips", debouncedReview);
+    }
 
-    const response = await fetch(review ? reviewResponse : defaultResponse);
+    const url = debouncedCourse
+      ? `${getAllCourses}/courses/${debouncedCourse}?${params.toString()}`
+      : `${getAllCourses}/courses?${params.toString()}`;
+
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error("Failed to fetch courses data");
     }
@@ -85,7 +99,7 @@ function Courses() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["projects", debouncedCourse, debouncedReview],
+    queryKey: ["projects", debouncedCourse, debouncedReview, date],
     queryFn: fetchProjects,
     initialPageParam: 1,
     getNextPageParam: (_lastPage, pages) => pages.length + 1,
@@ -102,19 +116,23 @@ function Courses() {
   }
 
   const fetchChartData = async () => {
-    const response = await fetch(
-      course
-        ? `${getAllCourses}/courses/${course}/all_reviews?course_tips=${review}`
-        : `${getAllCourses}/courses/all?course_tips=${review}`
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch chart data");
-    }
+    const params = new URLSearchParams();
+    if (debouncedReview) params.append("course_tips", debouncedReview);
+    if (date) params.append("date", date);
+    const encodedCourse = debouncedCourse
+      ? encodeURIComponent(debouncedCourse)
+      : "";
+    let url = debouncedCourse
+      ? `${getAllCourses}/courses/${encodedCourse}/all_reviews?${params.toString()}`
+      : `${getAllCourses}/courses/all?${params.toString()}`;
+    url = url.replace(/\+/g, "%20");
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch chart data");
     return response.json();
   };
 
   const { data: fetchedChartData, error: chartError } = useQuery({
-    queryKey: ["chartData", course, review],
+    queryKey: ["chartData", debouncedCourse, debouncedReview, date],
     queryFn: fetchChartData,
   });
 
@@ -134,6 +152,10 @@ function Courses() {
 
   const handleCourseChange = (value: string | null) => {
     setCourse(value);
+  };
+
+  const handleDateChange = (value: string | null) => {
+    setDate(value);
   };
 
   const handleReviewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,6 +202,7 @@ function Courses() {
         course_difficulty: "",
         course_time_spent_per_week: "",
         course_tips: "",
+        course_enjoyability: "",
         course_taken_date: "",
         pairs: [],
       });
@@ -194,10 +217,21 @@ function Courses() {
       <div>
         <motion.div variants={itemVariants}>
           <div className="flex flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6">
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-row flex-wrap gap-4">
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
-                  <SelectMantine value={course} onChange={handleCourseChange} />
+                  <SelectMantine
+                    label="Classes"
+                    placeHolder="Pick a class"
+                    value={course}
+                    onChange={handleCourseChange}
+                    data={[
+                      ...lowerDivisionOne,
+                      ...lowerDivisionTwo,
+                      ...upperDivisionOne,
+                      ...upperDivisionTwo,
+                    ]}
+                  />
                 </Skeleton>
               </div>
               <div className="w-full md:w-56">
@@ -206,7 +240,24 @@ function Courses() {
                     value={review ?? ""}
                     onChange={handleReviewChange}
                     label="Search"
-                    placeholder="Course Reviews"
+                    placeholder="Search for a review"
+                  />
+                </Skeleton>
+              </div>
+              <div className="w-full md:w-56">
+                <Skeleton visible={isLoading}>
+                  <SelectMantine
+                    label="Dates"
+                    placeHolder="Filter Date"
+                    value={date}
+                    data={[
+                      "1 Month",
+                      "3 Months",
+                      "6 Months",
+                      "1 Year",
+                      "2 Years",
+                    ]}
+                    onChange={handleDateChange}
                   />
                 </Skeleton>
               </div>
@@ -259,6 +310,16 @@ function Courses() {
                       value ?? ""
                     );
                   }}
+                />
+                <Select
+                  value={formData.course_enjoyability}
+                  onChange={(value) =>
+                    handleCourseInputChange("course_enjoyability", value ?? "")
+                  }
+                  label="Course Enjoyability"
+                  placeholder="Select Course Enjoyability"
+                  data={["Enjoyable", "Meh", "Not Enjoyable"]}
+                  clearable
                 />
                 <Textarea
                   placeholder="Enter Tips for the Course"
@@ -315,10 +376,9 @@ function Courses() {
                   required
                 />
               </div>
-
-              <Button className="mt-4" onClick={handleCourseSubmit}>
-                Submit
-              </Button>
+              <div className="mt-4">
+                <Button onClick={handleCourseSubmit}>Submit</Button>
+              </div>
             </Modal>
             <div>
               <Skeleton visible={isLoading}>
@@ -358,10 +418,8 @@ function Courses() {
           <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[75vh]">
             {data && fetchedChartData && (
               <div className="md:flex absolute justify-end text-xs font-medium mt-[-25px] text-gray-300">
-                {data.pages.length * 10 >= fetchedChartData?.length
-                  ? fetchedChartData?.length
-                  : data.pages.length * 10}{" "}
-                of {fetchedChartData?.length} course reviews
+                {data?.pages.reduce((count, page) => count + page.length, 0)} of{" "}
+                {fetchedChartData.length} course reviews
               </div>
             )}
             {status === "pending" && (
@@ -387,6 +445,7 @@ function Courses() {
                         difficulty={course.course_difficulty}
                         course={course.course_name}
                         taken_date={course.course_taken_date}
+                        enjoyability={course.course_enjoyability}
                         time_spent_per_week={course.course_time_spent_per_week}
                         timestamp={new Date(course.timestamp).toLocaleString()}
                         tips={course.course_tips}
