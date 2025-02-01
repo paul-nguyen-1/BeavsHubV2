@@ -7,6 +7,7 @@ export interface CourseInfo {
   course_tips: string;
   course_enjoyability: string;
   timestamp: string;
+  pairs: string[];
 }
 
 export interface CourseCard {
@@ -18,6 +19,7 @@ export interface CourseCard {
   time_spent_per_week: string;
   tips: string;
   timestamp: string;
+  pairs: string[];
 }
 
 export interface ChartData {
