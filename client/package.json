@@ -38,7 +38,7 @@
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@tanstack/eslint-plugin-query": "^5.64.2",
-    "@tanstack/router-devtools": "^1.97.3",
+    "@tanstack/router-devtools": "^1.99.0",
     "@tanstack/router-plugin": "^1.97.23",
     "@types/node": "^22.10.10",
     "@types/react": "^18.3.12",
