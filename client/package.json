@@ -23,7 +23,7 @@
     "@vercel/analytics": "^1.4.1",
     "@wojtekmaj/react-hooks": "^1.22.0",
     "@xyflow/react": "^12.4.2",
-    "aws-amplify": "^6.12.3",
+    "aws-amplify": "^6.13.0",
     "axios": "^1.7.9",
     "elkjs": "^0.9.3",
     "motion": "^12.0.5",
