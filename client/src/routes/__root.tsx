@@ -7,7 +7,9 @@ export const Route = createRootRoute({
     <>
       <TitaniumHeader />
       <Outlet />
-      <TanStackRouterDevtools />
+      {import.meta.env.VITE_API_BASE_URL.includes("localhost") && (
+        <TanStackRouterDevtools />
+      )}
     </>
   ),
 });
