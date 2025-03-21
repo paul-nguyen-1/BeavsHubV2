@@ -1,170 +1,79 @@
-import {
-  Anchor,
-  Burger,
-  Container,
-  ContainerProps,
-  Flex,
-  Group,
-  MantineBreakpoint,
-  MantineRadius,
-  Text,
-} from "@mantine/core";
-import { motion } from "motion/react";
-import { useState } from "react";
-import classes from "./header.module.css";
+import { useState, useRef, useEffect } from "react";
+import { Anchor, Box, Burger, Container, Group, Image } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { Link, useLocation } from "@tanstack/react-router";
+import headerIcon from "../../assets/header.svg";
+import "./header.css";
 
-export type HeaderLink = {
-  label: string;
-  href: string;
-};
-
-const HEADER_LINKS: HeaderLink[] = [
-  { label: "Courses", href: "/" },
-  { label: "Planner", href: "/planner" },
-  { label: "Resumes", href: "/resumes" },
+const mainLinks = [
+  { link: "/", label: "Home" },
+  { link: "/courses", label: "Courses" },
+  { link: "/planner", label: "Degree" },
+  { link: "/resumes", label: "Resume" },
 ];
 
-type Header01Props = ContainerProps & {
-  logo?: React.ReactNode;
-  links?: HeaderLink[];
-  callToActionTitle?: string;
-  callToActionUrl?: string;
-  breakpoint?: MantineBreakpoint;
-  radius?: MantineRadius | number;
-};
+export function DoubleHeader() {
+  const location = useLocation();
+  const [opened, { toggle }] = useDisclosure(false);
+  const linksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [underlineStyle, setUnderlineStyle] = useState({
+    transform: "translateX(0px)",
+    width: "0px",
+  });
 
-export const TitaniumHeader = ({
-  style,
-  breakpoint = "xs",
-  logo = (
-    <Text fw="bold" fz={24} mx="xs">
-      BeavsHub
-    </Text>
-  ),
-  callToActionTitle = "Login",
-  callToActionUrl = "/login",
-  links = HEADER_LINKS,
-  h = 60,
-  radius = 30,
-  ...containerProps
-}: Header01Props) => {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const activeIndex = mainLinks.findIndex((item) => item.link === location.pathname);
 
-  const handleMenuToggle = () => {
-    setMenuOpen((prev) => !prev);
-  };
+  useEffect(() => {
+    const handle = requestAnimationFrame(() => {
+      const link = linksRef.current[activeIndex];
+      if (link) {
+        setUnderlineStyle({
+          transform: `translateX(${link.offsetLeft}px)`,
+          width: `${link.offsetWidth}px`,
+        });
+      }
+    });
+    return () => cancelAnimationFrame(handle);
+  }, [activeIndex]);
 
-  const handleCloseOverlay = () => {
-    setMenuOpen(false);
-  };
+  const mainItems = mainLinks.map((item, index) => (
+    <Anchor
+      underline="never"
+      href={item.link}
+      key={item.label}
+      ref={(el) => (linksRef.current[index] = el)}
+      className="main-link"
+      data-active={index === activeIndex ? "true" : undefined}
+    >
+      <Link to={item.link}>{item.label}</Link>
+    </Anchor>
+  ));
 
   return (
-    <Container
-      className={classes.container}
-      component="header"
-      style={{ borderRadius: radius, ...style }}
-      w={{ base: "100%", [breakpoint]: "fit-content" }}
-      h={h}
-      {...containerProps}
-    >
-      <Flex
-        justify="space-between"
-        align="center"
-        h="100%"
-        style={{ overflow: "hidden" }}
-        gap="xs"
-        wrap="nowrap"
-      >
-        <Group gap={0} style={{ flexShrink: 0 }}>
-          <Burger
-            size="sm"
-            opened={isMenuOpen}
-            onClick={handleMenuToggle}
-            hiddenFrom={breakpoint}
-          />
-          {logo}
-        </Group>
-        <motion.div
-          initial={{ width: 0, opacity: 0 }}
-          whileInView={{ width: "fit-content", opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-          viewport={{ once: true }}
-        >
-          <Flex
-            flex={1}
-            justify="center"
-            px="lg"
-            h="100%"
-            align="center"
-            wrap="nowrap"
-            visibleFrom={breakpoint}
-            gap="lg"
-            className={classes["link-container"]}
+    <header className="header">
+      <Container className="inner">
+        <Link to="/">
+          <Image src={headerIcon} className="icon" />
+        </Link>
+        <Box className="links" visibleFrom="sm">
+          <Group
+            gap={0}
+            justify="flex-end"
+            className="main-links"
+            style={{ position: "relative" }}
           >
-            {links.map((link) => (
-              <Anchor
-                key={link.href}
-                className={classes.link}
-                href={link.href}
-                td="none"
-              >
-                {link.label}
-              </Anchor>
-            ))}
-          </Flex>
-        </motion.div>
-        {/* <Anchor
-          href={callToActionUrl}
-          className={classes.cta}
-          style={{ flexShrink: 0, padding: "5px 20px" }}
-        >
-          {callToActionTitle}
-        </Anchor> */}
-      </Flex>
-
-      {isMenuOpen && (
-        <motion.div
-          className={classes.overlay}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          onClick={handleCloseOverlay}
-        >
-          <div className={classes.overlayContent}>
-            <button
-              className={classes.closeButton}
-              onClick={handleCloseOverlay}
-            >
-              &times;
-            </button>
-            <Flex direction="column" justify="center" align="center" gap="md">
-              {links.map((link) => (
-                <Anchor
-                  key={link.href}
-                  className={classes.link}
-                  href={link.href}
-                  td="none"
-                  onClick={handleMenuToggle}
-                >
-                  {link.label}
-                </Anchor>
-              ))}
-              <Anchor
-                href={callToActionUrl}
-                className={classes.cta}
-                onClick={handleMenuToggle}
-                style={{
-                  padding: "5px 20px",
-                  borderRadius: "20px",
-                }}
-              >
-                {callToActionTitle}
-              </Anchor>
-            </Flex>
-          </div>
-        </motion.div>
-      )}
-    </Container>
+            {mainItems}
+            <div className="underline" style={underlineStyle}></div>
+          </Group>
+        </Box>
+        <Burger
+          opened={opened}
+          onClick={toggle}
+          className="burger"
+          size="sm"
+          hiddenFrom="sm"
+        />
+      </Container>
+    </header>
   );
-};
+}
