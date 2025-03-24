@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Anchor, Box, Burger, Container, Group, Image } from "@mantine/core";
+import { Box, Burger, Container, Group, Image } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link, useLocation } from "@tanstack/react-router";
 import headerIcon from "../../assets/header.svg";
@@ -15,13 +15,15 @@ const mainLinks = [
 export function DoubleHeader() {
   const location = useLocation();
   const [opened, { toggle }] = useDisclosure(false);
-  const linksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const linksRef = useRef<(HTMLDivElement | null)[]>([]);
   const [underlineStyle, setUnderlineStyle] = useState({
     transform: "translateX(0px)",
     width: "0px",
   });
 
-  const activeIndex = mainLinks.findIndex((item) => item.link === location.pathname);
+  const activeIndex = mainLinks.findIndex(
+    (item) => item.link === location.pathname
+  );
 
   useEffect(() => {
     const handle = requestAnimationFrame(() => {
@@ -37,16 +39,14 @@ export function DoubleHeader() {
   }, [activeIndex]);
 
   const mainItems = mainLinks.map((item, index) => (
-    <Anchor
-      underline="never"
-      href={item.link}
+    <Box
       key={item.label}
       ref={(el) => (linksRef.current[index] = el)}
       className="main-link"
       data-active={index === activeIndex ? "true" : undefined}
     >
       <Link to={item.link}>{item.label}</Link>
-    </Anchor>
+    </Box>
   ));
 
   return (
