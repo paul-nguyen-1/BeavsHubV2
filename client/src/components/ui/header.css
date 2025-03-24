@@ -3,7 +3,6 @@
 }
 
 .inner {
-  height: 84px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -33,9 +32,8 @@
 }
 
 .main-link {
-  text-transform: uppercase;
   font-size: var(--mantine-font-size-xs);
-  color: var(--mantine-color-gray-6);
+  color: var(--custom-gray-heading) !important;
   padding: 10px var(--mantine-spacing-sm);
   font-weight: 700;
   position: relative;
@@ -49,7 +47,7 @@
 }
 
 .main-link[data-active="true"] {
-  color: var(--mantine-color-blue-6);
+  color: var(--mantine-color-primary) !important;
   font-weight: bold;
 }
 
@@ -59,7 +57,7 @@
   left: 0;
   height: 2px;
   width: var(--underline-width, 80px);
-  background-color: var(--mantine-color-blue-6);
+  background-color: var(--mantine-color-primary);
   transition:
     transform 0.3s ease-in-out,
     width 0.3s ease-in-out;

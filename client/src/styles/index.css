@@ -1,6 +1,6 @@
 @import "normalize.css";
 @import url("./xy-theme.css");
-@import "tailwindcss"; 
+@import "tailwindcss";
 
 .PDF__container__document {
   width: 100%;
@@ -15,4 +15,9 @@ canvas {
 
 .cardSizingPDF > canvas {
   height: 100% !important;
+}
+
+:root {
+  --mantine-color-primary: #D73F09;
+  --custom-gray-heading: #423E3C;
 }
