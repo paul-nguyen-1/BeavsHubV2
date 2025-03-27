@@ -221,7 +221,6 @@ function Courses() {
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
                   <SelectMantine
-                    label="Classes"
                     placeHolder="Pick a class"
                     value={course}
                     onChange={handleCourseChange}
@@ -239,7 +238,6 @@ function Courses() {
                   <MantineInput
                     value={review ?? ""}
                     onChange={handleReviewChange}
-                    label="Search"
                     placeholder="Search for a review"
                   />
                 </Skeleton>
@@ -247,7 +245,6 @@ function Courses() {
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
                   <SelectMantine
-                    label="Dates"
                     placeHolder="Filter Date"
                     value={date}
                     data={[
@@ -382,7 +379,7 @@ function Courses() {
             </Modal>
             <div>
               <Skeleton visible={isLoading}>
-                <Button className="relative top-3" onClick={open}>
+                <Button onClick={open}>
                   New Post
                 </Button>
               </Skeleton>
