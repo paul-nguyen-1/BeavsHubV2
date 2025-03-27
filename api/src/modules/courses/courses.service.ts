@@ -348,4 +348,53 @@ export class CoursesService {
 
     return await this.courseModel.find(filters).sort({ timestamp: -1 }).exec();
   }
+
+  async mostFrequentCourses() {
+    return this.courseModel
+      .aggregate([
+        { $sort: { createdAt: -1 } },
+        {
+          $addFields: {
+            hours: {
+              $switch: {
+                branches: [
+                  {
+                    case: { $eq: ['$course_time_spent_per_week', '0-5 hours'] },
+                    then: 2.5,
+                  },
+                  {
+                    case: {
+                      $eq: ['$course_time_spent_per_week', '6-12 hours'],
+                    },
+                    then: 9,
+                  },
+                  {
+                    case: {
+                      $eq: ['$course_time_spent_per_week', '13-18 hours'],
+                    },
+                    then: 15.5,
+                  },
+                  {
+                    case: { $eq: ['$course_time_spent_per_week', '18+ hours'] },
+                    then: 20,
+                  },
+                ],
+                default: 0,
+              },
+            },
+          },
+        },
+        {
+          $group: {
+            _id: '$course_name',
+            count: { $sum: 1 },
+            avg_difficulty: { $avg: '$course_difficulty' },
+            avg_hours: { $avg: '$hours' },
+            course: { $first: '$$ROOT' },
+          },
+        },
+        { $sort: { count: -1 } },
+      ])
+      .exec();
+  }
 }

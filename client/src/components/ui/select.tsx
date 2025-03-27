@@ -1,4 +1,5 @@
 import { Autocomplete, CloseButton } from "@mantine/core";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 
 interface SelectMantineProps {
   value: string | null;
@@ -7,6 +8,7 @@ interface SelectMantineProps {
   label?: string;
   placeHolder?: string;
   data: string[];
+  isPrimarySelector?: boolean;
 }
 
 export default function SelectMantine({
@@ -16,13 +18,19 @@ export default function SelectMantine({
   label,
   placeHolder,
   data,
+  isPrimarySelector,
 }: SelectMantineProps) {
+  const navigate = useNavigate();
+  const routerState = useRouterState();
   const handleInputChange = (inputValue: string | null) => {
     if (inputValue && charSize) {
       const limitedValue = inputValue.slice(0, charSize);
       onChange(limitedValue);
     } else {
       onChange(inputValue);
+    }
+    if (routerState.location.pathname !== "/courses") {
+      navigate({ to: "/courses" });
     }
   };
 
@@ -35,10 +43,14 @@ export default function SelectMantine({
       data={data}
       rightSection={
         value ? (
-          <CloseButton
-            aria-label="Clear input"
-            onClick={() => onChange(null)}
-          />
+          isPrimarySelector ? (
+            ""
+          ) : (
+            <CloseButton
+              aria-label="Clear input"
+              onClick={() => onChange(null)}
+            />
+          )
         ) : null
       }
     />
