@@ -47,9 +47,6 @@ function Home() {
   });
 
   const popularCourses = data?.slice(0, 3) ?? [];
-
-  console.log(popularCourses);
-
   return (
     <>
       <div
