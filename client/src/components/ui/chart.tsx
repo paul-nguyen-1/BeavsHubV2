@@ -4,7 +4,7 @@ import {
   BarChartDataItem,
   PieChartDataItem,
   DonutChartDataItem,
-} from "../../lib/types";
+} from "../../misc/types";
 import { Legend } from "recharts";
 
 const colorPalette = ["#6FCF97", "#F2C94C", "#F2994A", "#EB5757", "#D32F2F"];

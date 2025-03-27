@@ -6,7 +6,7 @@ import {
   Text,
   TypographyStylesProvider,
 } from "@mantine/core";
-import { CourseCard } from "../lib/types";
+import { CourseCard } from "../misc/types";
 import { useMediaQuery } from "@mantine/hooks";
 import user from "/user.png?url";
 

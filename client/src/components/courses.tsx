@@ -10,8 +10,8 @@ import {
   lowerDivisionTwo,
   upperDivisionOne,
   upperDivisionTwo,
-} from "../lib/const";
-import { CourseInfo } from "../lib/types";
+} from "../misc/const";
+import { CourseInfo } from "../misc/types";
 import { Course } from "./course";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
