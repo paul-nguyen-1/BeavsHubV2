@@ -8,6 +8,8 @@ import "./styles/index.css";
 import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
 import { Analytics } from "@vercel/analytics/react";
+import { Provider } from 'react-redux'
+import store from '../app/store'
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -52,12 +54,14 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <MantineProvider theme={theme}>
-          <RouterProvider router={router} />
-          <Analytics />
-        </MantineProvider>
-      </QueryClientProvider>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <MantineProvider theme={theme}>
+            <RouterProvider router={router} />
+            <Analytics />
+          </MantineProvider>
+        </QueryClientProvider>
+      </Provider>
     </StrictMode>
   );
 }

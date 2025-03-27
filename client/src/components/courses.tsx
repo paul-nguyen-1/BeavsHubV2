@@ -33,6 +33,9 @@ import {
   DonutChartMantine,
 } from "./ui/chart";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import { AppDispatch, RootState } from "../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedCourse } from "../hooks/useCourse";
 
 interface CourseFormData {
   course_name: string;
@@ -45,7 +48,10 @@ interface CourseFormData {
 }
 
 function Courses() {
-  const [course, setCourse] = useState<string | null>("");
+  const dispatch = useDispatch<AppDispatch>();
+  const course = useSelector(
+    (state: RootState) => state.useCourse.selectedCourse
+  );
   const [date, setDate] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
   const [debouncedCourse] = useDebouncedValue(course, 200);
@@ -151,7 +157,7 @@ function Courses() {
   };
 
   const handleCourseChange = (value: string | null) => {
-    setCourse(value);
+    dispatch(setSelectedCourse(value));
   };
 
   const handleDateChange = (value: string | null) => {
@@ -379,9 +385,7 @@ function Courses() {
             </Modal>
             <div>
               <Skeleton visible={isLoading}>
-                <Button onClick={open}>
-                  New Post
-                </Button>
+                <Button onClick={open}>New Post</Button>
               </Skeleton>
             </div>
           </div>

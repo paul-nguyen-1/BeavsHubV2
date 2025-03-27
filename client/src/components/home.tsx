@@ -5,8 +5,27 @@ import telegramIcon from "../assets/telegram-fill.svg";
 import peopleIcon from "../assets/people-fill.svg";
 import backgroundImage from "../assets/Hero_section_background.jpg";
 import { LinearProgress } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../app/store";
+import SelectMantine from "./ui/select";
+import {
+  lowerDivisionOne,
+  lowerDivisionTwo,
+  upperDivisionOne,
+  upperDivisionTwo,
+} from "../misc/const";
+import { setSelectedCourse } from "../hooks/useCourse";
 
 function Home() {
+  const dispatch = useDispatch<AppDispatch>();
+  const course = useSelector(
+    (state: RootState) => state.useCourse.selectedCourse
+  );
+
+  const handleCourseChange = (value: string | null) => {
+    dispatch(setSelectedCourse(value));
+  };
+
   return (
     <>
       <div
@@ -18,6 +37,19 @@ function Home() {
           <h2 className="text-2xl mt-2">
             Comprehensive Course Reviews and Degree Planning for OSU Students
           </h2>
+          <div className="w-full md:w-56">
+            <SelectMantine
+              placeHolder="Pick a class"
+              value={course}
+              onChange={handleCourseChange}
+              data={[
+                ...lowerDivisionOne,
+                ...lowerDivisionTwo,
+                ...upperDivisionOne,
+                ...upperDivisionTwo,
+              ]}
+            />
+          </div>
         </div>
       </div>
       <div>
