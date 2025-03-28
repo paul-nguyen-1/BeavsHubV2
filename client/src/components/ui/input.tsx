@@ -4,7 +4,7 @@ import { IconAt } from "@tabler/icons-react";
 interface MantineInputProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  label: string;
+  label?: string;
   placeholder: string;
 }
 

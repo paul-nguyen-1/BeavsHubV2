@@ -1,4 +1,6 @@
-import { Autocomplete, CloseButton } from "@mantine/core";
+import { Autocomplete, CloseButton, Image } from "@mantine/core";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
+import searchIcon from "../../assets/Hero_search_button.svg";
 
 interface SelectMantineProps {
   value: string | null;
@@ -7,6 +9,7 @@ interface SelectMantineProps {
   label?: string;
   placeHolder?: string;
   data: string[];
+  isPrimarySelector?: boolean;
 }
 
 export default function SelectMantine({
@@ -16,7 +19,10 @@ export default function SelectMantine({
   label,
   placeHolder,
   data,
+  isPrimarySelector,
 }: SelectMantineProps) {
+  const navigate = useNavigate();
+  const routerState = useRouterState();
   const handleInputChange = (inputValue: string | null) => {
     if (inputValue && charSize) {
       const limitedValue = inputValue.slice(0, charSize);
@@ -31,10 +37,25 @@ export default function SelectMantine({
       label={label}
       placeholder={placeHolder}
       value={value || ""}
-      onChange={handleInputChange}
+      onChange={(value) => {
+        handleInputChange(value);
+      }}
       data={data}
       rightSection={
-        value ? (
+        isPrimarySelector ? (
+          <Image
+            src={searchIcon}
+            h={32}
+            alt="Search"
+            className="relative left-0.5 cursor-pointer transition-transform hover:scale-110"
+            onClick={() => {
+              handleInputChange(value);
+              if (routerState.location.pathname !== "/courses") {
+                navigate({ to: "/courses" });
+              }
+            }}
+          />
+        ) : value ? (
           <CloseButton
             aria-label="Clear input"
             onClick={() => onChange(null)}

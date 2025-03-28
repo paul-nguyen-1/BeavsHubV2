@@ -10,8 +10,8 @@ import {
   lowerDivisionTwo,
   upperDivisionOne,
   upperDivisionTwo,
-} from "../lib/const";
-import { CourseInfo } from "../lib/types";
+} from "../misc/const";
+import { CourseInfo } from "../misc/types";
 import { Course } from "./course";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
@@ -33,6 +33,9 @@ import {
   DonutChartMantine,
 } from "./ui/chart";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import { AppDispatch, RootState } from "../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedCourse } from "../hooks/useCourse";
 
 interface CourseFormData {
   course_name: string;
@@ -45,7 +48,10 @@ interface CourseFormData {
 }
 
 function Courses() {
-  const [course, setCourse] = useState<string | null>("");
+  const dispatch = useDispatch<AppDispatch>();
+  const course = useSelector(
+    (state: RootState) => state.useCourse.selectedCourse
+  );
   const [date, setDate] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
   const [debouncedCourse] = useDebouncedValue(course, 200);
@@ -151,7 +157,7 @@ function Courses() {
   };
 
   const handleCourseChange = (value: string | null) => {
-    setCourse(value);
+    dispatch(setSelectedCourse(value));
   };
 
   const handleDateChange = (value: string | null) => {
@@ -171,6 +177,12 @@ function Courses() {
 
   const handleCourseSubmit = () => {
     mutation.mutate(formData);
+  };
+
+  const handleClearFilter = () => {
+    dispatch(setSelectedCourse(""));
+    setReview("");
+    setDate("");
   };
 
   const queryClient = useQueryClient();
@@ -216,12 +228,11 @@ function Courses() {
     <>
       <div>
         <motion.div variants={itemVariants}>
-          <div className="flex flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6">
+          <div className="flex flex-wrap flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6 pt-5">
             <div className="flex flex-row flex-wrap gap-4">
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
                   <SelectMantine
-                    label="Classes"
                     placeHolder="Pick a class"
                     value={course}
                     onChange={handleCourseChange}
@@ -239,7 +250,6 @@ function Courses() {
                   <MantineInput
                     value={review ?? ""}
                     onChange={handleReviewChange}
-                    label="Search"
                     placeholder="Search for a review"
                   />
                 </Skeleton>
@@ -247,7 +257,6 @@ function Courses() {
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
                   <SelectMantine
-                    label="Dates"
                     placeHolder="Filter Date"
                     value={date}
                     data={[
@@ -318,7 +327,7 @@ function Courses() {
                   }
                   label="Course Enjoyability"
                   placeholder="Select Course Enjoyability"
-                  data={["Enjoyable", "Meh", "Not Enjoyable"]}
+                  data={["Enjoyable", "Neutral", "Not Enjoyable"]}
                   clearable
                 />
                 <Textarea
@@ -380,12 +389,19 @@ function Courses() {
                 <Button onClick={handleCourseSubmit}>Submit</Button>
               </div>
             </Modal>
-            <div>
-              <Skeleton visible={isLoading}>
-                <Button className="relative top-3" onClick={open}>
-                  New Post
-                </Button>
-              </Skeleton>
+            <div className="flex flex-row flex-wrap gap-4">
+              <div>
+                <Skeleton visible={isLoading}>
+                  <Button onClick={handleClearFilter} color="gray">
+                    Clear Filters
+                  </Button>
+                </Skeleton>
+              </div>
+              <div>
+                <Skeleton visible={isLoading}>
+                  <Button onClick={open}>New Post</Button>
+                </Skeleton>
+              </div>
             </div>
           </div>
         </motion.div>

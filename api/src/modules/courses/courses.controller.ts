@@ -35,6 +35,11 @@ export class CoursesController {
     return await this.courseService.createCourse(body);
   }
 
+  @Get('frequency')
+  async getMostFrequentCourses(): Promise<CourseDto[]> {
+    return this.courseService.mostFrequentCourses();
+  }
+
   @Get(':id')
   async getCourseById(
     @Param('id') id: string,

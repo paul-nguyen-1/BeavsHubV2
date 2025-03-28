@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as CoursesImport } from './routes/courses'
 
 // Create Virtual Routes
 
@@ -41,6 +42,12 @@ const LoginLazyRoute = LoginLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
 
+const CoursesRoute = CoursesImport.update({
+  id: '/courses',
+  path: '/courses',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
   path: '/',
@@ -56,6 +63,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/courses': {
+      id: '/courses'
+      path: '/courses'
+      fullPath: '/courses'
+      preLoaderRoute: typeof CoursesImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -86,6 +100,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/courses': typeof CoursesRoute
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
   '/resumes': typeof ResumesLazyRoute
@@ -93,6 +108,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/courses': typeof CoursesRoute
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
   '/resumes': typeof ResumesLazyRoute
@@ -101,6 +117,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/courses': typeof CoursesRoute
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
   '/resumes': typeof ResumesLazyRoute
@@ -108,15 +125,16 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/planner' | '/resumes'
+  fullPaths: '/' | '/courses' | '/login' | '/planner' | '/resumes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/planner' | '/resumes'
-  id: '__root__' | '/' | '/login' | '/planner' | '/resumes'
+  to: '/' | '/courses' | '/login' | '/planner' | '/resumes'
+  id: '__root__' | '/' | '/courses' | '/login' | '/planner' | '/resumes'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  CoursesRoute: typeof CoursesRoute
   LoginLazyRoute: typeof LoginLazyRoute
   PlannerLazyRoute: typeof PlannerLazyRoute
   ResumesLazyRoute: typeof ResumesLazyRoute
@@ -124,6 +142,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  CoursesRoute: CoursesRoute,
   LoginLazyRoute: LoginLazyRoute,
   PlannerLazyRoute: PlannerLazyRoute,
   ResumesLazyRoute: ResumesLazyRoute,
@@ -140,6 +159,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/courses",
         "/login",
         "/planner",
         "/resumes"
@@ -147,6 +167,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/courses": {
+      "filePath": "courses.tsx"
     },
     "/login": {
       "filePath": "login.lazy.tsx"
