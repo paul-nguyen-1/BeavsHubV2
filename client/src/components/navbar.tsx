@@ -90,7 +90,7 @@ export function Navbar() {
   return (
     <Box pb={40}>
       <header
-        className={`header fixed w-full z-[99999] transition-transform duration-700 ease-in-out ${
+        className={`header fixed w-full z-[10] transition-transform duration-700 ease-in-out ${
           heightState === "scrollDown" ? "-translate-y-full" : "translate-y-0"
         }`}
       >
