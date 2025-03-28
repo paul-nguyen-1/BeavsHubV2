@@ -18,6 +18,17 @@ canvas {
 }
 
 :root {
-  --mantine-color-primary: #D73F09;
-  --custom-gray-heading: #423E3C;
+  --mantine-color-primary: #d73f09;
+  --custom-gray-heading: #423e3c;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }

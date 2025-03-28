@@ -222,7 +222,7 @@ function Courses() {
     <>
       <div>
         <motion.div variants={itemVariants}>
-          <div className="flex flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6">
+          <div className="flex flex-wrap flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6 pt-5">
             <div className="flex flex-row flex-wrap gap-4">
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
@@ -321,7 +321,7 @@ function Courses() {
                   }
                   label="Course Enjoyability"
                   placeholder="Select Course Enjoyability"
-                  data={["Enjoyable", "Meh", "Not Enjoyable"]}
+                  data={["Enjoyable", "Neutral", "Not Enjoyable"]}
                   clearable
                 />
                 <Textarea

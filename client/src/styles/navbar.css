@@ -11,19 +11,17 @@
 
 .icon {
   position: relative;
-  bottom: 10px;
+  top: 10px;
 }
 
 .links {
-  padding-top: var(--mantine-spacing-lg);
-  height: 84px;
-  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .main-links {
+  height: 100%;
   width: 100%;
   display: flex;
   justify-content: center !important;
@@ -53,7 +51,7 @@
 
 .underline {
   position: absolute;
-  bottom: 0;
+  bottom: 12px;
   left: 0;
   height: 2px;
   width: var(--underline-width, 80px);

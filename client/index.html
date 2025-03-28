@@ -5,9 +5,72 @@
     <link rel="icon" type="image/png" href="/beav.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BeavsHub</title>
+
+    <style>
+      #preloader {
+        position: fixed;
+        inset: 0;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 180px;
+        z-index: 9999;
+        transition: opacity 0.4s ease;
+      }
+
+      #preloader.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #preloader img {
+        width: 220px;
+        margin-bottom: 30px;
+      }
+
+      .progress-bar {
+        position: relative;
+        width: 200px;
+        height: 6px;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .progress-bar::before {
+        content: "";
+        position: absolute;
+        height: 100%;
+        width: 40%;
+        background-color: #ff6b00;
+        animation: loadingShimmer 1.5s infinite ease-in-out;
+        border-radius: 4px;
+      }
+
+      @keyframes loadingShimmer {
+        0% {
+          left: -40%;
+        }
+        50% {
+          left: 100%;
+        }
+        100% {
+          left: -40%;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="preloader">
+      <img src="/src/assets/osu-beavs.png" alt="BeavsHub Logo" />
+
+      <div class="progress-bar"></div>
+    </div>
+
     <div id="root"></div>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

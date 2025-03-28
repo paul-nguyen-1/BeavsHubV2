@@ -1,49 +1,46 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Group,
-  Button,
   Divider,
   Box,
   Burger,
   Drawer,
   ScrollArea,
   rem,
-  Autocomplete,
+  Image,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconSearch } from "@tabler/icons-react";
-import classes from "../styles/navbar.module.css";
-
-const links = [
-  { link: "/about", label: "Features" },
-  { link: "/pricing", label: "Pricing" },
-  { link: "/learn", label: "Learn" },
-  { link: "/community", label: "Community" },
-];
-
-const items = links.map((link) => (
-  <a
-    key={link.label}
-    href={link.link}
-    className={classes.link}
-    onClick={(event) => event.preventDefault()}
-  >
-    {link.label}
-  </a>
-));
-
-// https://ui.mantine.dev/category/headers/# -- implement header with mega menu, add search and get user icon and tab when i set up AWS Cognito
+import "../styles/navbar.css";
+import { Link, useLocation } from "@tanstack/react-router";
+import headerIcon from "../assets/header.svg";
 
 export function Navbar() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [heightState, setHeightState] = useState("pageTop");
+  const location = useLocation();
+  const linksRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [underlineStyle, setUnderlineStyle] = useState({
+    transform: "translateX(0px)",
+    width: "0px",
+  });
+
+  const mainLinks = [
+    { link: "/", label: "Home" },
+    { link: "/courses", label: "Courses" },
+    { link: "/planner", label: "Degree" },
+    { link: "/resumes", label: "Resume" },
+  ];
+
+  const activeIndex = mainLinks.findIndex(
+    (item) => item.link === location.pathname
+  );
 
   useEffect(() => {
     let lastVal = 0;
     const handleScroll = () => {
       const y = window.scrollY;
-      if (y > lastVal && y > 65) {
+      if (y > lastVal && y > 100) {
         setHeightState("scrollDown");
       } else if (y < lastVal) {
         setHeightState("scrollUp");
@@ -61,79 +58,81 @@ export function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    const handle = requestAnimationFrame(() => {
+      const link = linksRef.current[activeIndex];
+      if (link) {
+        setUnderlineStyle({
+          transform: `translateX(${link.offsetLeft}px)`,
+          width: `${link.offsetWidth}px`,
+        });
+      }
+    });
+    return () => cancelAnimationFrame(handle);
+  }, [activeIndex]);
+
+  const mainItems = mainLinks.map((item, index) => (
+    <Box
+      key={item.label}
+      ref={(el) => (linksRef.current[index] = el)}
+      className="main-link"
+      data-active={index === activeIndex ? "true" : undefined}
+      onClick={(event) => {
+        event.preventDefault();
+      }}
+    >
+      <Link to={item.link}>
+        <div onClick={closeDrawer}>{item.label}</div>
+      </Link>
+    </Box>
+  ));
+
   return (
-    <Box pb={120}>
+    <Box pb={40}>
       <header
-        className={`${classes.header} fixed w-full transition-transform duration-700 ease-in-out ${
+        className={`header fixed w-full transition-transform duration-700 ease-in-out ${
           heightState === "scrollDown" ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <Group justify="space-between" h="100%">
-          <h1>BeavsHub</h1>
-          <Autocomplete
-            className={classes.search}
-            placeholder="Search"
-            leftSection={
-              <IconSearch
-                style={{ width: rem(16), height: rem(16) }}
-                stroke={1.5}
-              />
-            }
-            data={[
-              "React",
-              "Angular",
-              "Vue",
-              "Next.js",
-              "Riot.js",
-              "Svelte",
-              "Blitz.js",
-            ]}
-            visibleFrom="xs"
-          />
-          <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
-            {items}
-          </Group>
-
-          <Group visibleFrom="sm">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
-          </Group>
-
+        <div className="h-[50px] flex flex-wrap justify-between md:justify-center md:gap-35 px-5">
+          <Link to="/">
+            <Image src={headerIcon} className="icon" />
+          </Link>
+          <Box className="links" visibleFrom="sm">
+            <Group
+              gap={0}
+              justify="flex-end"
+              className="main-links"
+              style={{ position: "relative" }}
+            >
+              {mainItems}
+              <div className="underline" style={underlineStyle}></div>
+            </Group>
+          </Box>
           <Burger
             opened={drawerOpened}
             onClick={toggleDrawer}
             hiddenFrom="sm"
+            className="relative top-2"
           />
-        </Group>
+        </div>
       </header>
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
-        size="100%"
+        size="80%"
         padding="md"
-        title="Navigation"
+        title={
+          <Link to="/">
+            <Image src={headerIcon} className="icon" onClick={closeDrawer} />
+          </Link>
+        }
         hiddenFrom="sm"
         zIndex={1000000}
       >
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
           <Divider my="sm" />
-          <a href="#" className={classes.link}>
-            Home
-          </a>
-          <a href="#" className={classes.link}>
-            Features
-          </a>
-          <a href="#" className={classes.link}>
-            Learn
-          </a>
-          <a href="#" className={classes.link}>
-            Academy
-          </a>
-          <Divider my="sm" />
-          <Group justify="center" grow pb="xl" px="md">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
-          </Group>
+          {mainItems}
         </ScrollArea>
       </Drawer>
     </Box>

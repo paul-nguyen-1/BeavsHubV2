@@ -17,9 +17,10 @@ import {
 } from "../misc/const";
 import { setSelectedCourse } from "../hooks/useCourse";
 import { useQuery } from "@tanstack/react-query";
-import { splitString } from "../misc/utils";
+import { classType, splitString } from "../misc/utils";
 import { Loader } from "@mantine/core";
 import { CourseInfo } from "../misc/types";
+import { Link } from "@tanstack/react-router";
 
 interface PopularCourses {
   avg_difficulty: number;
@@ -76,7 +77,7 @@ function Home() {
       </div>
       <div>
         <h1>Popular Courses</h1>
-        <div className="flex justify-center gap-15">
+        <div className="flex justify-center flex-wrap gap-15">
           {isLoading ? (
             <>
               <Loader />
@@ -89,33 +90,44 @@ function Home() {
               );
 
               return (
-                <div
-                  key={course.course._id}
-                  className="bg-white shadow-lg rounded-lg p-4 w-80 border"
+                <Link
+                  to="/courses"
+                  onClick={() =>
+                    dispatch(setSelectedCourse(course.course.course_name))
+                  }
                 >
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-lg font-bold">{courseNumber}</h2>
-                    <span className="bg-red-600 text-white text-xs px-3 py-1 rounded-full">
-                      Core
-                    </span>
+                  <div
+                    key={course.course._id}
+                    className="bg-white shadow-lg rounded-lg p-4 w-80 border"
+                  >
+                    <div className="flex justify-between items-center">
+                      <h2 className="text-lg font-bold">{courseNumber}</h2>
+                      <span className="bg-red-600 text-white text-xs px-3 py-1 rounded-full">
+                        {classType(course.course.course_name)}
+                      </span>
+                    </div>
+                    <h3 className="text-md font-semibold mt-2">
+                      {courseTitle}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Difficulty level
+                    </p>
+                    <div className="mt-1">
+                      <LinearProgress
+                        variant="determinate"
+                        value={course.avg_difficulty * 20}
+                        className="h-1.5 rounded-lg"
+                      />
+                    </div>
+                    <p className="text-sm italic text-gray-700 mt-3">
+                      {course.course.course_tips.slice(0, 75)}...
+                    </p>
+                    <div className="flex justify-between items-center text-sm text-gray-600 mt-4">
+                      <span>{course.avg_hours.toFixed(2)} hrs / wk</span>
+                      <span>{course.count} Reviews</span>
+                    </div>
                   </div>
-                  <h3 className="text-md font-semibold mt-2">{courseTitle}</h3>
-                  <p className="text-sm text-gray-600 mt-2">Difficulty level</p>
-                  <div className="mt-1">
-                    <LinearProgress
-                      variant="determinate"
-                      value={course.avg_difficulty * 20}
-                      className="h-1.5 rounded-lg"
-                    />
-                  </div>
-                  <p className="text-sm italic text-gray-700 mt-3">
-                    {course.course.course_tips.slice(0, 75)}...
-                  </p>
-                  <div className="flex justify-between items-center text-sm text-gray-600 mt-4">
-                    <span>{course.avg_hours.toFixed(2)} hrs</span>
-                    <span>{course.count} Reviews</span>
-                  </div>
-                </div>
+                </Link>
               );
             })
           )}
@@ -127,18 +139,26 @@ function Home() {
             image={calendarIcon}
             alt="Degree Path"
             header="Degree Path"
+            link="https://catalog.oregonstate.edu/courses/cs/"
           />
           <QuickActions
             image={telegramIcon}
             alt="Request Information"
             header="Request Information"
+            link="mailto:eecs@oregonstate.edu"
           />
           <QuickActions
             image={clipboardIcon}
             alt="Program Details"
             header="Program Details"
+            link="https://engineering.oregonstate.edu/EECS"
           />
-          <QuickActions image={peopleIcon} alt="Discord" header="Discord" />
+          <QuickActions
+            image={peopleIcon}
+            alt="Discord"
+            header="Discord"
+            link="https://discord.gg/v5cFyqm4JY"
+          />
         </div>
       </div>
     </>
