@@ -141,7 +141,7 @@ function Home() {
             <h1 className="relative text-center md:text-left mb-6">
               Quick Actions
             </h1>
-            <div className="flex flex-wrap justify-center gap-10">
+            <div className="flex flex-wrap justify-center gap-4 md:gap-10">
               <QuickActions
                 image={calendarIcon}
                 alt="Degree Path"
