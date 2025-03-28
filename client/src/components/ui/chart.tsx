@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { BarChart, DonutChart, PieChart } from "@mantine/charts";
 import { Loader, Skeleton, Text } from "@mantine/core";
 import {
@@ -90,6 +91,8 @@ export const PieChartMantine = (props: {
   isLoading: boolean;
 }) => {
   const { data, isLoading } = props;
+  const [showNoDataMessage, setShowNoDataMessage] = useState(false);
+
   const flattenedData = Array.isArray(data) ? data.flat() : [];
 
   const difficultyCounts = flattenedData.reduce<Record<number, number>>(
@@ -108,6 +111,17 @@ export const PieChartMantine = (props: {
       color: getColor(Number(difficulty) - 1),
     })
   );
+
+  useEffect(() => {
+    if (!isLoading && !chartState(pieChartData)) {
+      const timer = setTimeout(() => {
+        setShowNoDataMessage(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowNoDataMessage(false);
+    }
+  }, [isLoading, pieChartData]);
 
   return (
     <Skeleton visible={isLoading} height={250}>
@@ -138,7 +152,7 @@ export const PieChartMantine = (props: {
           </>
         ) : (
           <div className="flex flex-col justify-center items-center gap-3 md:w-[85vw]">
-            {isLoading ? (
+            {isLoading || !showNoDataMessage ? (
               <Loader />
             ) : (
               <Text fz="xs" mb="sm" ta="center">
@@ -151,6 +165,7 @@ export const PieChartMantine = (props: {
     </Skeleton>
   );
 };
+
 export const DonutChartMantine = (props: {
   data: DonutChartDataItem[];
   isLoading: boolean;

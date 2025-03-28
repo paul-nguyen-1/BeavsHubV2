@@ -9,9 +9,6 @@ export const splitString = (
 };
 
 export const classType = (className: string) => {
-  
-  console.log(className)
-  console.log(coreClasses.includes(className.slice(3)))
   if (coreClasses.includes(className.slice(3))) {
     return "Core";
   } else if (electives.includes(className.slice(3))) {

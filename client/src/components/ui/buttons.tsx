@@ -18,16 +18,16 @@ export const QuickActions = ({
       rel={link.startsWith("http") ? "noopener noreferrer" : undefined}
       underline="never"
     >
-      <div className="flex flex-col items-center justify-center rounded-xl bg-gray-100 shadow-sm hover:shadow-md transition">
+      <div className="flex flex-col items-center justify-center rounded-xl bg-gray-100 drop-shadow-lg hover:shadow-2xl transition w-[280px] h-[100px]">
         <Image
           radius="md"
-          h={55}
-          w={55}
+          h={40}
+          w={40}
           src={image}
           alt={alt}
           fallbackSrc="https://placehold.co/600x400"
         />
-        <h1 className="text-sm font-semibold text-black mt-2">{header}</h1>
+        <h2 className="text-sm font-semibold text-black mt-2">{header}</h2>
       </div>
     </Anchor>
   );

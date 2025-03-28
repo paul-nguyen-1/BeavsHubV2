@@ -179,6 +179,12 @@ function Courses() {
     mutation.mutate(formData);
   };
 
+  const handleClearFilter = () => {
+    dispatch(setSelectedCourse(""));
+    setReview("");
+    setDate("");
+  };
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation<Response, Error, CourseFormData>({
@@ -383,10 +389,19 @@ function Courses() {
                 <Button onClick={handleCourseSubmit}>Submit</Button>
               </div>
             </Modal>
-            <div>
-              <Skeleton visible={isLoading}>
-                <Button onClick={open}>New Post</Button>
-              </Skeleton>
+            <div className="flex flex-row flex-wrap gap-4">
+              <div>
+                <Skeleton visible={isLoading}>
+                  <Button onClick={handleClearFilter} color="gray">
+                    Clear Filters
+                  </Button>
+                </Skeleton>
+              </div>
+              <div>
+                <Skeleton visible={isLoading}>
+                  <Button onClick={open}>New Post</Button>
+                </Skeleton>
+              </div>
             </div>
           </div>
         </motion.div>
