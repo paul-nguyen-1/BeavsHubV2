@@ -137,8 +137,8 @@ function UploadResumeForm({ closeForm }: UploadResumeFormProps) {
           />
           <Button
             leftSection={<IconPhoto size={14} />}
-            variant="default"
             component="span"
+            color="gray"
           >
             Upload Resume
           </Button>

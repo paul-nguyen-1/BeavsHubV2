@@ -192,14 +192,14 @@ export const LayoutFlow = () => {
       <Panel position="top-right">
         <div className="flex space-x-2 gap-2">
           <button
-            className="px-4 py-2 bg-black text-white text-sm font-medium rounded-lg shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75 transition"
+            className="px-4 py-2 bg-[#d73f09] text-white text-sm font-medium rounded-lg shadow-md hover:opacity-85 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75 transition cursor-pointer"
             onClick={() => onLayout({ direction: "DOWN" })}
           >
             Vertical Layout
           </button>
 
           <button
-            className="px-4 py-2 bg-black text-white text-sm font-medium rounded-lg shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75 transition"
+            className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg shadow-md hover:opacity-55 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75 transition cursor-pointer"
             onClick={() => onLayout({ direction: "RIGHT" })}
           >
             Horizontal Layout
