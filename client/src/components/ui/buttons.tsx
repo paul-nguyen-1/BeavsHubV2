@@ -18,7 +18,7 @@ export const QuickActions = ({
       rel={link.startsWith("http") ? "noopener noreferrer" : undefined}
       underline="never"
     >
-      <div className="flex flex-col items-center justify-center rounded-xl bg-gray-100 drop-shadow-lg hover:shadow-2xl transition w-[160px] md:w-[280px] h-[100px]">
+      <div className="flex flex-col items-center justify-center rounded-xl bg-gray-100 drop-shadow-lg hover:opacity-65 transition w-[160px] md:w-[280px] h-[100px]">
         <Image
           radius="md"
           h={40}

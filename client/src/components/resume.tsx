@@ -64,8 +64,8 @@ const Resume = () => {
       <label htmlFor="file-upload" className="inline-block">
         <Button
           leftSection={<IconPhoto size={14} />}
-          variant="default"
           component="span"
+          className="bg-[#d73f09] hover:opacity-85"
           onClick={open}
         >
           Upload Resume

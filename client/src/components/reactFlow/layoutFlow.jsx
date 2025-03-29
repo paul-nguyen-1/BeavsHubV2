@@ -1,6 +1,11 @@
 import { initialNodes, initialEdges } from "./initialElements.js";
 import ELK from "elkjs/lib/elk.bundled.js";
-import React, { useCallback, useState, useLayoutEffect } from "react";
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useLayoutEffect,
+} from "react";
 import {
   Background,
   ReactFlow,
@@ -12,9 +17,11 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { useDisclosure } from "@mantine/hooks";
+import { Drawer, Progress } from "@mantine/core";
+import { classType } from "../../misc/utils.js";
 
 const elk = new ELK();
-
 const elkOptions = {
   "elk.algorithm": "layered",
   "elk.layered.spacing.nodeNodeBetweenLayers": "100",
@@ -24,32 +31,40 @@ const elkOptions = {
 const getConnectedNodes = (nodeId, edges) => {
   const prerequisites = new Set();
   const unlocks = new Set();
-
   edges.forEach(({ source, target }) => {
     if (source === nodeId) unlocks.add(target);
     if (target === nodeId) prerequisites.add(source);
   });
-
   return { prerequisites, unlocks };
 };
 
 const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
   if (!hoveredNodeId) {
-    return nodes.map((node) => ({
-      ...node,
-      style: {
-        ...node.style,
-        backgroundColor: "#FFFFFF",
-        borderColor: "#000000",
-      },
-    }));
+    return nodes.map((node) => {
+      if (node.taken) {
+        return {
+          ...node,
+          style: {
+            ...node.style,
+            backgroundColor: "#A3E635",
+            borderColor: "#4CAF50",
+            color: "#000000",
+          },
+        };
+      }
+      return {
+        ...node,
+        style: {
+          ...node.style,
+          backgroundColor: "#FFFFFF",
+          borderColor: "#000000",
+        },
+      };
+    });
   }
-
   const { prerequisites, unlocks } = getConnectedNodes(hoveredNodeId, edges);
-
   return nodes.map((node) => {
     if (node.id === hoveredNodeId) {
-      // Source Node
       return {
         ...node,
         style: {
@@ -60,7 +75,6 @@ const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
         },
       };
     } else if (prerequisites.has(node.id)) {
-      // Highlight prerequisites
       return {
         ...node,
         style: {
@@ -71,7 +85,6 @@ const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
         },
       };
     } else if (unlocks.has(node.id)) {
-      // Highlight unlocked courses
       return {
         ...node,
         style: {
@@ -81,17 +94,25 @@ const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
           color: "#000000",
         },
       };
-    } else {
-      // Default
+    } else if (node.taken) {
       return {
         ...node,
         style: {
           ...node.style,
-          backgroundColor: "#FFFFFF",
-          borderColor: "#000000",
+          backgroundColor: "#A3E635",
+          borderColor: "#4CAF50",
+          color: "#000000",
         },
       };
     }
+    return {
+      ...node,
+      style: {
+        ...node.style,
+        backgroundColor: "#FFFFFF",
+        borderColor: "#000000",
+      },
+    };
   });
 };
 
@@ -119,7 +140,6 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
     })),
     edges: edges,
   };
-
   return elk
     .layout(graph)
     .then((layoutedGraph) => ({
@@ -133,23 +153,23 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
 };
 
 export const LayoutFlow = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [opened, { open, close }] = useDisclosure(false);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [hoveredNodeId, setHoveredNodeId] = useState(null);
+  const [currentNodeId, setCurrentNodeId] = useState(null);
   const { fitView } = useReactFlow();
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) => setEdges((existingEdges) => addEdge(params, existingEdges)),
     []
   );
 
   const onLayout = useCallback(
     ({ direction, useInitialNodes = false }) => {
-      const opts = { "elk.direction": direction, ...elkOptions };
-      const ns = useInitialNodes ? initialNodes : nodes;
-      const es = useInitialNodes ? initialEdges : edges;
-
-      getLayoutedElements(ns, es, opts).then(
+      const layoutOptions = { "elk.direction": direction, ...elkOptions };
+      const nodeSource = useInitialNodes ? initialNodes : nodes;
+      const edgeSource = useInitialNodes ? initialEdges : edges;
+      getLayoutedElements(nodeSource, edgeSource, layoutOptions).then(
         ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
           setNodes(layoutedNodes);
           setEdges(layoutedEdges);
@@ -157,22 +177,53 @@ export const LayoutFlow = () => {
         }
       );
     },
-    [nodes, edges]
+    [nodes, edges, fitView, setNodes, setEdges]
   );
 
   useLayoutEffect(() => {
-    onLayout({ direction: "DOWN", useInitialNodes: true });
-  }, []);
+    const options = { "elk.direction": "DOWN", ...elkOptions };
+    getLayoutedElements(initialNodes, initialEdges, options).then(
+      ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+        setNodes(layoutedNodes);
+        setEdges(layoutedEdges);
+        window.requestAnimationFrame(() => fitView());
+      }
+    );
+  }, [fitView, setNodes, setEdges]);
 
   const handleNodeMouseEnter = (event, node) => {
-    setHoveredNodeId(node.id);
+    setCurrentNodeId(node.id);
   };
 
   const handleNodeMouseLeave = () => {
-    setHoveredNodeId(null);
+    setCurrentNodeId(null);
   };
 
-  const highlightedNodes = getHighlightedNodes(nodes, edges, hoveredNodeId);
+  const handleNodeClick = (event, node) => {
+    setNodes((previousNodes) => {
+      const updatedNodes = previousNodes.map((existingNode) =>
+        existingNode.id === node.id
+          ? { ...existingNode, taken: !existingNode.taken }
+          : existingNode
+      );
+      return updatedNodes;
+    });
+    open();
+  };
+
+  const coreNodes = nodes.filter((node) => classType(node.id) === "Core");
+  const electiveNodes = nodes.filter(
+    (node) => classType(node.id) === "Elective"
+  );
+  const takenCore = coreNodes.filter((node) => node.taken).length;
+  const takenElectives = electiveNodes.filter((node) => node.taken).length;
+  const percentCore = coreNodes.length
+    ? Math.round((takenCore / coreNodes.length) * 100)
+    : 0;
+  const percentElectives = electiveNodes.length
+    ? Math.round((takenElectives / electiveNodes.length) * 100)
+    : 0;
+  const highlightedNodes = getHighlightedNodes(nodes, edges, currentNodeId);
 
   return (
     <ReactFlow
@@ -187,19 +238,19 @@ export const LayoutFlow = () => {
       minZoom={0.1}
       onNodeMouseEnter={handleNodeMouseEnter}
       onNodeMouseLeave={handleNodeMouseLeave}
+      onNodeClick={handleNodeClick}
       style={{ backgroundColor: "transparent", height: "100%", width: "100%" }}
     >
       <Panel position="top-right">
         <div className="flex space-x-2 gap-2">
           <button
-            className="px-4 py-2 bg-black text-white text-sm font-medium rounded-lg shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75 transition"
+            className="px-4 py-2 bg-[#d73f09] text-white text-sm font-medium rounded-lg shadow-md hover:opacity-85 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75 transition cursor-pointer"
             onClick={() => onLayout({ direction: "DOWN" })}
           >
             Vertical Layout
           </button>
-
           <button
-            className="px-4 py-2 bg-black text-white text-sm font-medium rounded-lg shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75 transition"
+            className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg shadow-md hover:opacity-55 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75 transition cursor-pointer"
             onClick={() => onLayout({ direction: "RIGHT" })}
           >
             Horizontal Layout
@@ -207,6 +258,69 @@ export const LayoutFlow = () => {
         </div>
       </Panel>
       <Background />
+      <Drawer
+        opened={opened}
+        onClose={close}
+        position="right"
+        title="Degree Planner"
+      >
+        <div style={{ padding: "1rem" }}>
+          <h3 style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
+            Core Classes
+          </h3>
+          <Progress value={percentCore} size="lg" color="orange" radius="xl" />
+          <p style={{ marginTop: "0.5rem" }}>
+            {takenCore} of {coreNodes.length} taken ({percentCore}%)
+          </p>
+          <div style={{ marginTop: "0.5rem", marginBottom: "1.5rem" }}>
+            {coreNodes.map((node) => (
+              <div
+                key={node.id}
+                className={`
+                  px-3 py-2 mb-1 rounded-lg 
+                  ${
+                    node.taken
+                      ? "bg-lime-400 font-bold text-[#1a1a1a] border-[#4caf50]"
+                      : "bg-gray-100 font-normal text-gray-500"
+                  }
+                `}
+              >
+                {node.data?.label}
+              </div>
+            ))}
+          </div>
+          <h3 style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
+            Electives
+          </h3>
+          <Progress
+            value={percentElectives}
+            size="lg"
+            color="orange"
+            radius="xl"
+          />
+          <p style={{ marginTop: "0.5rem" }}>
+            {takenElectives} of {electiveNodes.length} taken ({percentElectives}
+            %)
+          </p>
+          <div style={{ marginTop: "0.5rem" }}>
+            {electiveNodes.map((node) => (
+              <div
+                key={node.id}
+                className={`
+                  px-3 py-2 mb-1 rounded-lg
+                  ${
+                    node.taken
+                      ? "bg-lime-400 font-bold text-[#1a1a1a] border-1 border-[#4caf50]"
+                      : "bg-gray-100 font-normal text-gray-500 border border-gray-300"
+                  }
+                `}
+              >
+                {node.data?.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </Drawer>
     </ReactFlow>
   );
 };

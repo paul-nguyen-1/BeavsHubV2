@@ -476,7 +476,7 @@ function Courses() {
               data &&
               fetchedChartData?.length > data.pages.length * 10 && (
                 <div ref={ref} className="p-5 text-center w-full">
-                  {isFetchingNextPage && <Loader color="blue" />}
+                  {isFetchingNextPage && <Loader />}
                 </div>
               )}
           </div>
