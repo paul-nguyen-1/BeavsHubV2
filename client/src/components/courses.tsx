@@ -85,6 +85,10 @@ function Courses() {
       params.append("course_tips", debouncedReview);
     }
 
+    if (course === "419 (Legacy)/467 - Capstone") {
+      dispatch(setSelectedCourse("Capstone"));
+    }
+
     const url = debouncedCourse
       ? `${getAllCourses}/courses/${debouncedCourse}?${params.toString()}`
       : `${getAllCourses}/courses?${params.toString()}`;
