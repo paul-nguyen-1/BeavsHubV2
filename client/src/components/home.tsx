@@ -107,7 +107,7 @@ function Home() {
                       <div className="flex justify-between items-center">
                         <h2 className="text-lg font-bold">{courseNumber}</h2>
                         <span className="bg-[#d73f09] text-white text-xs px-3 py-1 rounded-full">
-                          {classType(course.course.course_name)}
+                          {classType(courseNumber)}
                         </span>
                       </div>
                       <h3 className="text-md mt-2">{courseTitle}</h3>

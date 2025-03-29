@@ -9,9 +9,10 @@ export const splitString = (
 };
 
 export const classType = (className: string) => {
-  if (coreClasses.includes(className.slice(3))) {
+  const id = className.replace("CS", "").trim();
+  if (coreClasses.some((core) => core.startsWith(id))) {
     return "Core";
-  } else if (electives.includes(className.slice(3))) {
+  } else if (electives.some((elective) => elective.startsWith(id))) {
     return "Elective";
   } else {
     return "N/A";
