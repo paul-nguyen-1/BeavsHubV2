@@ -10,8 +10,8 @@ import { CourseCard } from "../misc/types";
 import { useMediaQuery } from "@mantine/hooks";
 import user from "../assets/Profile_icon_fill.svg";
 import { classType } from "../misc/utils";
-import { AppDispatch } from "../../app/store";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../app/store";
+import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
 
 export function Course(props: CourseCard) {
@@ -27,6 +27,9 @@ export function Course(props: CourseCard) {
   } = props;
   const isMobile = useMediaQuery("(max-width: 768px)");
   const dispatch = useDispatch<AppDispatch>();
+  const globalCourse = useSelector(
+    (state: RootState) => state.useCourse.selectedCourse
+  );
   const handleCourseChange = (value: string | null) => {
     dispatch(setSelectedCourse(value));
   };
@@ -35,7 +38,7 @@ export function Course(props: CourseCard) {
     <Paper
       withBorder
       radius="md"
-      className="p-5 w-full flex md:flex-col cursor-pointer"
+      className={`p-5 w-full flex md:flex-col ${!globalCourse && "cursor-pointer"}`}
       onClick={() => handleCourseChange(course)}
     >
       <div className="w-full flex align-top justify-between">
