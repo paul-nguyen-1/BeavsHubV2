@@ -103,7 +103,7 @@ function Home() {
                       dispatch(setSelectedCourse(course.course.course_name))
                     }
                   >
-                    <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[240px]">
+                    <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[255px]">
                       <div className="flex justify-between items-center">
                         <h2 className="text-lg font-bold">{courseNumber}</h2>
                         <span
