@@ -9,6 +9,7 @@ import {
 import { CourseCard } from "../misc/types";
 import { useMediaQuery } from "@mantine/hooks";
 import user from "../assets/Profile_icon_fill.svg";
+import { classType } from "../misc/utils";
 
 export function Course(props: CourseCard) {
   const {
@@ -26,7 +27,12 @@ export function Course(props: CourseCard) {
     <Paper withBorder radius="md" className="p-5 w-full flex md:flex-col">
       <div className="w-full flex align-top justify-between">
         <div className="flex flex-col md:flex-row gap-2">
-          <Avatar src={user} alt="Avatar" radius="xl" className="md:relative md:top-5"/>
+          <Avatar
+            src={user}
+            alt="Avatar"
+            radius="xl"
+            className="md:relative md:top-5"
+          />
           <div className="flex flex-col">
             <Text fz="sm">{isMobile ? course.slice(0, 30) : course}</Text>
             <Text fz="sm">Difficulty: {difficulty}</Text>
@@ -46,9 +52,17 @@ export function Course(props: CourseCard) {
             )}
           </div>
         </div>
-        <div className="h-full flex flex-col align-top">
+        <div className="h-full flex flex-col align-top items-center">
+          <div
+            className={`${
+              classType(course) === "Core" ? "bg-[#d73f09]" : "bg-[#f28705]"
+            } text-white text-xs px-3 py-1 rounded-full w-16 flex justify-center`}
+          >
+            {classType(course)}
+          </div>
+
           <Text fz="xs" c="dimmed">
-            Posted: {new Date(timestamp).toLocaleDateString()}
+            {new Date(timestamp).toLocaleDateString()}
           </Text>
           <Text fz="xs" c="dimmed">
             {taken_date}

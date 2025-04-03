@@ -106,7 +106,13 @@ function Home() {
                     <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[230px]">
                       <div className="flex justify-between items-center">
                         <h2 className="text-lg font-bold">{courseNumber}</h2>
-                        <span className="bg-[#d73f09] text-white text-xs px-3 py-1 rounded-full">
+                        <span
+                          className={`${
+                            classType(courseNumber) === "Core"
+                              ? "bg-[#d73f09]"
+                              : "bg-[#f28705]"
+                          } text-white text-xs px-3 py-1 rounded-full w-16 flex justify-center`}
+                        >
                           {classType(courseNumber)}
                         </span>
                       </div>
