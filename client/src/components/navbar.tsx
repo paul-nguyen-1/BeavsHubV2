@@ -94,21 +94,24 @@ export function Navbar() {
           heightState === "scrollDown" ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="h-[50px] flex flex-wrap justify-between md:justify-center md:gap-35 px-5">
-          <Link to="/">
-            <Image src={headerIcon} className="icon" />
-          </Link>
-          <Box className="links" visibleFrom="sm">
-            <Group
-              gap={0}
-              justify="flex-end"
-              className="main-links"
-              style={{ position: "relative" }}
-            >
-              {mainItems}
-              <div className="underline" style={underlineStyle}></div>
-            </Group>
-          </Box>
+        <div className="h-[50px] flex flex-wrap justify-between px-5">
+          <div className="flex flex-wrap md:justify-evenly md:w-full">
+            <Link to="/">
+              <Image src={headerIcon} className="icon" />
+            </Link>
+            <Box className="links" visibleFrom="sm">
+              <Group
+                gap={0}
+                justify="flex-end"
+                className="main-links"
+                style={{ position: "relative" }}
+              >
+                {mainItems}
+                <div className="underline" style={underlineStyle}></div>
+              </Group>
+            </Box>
+            <div></div>
+          </div>
           <Burger
             opened={drawerOpened}
             onClick={toggleDrawer}
