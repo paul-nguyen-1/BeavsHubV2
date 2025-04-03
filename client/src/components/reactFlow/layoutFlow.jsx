@@ -71,7 +71,6 @@ const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
           ...node.style,
           backgroundColor: "#D73F09",
           borderColor: "#A32A00",
-          color: "#FFFFFF",
         },
       };
     } else if (prerequisites.has(node.id)) {
@@ -81,7 +80,6 @@ const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
           ...node.style,
           backgroundColor: "#F4A261",
           borderColor: "#E76F51",
-          color: "#000000",
         },
       };
     } else if (unlocks.has(node.id)) {
@@ -91,7 +89,6 @@ const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
           ...node.style,
           backgroundColor: "#A3E635",
           borderColor: "#4CAF50",
-          color: "#000000",
         },
       };
     } else if (node.taken) {
@@ -101,7 +98,6 @@ const getHighlightedNodes = (nodes, edges, hoveredNodeId) => {
           ...node.style,
           backgroundColor: "#A3E635",
           borderColor: "#4CAF50",
-          color: "#000000",
         },
       };
     }
