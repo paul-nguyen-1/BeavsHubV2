@@ -138,14 +138,14 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
         justifyContent: "center",
       },
     })),
-    edges: edges,
+    edges,
   };
   return elk
     .layout(graph)
     .then((layoutedGraph) => ({
-      nodes: layoutedGraph.children.map((node) => ({
-        ...node,
-        position: { x: node.x, y: node.y },
+      nodes: layoutedGraph.children.map((n) => ({
+        ...n,
+        position: { x: n.x, y: n.y },
       })),
       edges: layoutedGraph.edges,
     }))
@@ -154,24 +154,36 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
 
 export const LayoutFlow = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [currentNodeId, setCurrentNodeId] = useState(null);
   const { fitView } = useReactFlow();
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-
+  const [currentNodeId, setCurrentNodeId] = useState(null);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const storedNodes = localStorage.getItem("highlightedNodes");
+  let initialNodesList = [];
+  if (storedNodes) {
+    try {
+      initialNodesList = JSON.parse(storedNodes);
+    } catch {
+      initialNodesList = [];
+    }
+  }
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesList);
   const onConnect = useCallback(
-    (params) => setEdges((existingEdges) => addEdge(params, existingEdges)),
+    (params) => setEdges((prevEdges) => addEdge(params, prevEdges)),
     []
   );
-
   const onLayout = useCallback(
     ({ direction, useInitialNodes = false }) => {
       const layoutOptions = { "elk.direction": direction, ...elkOptions };
       const nodeSource = useInitialNodes ? initialNodes : nodes;
       const edgeSource = useInitialNodes ? initialEdges : edges;
       getLayoutedElements(nodeSource, edgeSource, layoutOptions).then(
-        ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-          setNodes(layoutedNodes);
+        ({ nodes: layouted, edges: layoutedEdges }) => {
+          const highlighted = getHighlightedNodes(
+            layouted,
+            layoutedEdges,
+            null
+          );
+          setNodes(highlighted);
           setEdges(layoutedEdges);
           window.requestAnimationFrame(() => fitView());
         }
@@ -179,55 +191,59 @@ export const LayoutFlow = () => {
     },
     [nodes, edges, fitView, setNodes, setEdges]
   );
-
   useLayoutEffect(() => {
-    const options = { "elk.direction": "DOWN", ...elkOptions };
-    getLayoutedElements(initialNodes, initialEdges, options).then(
-      ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-        setNodes(layoutedNodes);
-        setEdges(layoutedEdges);
-        window.requestAnimationFrame(() => fitView());
-      }
-    );
-  }, [fitView, setNodes, setEdges]);
-
+    if (!storedNodes) {
+      const options = { "elk.direction": "DOWN", ...elkOptions };
+      getLayoutedElements(initialNodes, initialEdges, options).then(
+        ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+          const highlighted = getHighlightedNodes(
+            layoutedNodes,
+            layoutedEdges,
+            null
+          );
+          setNodes(highlighted);
+          setEdges(layoutedEdges);
+          window.requestAnimationFrame(() => fitView());
+        }
+      );
+    } else {
+      window.requestAnimationFrame(() => fitView());
+    }
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("highlightedNodes", JSON.stringify(nodes));
+  }, [nodes]);
   const handleNodeMouseEnter = (event, node) => {
+    setNodes((prev) => getHighlightedNodes(prev, edges, node.id));
     setCurrentNodeId(node.id);
   };
-
   const handleNodeMouseLeave = () => {
+    setNodes((prev) => getHighlightedNodes(prev, edges, null));
     setCurrentNodeId(null);
   };
-
   const handleNodeClick = (event, node) => {
-    setNodes((previousNodes) => {
-      const updatedNodes = previousNodes.map((existingNode) =>
+    setNodes((prev) =>
+      prev.map((existingNode) =>
         existingNode.id === node.id
           ? { ...existingNode, taken: !existingNode.taken }
           : existingNode
-      );
-      return updatedNodes;
-    });
+      )
+    );
     open();
   };
-
-  const coreNodes = nodes.filter((node) => classType(node.id) === "Core");
-  const electiveNodes = nodes.filter(
-    (node) => classType(node.id) === "Elective"
-  );
-  const takenCore = coreNodes.filter((node) => node.taken).length;
-  const takenElectives = electiveNodes.filter((node) => node.taken).length;
+  const coreNodes = nodes.filter((n) => classType(n.id) === "Core");
+  const electiveNodes = nodes.filter((n) => classType(n.id) === "Elective");
+  const takenCore = coreNodes.filter((n) => n.taken).length;
+  const takenElectives = electiveNodes.filter((n) => n.taken).length;
   const percentCore = coreNodes.length
     ? Math.round((takenCore / coreNodes.length) * 100)
     : 0;
   const percentElectives = electiveNodes.length
     ? Math.round((takenElectives / electiveNodes.length) * 100)
     : 0;
-  const highlightedNodes = getHighlightedNodes(nodes, edges, currentNodeId);
-
   return (
     <ReactFlow
-      nodes={highlightedNodes}
+      nodes={nodes}
       edges={edges}
       onConnect={onConnect}
       onNodesChange={onNodesChange}
@@ -276,14 +292,11 @@ export const LayoutFlow = () => {
             {coreNodes.map((node) => (
               <div
                 key={node.id}
-                className={`
-                  px-3 py-2 mb-1 rounded-lg 
-                  ${
-                    node.taken
-                      ? "bg-lime-400 font-bold text-[#1a1a1a] border-[#4caf50]"
-                      : "bg-gray-100 font-normal text-gray-500"
-                  }
-                `}
+                className={`px-3 py-2 mb-1 rounded-lg ${
+                  node.taken
+                    ? "bg-lime-400 font-bold text-[#1a1a1a] border-[#4caf50]"
+                    : "bg-gray-100 font-normal text-gray-500"
+                }`}
               >
                 {node.data?.label}
               </div>
@@ -306,14 +319,11 @@ export const LayoutFlow = () => {
             {electiveNodes.map((node) => (
               <div
                 key={node.id}
-                className={`
-                  px-3 py-2 mb-1 rounded-lg
-                  ${
-                    node.taken
-                      ? "bg-lime-400 font-bold text-[#1a1a1a] border-1 border-[#4caf50]"
-                      : "bg-gray-100 font-normal text-gray-500 border border-gray-300"
-                  }
-                `}
+                className={`px-3 py-2 mb-1 rounded-lg ${
+                  node.taken
+                    ? "bg-lime-400 font-bold text-[#1a1a1a] border-1 border-[#4caf50]"
+                    : "bg-gray-100 font-normal text-gray-500 border border-gray-300"
+                }`}
               >
                 {node.data?.label}
               </div>
