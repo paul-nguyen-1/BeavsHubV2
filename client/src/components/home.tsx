@@ -103,7 +103,7 @@ function Home() {
                       dispatch(setSelectedCourse(course.course.course_name))
                     }
                   >
-                    <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[265px]">
+                    <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[270px]">
                       <div className="flex justify-between items-center">
                         <h2 className="text-lg font-bold">{courseNumber}</h2>
                         <span
@@ -116,11 +116,11 @@ function Home() {
                           {classType(courseNumber)}
                         </span>
                       </div>
-                      <h3 className="text-md mt-2">{courseTitle}</h3>
-                      <p className="text-sm text-gray-600 mt-2">
+                      <h3 className="text-md">{courseTitle}</h3>
+                      <p className="text-sm text-gray-600">
                         Difficulty level
                       </p>
-                      <div className="mt-1">
+                      <div>
                         <Progress
                           variant="determinate"
                           value={course.avg_difficulty * 20}
@@ -128,10 +128,10 @@ function Home() {
                           color="#d73f09"
                         />
                       </div>
-                      <p className="text-sm italic text-gray-700 mt-3">
+                      <p className="text-sm italic text-gray-700">
                         {course.course.course_tips.slice(0, 75)}...
                       </p>
-                      <div className="flex flex-row justify-between items-center text-sm text-gray-600 mt-4">
+                      <div className="flex flex-row justify-between items-center text-sm text-gray-600">
                         <span>{course.avg_hours.toFixed(2)} hrs / wk</span>
                         <span>{course.count} Reviews</span>
                       </div>
