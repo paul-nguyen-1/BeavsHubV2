@@ -18,5 +18,8 @@
   "license": "ISC",
   "devDependencies": {
     "husky": "^8.0.0"
+  },
+  "dependencies": {
+    "@react-google-maps/api": "^2.20.6"
   }
 }

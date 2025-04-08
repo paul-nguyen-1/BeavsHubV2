@@ -17,12 +17,19 @@ import { Route as CoursesImport } from './routes/courses'
 
 // Create Virtual Routes
 
+const TourLazyImport = createFileRoute('/tour')()
 const ResumesLazyImport = createFileRoute('/resumes')()
 const PlannerLazyImport = createFileRoute('/planner')()
 const LoginLazyImport = createFileRoute('/login')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const TourLazyRoute = TourLazyImport.update({
+  id: '/tour',
+  path: '/tour',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/tour.lazy').then((d) => d.Route))
 
 const ResumesLazyRoute = ResumesLazyImport.update({
   id: '/resumes',
@@ -93,6 +100,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResumesLazyImport
       parentRoute: typeof rootRoute
     }
+    '/tour': {
+      id: '/tour'
+      path: '/tour'
+      fullPath: '/tour'
+      preLoaderRoute: typeof TourLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -104,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
   '/resumes': typeof ResumesLazyRoute
+  '/tour': typeof TourLazyRoute
 }
 
 export interface FileRoutesByTo {
@@ -112,6 +127,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
   '/resumes': typeof ResumesLazyRoute
+  '/tour': typeof TourLazyRoute
 }
 
 export interface FileRoutesById {
@@ -121,14 +137,22 @@ export interface FileRoutesById {
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
   '/resumes': typeof ResumesLazyRoute
+  '/tour': typeof TourLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/courses' | '/login' | '/planner' | '/resumes'
+  fullPaths: '/' | '/courses' | '/login' | '/planner' | '/resumes' | '/tour'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/courses' | '/login' | '/planner' | '/resumes'
-  id: '__root__' | '/' | '/courses' | '/login' | '/planner' | '/resumes'
+  to: '/' | '/courses' | '/login' | '/planner' | '/resumes' | '/tour'
+  id:
+    | '__root__'
+    | '/'
+    | '/courses'
+    | '/login'
+    | '/planner'
+    | '/resumes'
+    | '/tour'
   fileRoutesById: FileRoutesById
 }
 
@@ -138,6 +162,7 @@ export interface RootRouteChildren {
   LoginLazyRoute: typeof LoginLazyRoute
   PlannerLazyRoute: typeof PlannerLazyRoute
   ResumesLazyRoute: typeof ResumesLazyRoute
+  TourLazyRoute: typeof TourLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -146,6 +171,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginLazyRoute: LoginLazyRoute,
   PlannerLazyRoute: PlannerLazyRoute,
   ResumesLazyRoute: ResumesLazyRoute,
+  TourLazyRoute: TourLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -162,7 +188,8 @@ export const routeTree = rootRoute
         "/courses",
         "/login",
         "/planner",
-        "/resumes"
+        "/resumes",
+        "/tour"
       ]
     },
     "/": {
@@ -179,6 +206,9 @@ export const routeTree = rootRoute
     },
     "/resumes": {
       "filePath": "resumes.lazy.tsx"
+    },
+    "/tour": {
+      "filePath": "tour.lazy.tsx"
     }
   }
 }
