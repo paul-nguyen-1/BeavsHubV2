@@ -5,11 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import "./styles/index.css";
+import "leaflet/dist/leaflet.css";
 import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
 import { Analytics } from "@vercel/analytics/react";
-import { Provider } from 'react-redux'
-import store from '../app/store'
+import { Provider } from "react-redux";
+import store from "../app/store";
 
 declare module "@tanstack/react-router" {
   interface Register {

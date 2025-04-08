@@ -1,24 +1,24 @@
-import { GoogleMap, StreetViewPanorama } from "@react-google-maps/api";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import type { LatLngExpression } from "leaflet";
 
 function Map() {
-  const containerStyle = {
-    height: "600px",
-    width: "800px",
-  };
-  const center = {
-    lat: 44.5618,
-    lng: -123.2823,
-  };
+  const center: LatLngExpression = [44.5618, -123.2823];
 
   return (
-    <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
-      <StreetViewPanorama
-        options={{
-          position: center,
-          visible: true,
-        }}
+    <MapContainer
+      center={center}
+      zoom={13}
+      style={{ height: "600px", width: "800px" }}
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-    </GoogleMap>
+      <Marker position={center}>
+        <Popup>
+          You are here! <br /> OSU Campus.
+        </Popup>
+      </Marker>
+    </MapContainer>
   );
 }
 
