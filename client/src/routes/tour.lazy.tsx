@@ -7,8 +7,8 @@ export const Route = createLazyFileRoute("/tour")({
 
 function RouteComponent() {
   return (
-    <div className="pt-5 flex justify-center">
-        <Map />
+    <div className="flex justify-center ">
+      <Map />
     </div>
   );
 }
