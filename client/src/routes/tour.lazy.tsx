@@ -15,13 +15,6 @@ function RouteComponent() {
         Built by a Beaver, for Beavers. Your go-to platform for course reviews,
         campus exploration, and student-driven insights.
       </p>
-
-      <div className="flex justify-center mb-16">
-        <div className="w-full md:w-[90%] lg:w-[80%] xl:w-[70%]">
-          <Map />
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-gray-800 text-base leading-relaxed">
         <div>
           <h3 className="text-2xl font-semibold mb-4 text-[#D73F09]">
@@ -34,13 +27,13 @@ function RouteComponent() {
             one place.
           </p>
           <ul className="list-disc list-inside space-y-2 text-gray-700">
-            <li>Launched in 2025 with students in mind</li>
+            <li>Created in 2025 with students in mind</li>
             <li>Browse real feedback on courses with ratings</li>
             <li>Explore campus with integrated maps and street views</li>
           </ul>
         </div>
 
-        <div>
+        <div className="text-right">
           <h3 className="text-2xl font-semibold mb-4 text-[#D73F09]">
             About Me
           </h3>
@@ -51,7 +44,14 @@ function RouteComponent() {
             experience today — and to make your journey a little smoother along
             the way.
           </p>
-          <p className="mt-4 font-medium text-[#D73F09]">Go Beavs 🦫</p>
+        </div>
+      </div>
+      <h2 className="w-full mt-4 text-2xl font-bold text-[#D73F09] text-center">
+        Go Beavs 🦫
+      </h2>
+      <div className="flex justify-center mb-16 pt-10">
+        <div className="w-full md:w-[90%] lg:w-[80%] xl:w-[70%]">
+          <Map />
         </div>
       </div>
     </div>
