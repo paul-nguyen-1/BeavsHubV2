@@ -13,7 +13,7 @@ function MapWithStreetView() {
   }, []);
 
   return (
-    <div className="relative z-0 flex flex-row flex-wrap justify-center items-center gap-5 top-5 md:top-25">
+    <div className="relative z-0 flex flex-row flex-wrap justify-center items-center gap-5">
       <div className="relative">
         <Skeleton
           visible={isLoading}
