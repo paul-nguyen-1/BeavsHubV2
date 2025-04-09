@@ -30,7 +30,7 @@ export function Navbar() {
     { link: "/courses", label: "Courses" },
     { link: "/planner", label: "Degree" },
     { link: "/resumes", label: "Resume" },
-    // { link: "/tour", label: "Tour" },
+    { link: "/about", label: "About" },
   ];
 
   const activeIndex = mainLinks.findIndex(
