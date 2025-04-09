@@ -1,7 +1,7 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import Map from "../components/map";
 
-export const Route = createLazyFileRoute("/tour")({
+export const Route = createLazyFileRoute("/about")({
   component: RouteComponent,
 });
 
@@ -24,12 +24,14 @@ function RouteComponent() {
             BeavsHub was built to solve a simple problem: OSU students needed a
             better way to plan their academic journey. From honest course
             reviews to interactive maps, BeavsHub puts everything you need in
-            one place.
+            one place. Created in 2025 with students in mind, we are able to:
           </p>
           <ul className="list-disc list-inside space-y-2 text-gray-700">
-            <li>Created in 2025 with students in mind</li>
             <li>Browse real feedback on courses with ratings</li>
-            <li>Explore campus with integrated maps and street views</li>
+            <li>Plan our your degree using our custom flow chart</li>
+            <li>
+              Compare resumes to other students to see what works for them
+            </li>
           </ul>
         </div>
 

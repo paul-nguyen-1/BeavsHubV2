@@ -18,7 +18,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useDisclosure } from "@mantine/hooks";
-import { Drawer, Progress } from "@mantine/core";
+import { Drawer, Pill, Progress } from "@mantine/core";
 import { classType } from "../../misc/utils.js";
 
 const elk = new ELK();
@@ -282,6 +282,7 @@ export const LayoutFlow = () => {
               backgroundColor: "#d73f09",
               color: "#fff",
             }}
+            className="cursor-pointer"
             onClick={() => onLayout({ direction: "DOWN" })}
           >
             Vertical Layout
@@ -291,12 +292,26 @@ export const LayoutFlow = () => {
               padding: "0.5rem",
               backgroundColor: "#fff",
               color: "#000",
+              border: "1px solid black",
             }}
+            className="cursor-pointer"
             onClick={() => onLayout({ direction: "RIGHT" })}
           >
             Horizontal Layout
           </button>
         </div>
+      </Panel>
+      <Panel position="top-center" className="flex gap-2">
+        <Pill size="lg">
+          Core ({takenCore} / {coreNodes.length})
+        </Pill>
+        <Pill size="lg">
+          Elective ({takenElectives} / {electiveNodes.length})
+        </Pill>
+        <Pill size="lg">
+          Total ({takenCore + takenElectives} /{" "}
+          {coreNodes.length + electiveNodes.length})
+        </Pill>
       </Panel>
       <Background />
       <Drawer

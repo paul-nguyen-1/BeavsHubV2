@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Skeleton } from "@mantine/core";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 
 function MapWithStreetView() {
@@ -28,9 +28,6 @@ function MapWithStreetView() {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={engineeringCenter}>
-              <Popup>Kelley Engineering Center, OSU</Popup>
-            </Marker>
           </MapContainer>
         </Skeleton>
       </div>
