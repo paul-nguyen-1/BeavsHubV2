@@ -303,14 +303,13 @@ export const LayoutFlow = () => {
       </Panel>
       <Panel position="top-center" className="flex gap-2">
         <Pill size="lg">
-          Core ({takenCore} / {coreNodes.length})
+          Core ({takenCore} / {12})
         </Pill>
         <Pill size="lg">
-          Elective ({takenElectives} / {electiveNodes.length})
+          Elective ({takenElectives} / {3})
         </Pill>
         <Pill size="lg">
-          Total ({takenCore + takenElectives} /{" "}
-          {coreNodes.length + electiveNodes.length})
+          Total ({takenCore * 4 + takenElectives * 4} / {60})
         </Pill>
       </Panel>
       <Background />
