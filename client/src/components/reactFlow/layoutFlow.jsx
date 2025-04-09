@@ -247,7 +247,12 @@ export const LayoutFlow = () => {
     open();
   };
 
-  const coreNodes = nodes.filter((n) => classType(n.id) === "Core");
+  const coreNodes = nodes.filter(
+    (n) =>
+      classType(n.id) === "Core" ||
+      n.data.label.toLowerCase().includes("capstone")
+  );
+
   const electiveNodes = nodes.filter((n) => classType(n.id) === "Elective");
   const takenCore = coreNodes.filter((n) => n.taken).length;
   const takenElectives = electiveNodes.filter((n) => n.taken).length;
