@@ -38,6 +38,8 @@ import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { AppDispatch, RootState } from "../../app/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
+import { setSelectedDifficulty } from "../hooks/useDifficulty";
+import { setSelectedHours } from "../hooks/useHours";
 
 interface CourseFormData {
   course_name: string;
@@ -54,10 +56,16 @@ function Courses() {
   const course = useSelector(
     (state: RootState) => state.useCourse.selectedCourse
   );
+
+  const difficulty = useSelector(
+    (state: RootState) => state.useDifficulty.selectedDifficulty
+  );
+
+  const timeSpent = useSelector(
+    (state: RootState) => state.useHours.selectedHours
+  );
   const [date, setDate] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
-  const [difficulty, setDifficulty] = useState<string | null>("");
-  const [timeSpent, setTimeSpent] = useState<string | null>("");
   const [debouncedCourse] = useDebouncedValue(course, 200);
   const [debouncedReview] = useDebouncedValue(review, 200);
   const [opened, { open, close }] = useDisclosure(false);
@@ -204,11 +212,11 @@ function Courses() {
   };
 
   const handleDifficultyChange = (value: string | null) => {
-    setDifficulty(value);
+    dispatch(setSelectedDifficulty(value));
   };
 
   const handleTimeSpentChange = (value: string | null) => {
-    setTimeSpent(value);
+    dispatch(setSelectedHours(value));
   };
 
   const handleCourseInputChange = (name: string, value: string | string[]) => {
@@ -226,8 +234,8 @@ function Courses() {
     dispatch(setSelectedCourse(""));
     setReview("");
     setDate("");
-    setDifficulty("");
-    setTimeSpent("");
+    dispatch(setSelectedDifficulty(""));
+    dispatch(setSelectedHours(""));
   };
 
   const queryClient = useQueryClient();
@@ -273,8 +281,8 @@ function Courses() {
     <>
       <div>
         <motion.div variants={itemVariants}>
-          <div className="flex flex-wrap flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6 pt-5">
-            <div className="flex flex-row flex-wrap gap-4">
+          <div className="flex flex-wrap flex-col justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6 pt-5">
+            <div className="flex flex-row flex-wrap justify-center gap-4">
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
                   <SelectMantine

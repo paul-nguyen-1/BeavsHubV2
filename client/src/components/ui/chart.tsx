@@ -7,6 +7,11 @@ import {
   DonutChartDataItem,
 } from "../../misc/types";
 import { Legend } from "recharts";
+import { AppDispatch } from "../../../app/store";
+import { useDispatch } from "react-redux";
+import { setSelectedCourse } from "../../hooks/useCourse";
+import { setSelectedDifficulty } from "../../hooks/useDifficulty";
+import { setSelectedHours } from "../../hooks/useHours";
 
 const colorPalette = ["#6FCF97", "#F2C94C", "#F2994A", "#EB5757", "#D32F2F"];
 const difficultyType = ["Easy A", "Medium", "Hard", "Very Hard", "Insane"];
@@ -34,6 +39,7 @@ export const BarChartMantine = (props: {
   data: BarChartDataItem[];
   isLoading: boolean;
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const { data, isLoading } = props;
   const flattenedData = Array.isArray(data) ? data.flat() : [];
 
@@ -80,7 +86,7 @@ export const BarChartMantine = (props: {
               ]}
               barProps={() => ({
                 onClick: (barData) => {
-                  console.log("Bar data:", barData.name);
+                  dispatch(setSelectedCourse(barData.name));
                 },
                 style: { cursor: "pointer" },
               })}
@@ -96,6 +102,7 @@ export const PieChartMantine = (props: {
   data: PieChartDataItem[];
   isLoading: boolean;
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const { data, isLoading } = props;
   const [showNoDataMessage, setShowNoDataMessage] = useState(false);
 
@@ -144,7 +151,9 @@ export const PieChartMantine = (props: {
               mx="auto"
               pieProps={{
                 onClick: (sliceData) => {
-                  console.log("Slice clicked:", sliceData?.payload?.name);
+                  const parsedDifficulty =
+                    String(sliceData?.payload?.name).match(/\d+/)?.[0] ?? null;
+                  dispatch(setSelectedDifficulty(parsedDifficulty));
                 },
                 style: { cursor: "pointer" },
               }}
@@ -182,6 +191,7 @@ export const DonutChartMantine = (props: {
   data: DonutChartDataItem[];
   isLoading: boolean;
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const { data, isLoading } = props;
   const flattenedData = Array.isArray(data) ? data.flat() : [];
 
@@ -219,7 +229,7 @@ export const DonutChartMantine = (props: {
               data={donutChartData}
               pieProps={{
                 onClick: (sliceData) => {
-                  console.log("Clicked slice:", sliceData?.payload?.name);
+                  dispatch(setSelectedHours(sliceData?.payload?.name));
                 },
                 style: { cursor: "pointer" },
               }}
