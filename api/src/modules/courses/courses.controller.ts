@@ -15,18 +15,33 @@ export class CoursesController {
     @Query() query: ExpressQuery,
     @Query('course_tips') courseTips?: string,
     @Query('date') date?: string,
+    @Query('difficulty') difficulty?: string,
+    @Query('time_spent') time_spent?: string,
   ): Promise<CourseDto[]> {
     await this.courseService.refreshCourseReviews();
-    return await this.courseService.findAll(query, courseTips, date);
+    return await this.courseService.findAll(
+      query,
+      courseTips,
+      date,
+      difficulty,
+      time_spent,
+    );
   }
 
   @Get('all')
   async getAllCourses(
     @Query('course_tips') courseTips?: string,
     @Query('date') date?: string,
+    @Query('difficulty') difficulty?: string,
+    @Query('time_spent') time_spent?: string,
   ): Promise<CourseDto[]> {
     console.log('Getting all courses');
-    return await this.courseService.findAllCourses(courseTips, date);
+    return await this.courseService.findAllCourses(
+      courseTips,
+      date,
+      difficulty,
+      time_spent,
+    );
   }
 
   @Post('post')
@@ -46,8 +61,17 @@ export class CoursesController {
     @Query() query: ExpressQuery,
     @Query('course_tips') courseTips?: string,
     @Query('date') date?: string,
+    @Query('difficulty') difficulty?: string,
+    @Query('time_spent') time_spent?: string,
   ): Promise<CourseDto[]> {
-    return await this.courseService.findCourse(id, query, courseTips, date);
+    return await this.courseService.findCourse(
+      id,
+      query,
+      courseTips,
+      date,
+      difficulty,
+      time_spent,
+    );
   }
 
   @Get(':id/all_reviews')
@@ -56,12 +80,16 @@ export class CoursesController {
     @Query() query: ExpressQuery,
     @Query('course_tips') courseTips?: string,
     @Query('date') date?: string,
+    @Query('difficulty') difficulty?: string,
+    @Query('time_spent') time_spent?: string,
   ): Promise<CourseDto[]> {
     return await this.courseService.findAllCourseReviews(
       id,
       query,
       courseTips,
       date,
+      difficulty,
+      time_spent,
     );
   }
 }

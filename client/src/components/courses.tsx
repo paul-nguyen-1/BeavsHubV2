@@ -5,9 +5,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  difficultyList,
   getAllCourses,
   lowerDivisionOne,
   lowerDivisionTwo,
+  sortedTimeSpent,
   upperDivisionOne,
   upperDivisionTwo,
 } from "../misc/const";
@@ -54,6 +56,8 @@ function Courses() {
   );
   const [date, setDate] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
+  const [difficulty, setDifficulty] = useState<string | null>("");
+  const [timeSpent, setTimeSpent] = useState<string | null>("");
   const [debouncedCourse] = useDebouncedValue(course, 200);
   const [debouncedReview] = useDebouncedValue(review, 200);
   const [opened, { open, close }] = useDisclosure(false);
@@ -84,6 +88,13 @@ function Courses() {
     if (debouncedReview) {
       params.append("course_tips", debouncedReview);
     }
+    if (difficulty) {
+      params.append("difficulty", difficulty);
+    }
+
+    if (timeSpent) {
+      params.append("time_spent", timeSpent);
+    }
 
     if (course === "419 (Legacy)/467 - Capstone") {
       dispatch(setSelectedCourse("Capstone"));
@@ -92,7 +103,6 @@ function Courses() {
     const url = debouncedCourse
       ? `${getAllCourses}/courses/${debouncedCourse}?${params.toString()}`
       : `${getAllCourses}/courses?${params.toString()}`;
-
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error("Failed to fetch courses data");
@@ -109,7 +119,14 @@ function Courses() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["projects", debouncedCourse, debouncedReview, date],
+    queryKey: [
+      "projects",
+      debouncedCourse,
+      debouncedReview,
+      date,
+      difficulty,
+      timeSpent,
+    ],
     queryFn: fetchProjects,
     initialPageParam: 1,
     getNextPageParam: (_lastPage, pages) => pages.length + 1,
@@ -129,6 +146,13 @@ function Courses() {
     const params = new URLSearchParams();
     if (debouncedReview) params.append("course_tips", debouncedReview);
     if (date) params.append("date", date);
+    if (difficulty) {
+      params.append("difficulty", difficulty);
+    }
+
+    if (timeSpent) {
+      params.append("time_spent", timeSpent);
+    }
     const encodedCourse = debouncedCourse
       ? encodeURIComponent(debouncedCourse)
       : "";
@@ -142,7 +166,14 @@ function Courses() {
   };
 
   const { data: fetchedChartData, error: chartError } = useQuery({
-    queryKey: ["chartData", debouncedCourse, debouncedReview, date],
+    queryKey: [
+      "chartData",
+      debouncedCourse,
+      debouncedReview,
+      date,
+      difficulty,
+      timeSpent,
+    ],
     queryFn: fetchChartData,
   });
 
@@ -172,6 +203,14 @@ function Courses() {
     setReview(e.target.value);
   };
 
+  const handleDifficultyChange = (value: string | null) => {
+    setDifficulty(value);
+  };
+
+  const handleTimeSpentChange = (value: string | null) => {
+    setTimeSpent(value);
+  };
+
   const handleCourseInputChange = (name: string, value: string | string[]) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -187,6 +226,8 @@ function Courses() {
     dispatch(setSelectedCourse(""));
     setReview("");
     setDate("");
+    setDifficulty("");
+    setTimeSpent("");
   };
 
   const queryClient = useQueryClient();
@@ -255,6 +296,26 @@ function Courses() {
                     value={review ?? ""}
                     onChange={handleReviewChange}
                     placeholder="Search for a review"
+                  />
+                </Skeleton>
+              </div>
+              <div className="w-full md:w-56">
+                <Skeleton visible={isLoading}>
+                  <SelectMantine
+                    placeHolder="Search Difficulty"
+                    value={difficulty ?? ""}
+                    onChange={handleDifficultyChange}
+                    data={[...difficultyList]}
+                  />
+                </Skeleton>
+              </div>
+              <div className="w-full md:w-56">
+                <Skeleton visible={isLoading}>
+                  <SelectMantine
+                    placeHolder="Search Time Spent"
+                    value={timeSpent ?? ""}
+                    onChange={handleTimeSpentChange}
+                    data={[...sortedTimeSpent]}
                   />
                 </Skeleton>
               </div>

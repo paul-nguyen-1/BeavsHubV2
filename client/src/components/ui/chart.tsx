@@ -12,7 +12,7 @@ const colorPalette = ["#6FCF97", "#F2C94C", "#F2994A", "#EB5757", "#D32F2F"];
 const difficultyType = ["Easy A", "Medium", "Hard", "Very Hard", "Insane"];
 const sortedTimeSpent = ["0-5 hours", "6-12 hours", "13-18 hours", "18+ hours"];
 
-export const getColor = (index: number, reverse?: boolean) => {
+const getColor = (index: number, reverse?: boolean) => {
   const palette = reverse ? colorPalette.slice().reverse() : colorPalette;
   const colorIndex = Math.min(index, palette.length - 1);
   return palette[colorIndex];
@@ -23,7 +23,7 @@ type ChartDataItem = {
   value: number;
 };
 
-export const chartState = (chart: ChartDataItem[]): boolean => {
+const chartState = (chart: ChartDataItem[]): boolean => {
   if (!chart || chart.length === 0) {
     return false;
   }
@@ -78,6 +78,12 @@ export const BarChartMantine = (props: {
                   name: "value",
                 },
               ]}
+              barProps={() => ({
+                onClick: (barData) => {
+                  console.log("Bar data:", barData.name);
+                },
+                style: { cursor: "pointer" },
+              })}
             />
           </>
         ) : null}
@@ -136,6 +142,12 @@ export const PieChartMantine = (props: {
               withTooltip
               tooltipDataSource="segment"
               mx="auto"
+              pieProps={{
+                onClick: (sliceData) => {
+                  console.log("Slice clicked:", sliceData?.payload?.name);
+                },
+                style: { cursor: "pointer" },
+              }}
             >
               <Legend
                 verticalAlign="bottom"
@@ -205,6 +217,12 @@ export const DonutChartMantine = (props: {
               tooltipDataSource="segment"
               mx="auto"
               data={donutChartData}
+              pieProps={{
+                onClick: (sliceData) => {
+                  console.log("Clicked slice:", sliceData?.payload?.name);
+                },
+                style: { cursor: "pointer" },
+              }}
             >
               <Legend
                 verticalAlign="bottom"
