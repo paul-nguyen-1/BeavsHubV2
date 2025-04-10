@@ -153,6 +153,8 @@ export class CoursesService {
     query: ExpressQuery,
     courseTips?: string,
     date?: string,
+    difficulty?: string,
+    time_spent?: string,
   ): Promise<Course[]> {
     const resPerPage = 10;
     const currentPage = Number(query.page) || 1;
@@ -193,6 +195,16 @@ export class CoursesService {
         filters.timestamp = { $gte: dateFilter };
       }
     }
+    if (difficulty) {
+      filters.course_difficulty = Number(difficulty);
+    }
+
+    if (time_spent && time_spent.trim()) {
+      filters.course_time_spent_per_week = {
+        $regex: time_spent.trim(),
+        $options: 'i',
+      };
+    }
 
     return await this.courseModel
       .find(filters)
@@ -217,6 +229,8 @@ export class CoursesService {
     query: ExpressQuery,
     courseTips?: string,
     date?: string,
+    difficulty?: string,
+    time_spent?: string,
   ): Promise<Course[]> {
     const resPerPage = 10;
     const currentPage = Number(query.page) || 1;
@@ -258,6 +272,16 @@ export class CoursesService {
         filters.timestamp = { $gte: dateFilter };
       }
     }
+    if (difficulty) {
+      filters.course_difficulty = Number(difficulty);
+    }
+
+    if (time_spent && time_spent.trim()) {
+      filters.course_time_spent_per_week = {
+        $regex: time_spent.trim(),
+        $options: 'i',
+      };
+    }
 
     return await this.courseModel
       .find(filters)
@@ -268,7 +292,12 @@ export class CoursesService {
   }
 
   // No Pagination -- Access Chart Data
-  async findAllCourses(courseTips?: string, date?: string): Promise<Course[]> {
+  async findAllCourses(
+    courseTips?: string,
+    date?: string,
+    difficulty?: string,
+    time_spent?: string,
+  ): Promise<Course[]> {
     const filters: any = {};
     if (courseTips) {
       filters.course_tips = { $regex: courseTips, $options: 'i' };
@@ -301,6 +330,17 @@ export class CoursesService {
       }
     }
 
+    if (difficulty) {
+      filters.course_difficulty = Number(difficulty);
+    }
+
+    if (time_spent && time_spent.trim()) {
+      filters.course_time_spent_per_week = {
+        $regex: time_spent.trim(),
+        $options: 'i',
+      };
+    }
+
     return await this.courseModel.find(filters).lean().exec();
   }
 
@@ -309,6 +349,8 @@ export class CoursesService {
     query: ExpressQuery,
     courseTips?: string,
     date?: string,
+    difficulty?: string,
+    time_spent?: string,
   ): Promise<Course[]> {
     const filters: any = {
       course_name: { $regex: id, $options: 'i' },
@@ -344,6 +386,16 @@ export class CoursesService {
       if (dateFilter) {
         filters.timestamp = { $gte: dateFilter };
       }
+    }
+    if (difficulty) {
+      filters.course_difficulty = Number(difficulty);
+    }
+
+    if (time_spent && time_spent.trim()) {
+      filters.course_time_spent_per_week = {
+        $regex: time_spent.trim(),
+        $options: 'i',
+      };
     }
 
     return await this.courseModel.find(filters).sort({ timestamp: -1 }).exec();

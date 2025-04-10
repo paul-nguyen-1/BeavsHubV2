@@ -5,9 +5,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  difficultyList,
   getAllCourses,
   lowerDivisionOne,
   lowerDivisionTwo,
+  sortedTimeSpent,
   upperDivisionOne,
   upperDivisionTwo,
 } from "../misc/const";
@@ -36,6 +38,8 @@ import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { AppDispatch, RootState } from "../../app/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
+import { setSelectedDifficulty } from "../hooks/useDifficulty";
+import { setSelectedHours } from "../hooks/useHours";
 
 interface CourseFormData {
   course_name: string;
@@ -51,6 +55,14 @@ function Courses() {
   const dispatch = useDispatch<AppDispatch>();
   const course = useSelector(
     (state: RootState) => state.useCourse.selectedCourse
+  );
+
+  const difficulty = useSelector(
+    (state: RootState) => state.useDifficulty.selectedDifficulty
+  );
+
+  const timeSpent = useSelector(
+    (state: RootState) => state.useHours.selectedHours
   );
   const [date, setDate] = useState<string | null>("");
   const [review, setReview] = useState<string | null>("");
@@ -84,6 +96,13 @@ function Courses() {
     if (debouncedReview) {
       params.append("course_tips", debouncedReview);
     }
+    if (difficulty) {
+      params.append("difficulty", difficulty);
+    }
+
+    if (timeSpent) {
+      params.append("time_spent", timeSpent);
+    }
 
     if (course === "419 (Legacy)/467 - Capstone") {
       dispatch(setSelectedCourse("Capstone"));
@@ -92,7 +111,6 @@ function Courses() {
     const url = debouncedCourse
       ? `${getAllCourses}/courses/${debouncedCourse}?${params.toString()}`
       : `${getAllCourses}/courses?${params.toString()}`;
-
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error("Failed to fetch courses data");
@@ -109,7 +127,14 @@ function Courses() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["projects", debouncedCourse, debouncedReview, date],
+    queryKey: [
+      "projects",
+      debouncedCourse,
+      debouncedReview,
+      date,
+      difficulty,
+      timeSpent,
+    ],
     queryFn: fetchProjects,
     initialPageParam: 1,
     getNextPageParam: (_lastPage, pages) => pages.length + 1,
@@ -129,6 +154,13 @@ function Courses() {
     const params = new URLSearchParams();
     if (debouncedReview) params.append("course_tips", debouncedReview);
     if (date) params.append("date", date);
+    if (difficulty) {
+      params.append("difficulty", difficulty);
+    }
+
+    if (timeSpent) {
+      params.append("time_spent", timeSpent);
+    }
     const encodedCourse = debouncedCourse
       ? encodeURIComponent(debouncedCourse)
       : "";
@@ -142,7 +174,14 @@ function Courses() {
   };
 
   const { data: fetchedChartData, error: chartError } = useQuery({
-    queryKey: ["chartData", debouncedCourse, debouncedReview, date],
+    queryKey: [
+      "chartData",
+      debouncedCourse,
+      debouncedReview,
+      date,
+      difficulty,
+      timeSpent,
+    ],
     queryFn: fetchChartData,
   });
 
@@ -172,6 +211,14 @@ function Courses() {
     setReview(e.target.value);
   };
 
+  const handleDifficultyChange = (value: string | null) => {
+    dispatch(setSelectedDifficulty(value));
+  };
+
+  const handleTimeSpentChange = (value: string | null) => {
+    dispatch(setSelectedHours(value));
+  };
+
   const handleCourseInputChange = (name: string, value: string | string[]) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -187,6 +234,8 @@ function Courses() {
     dispatch(setSelectedCourse(""));
     setReview("");
     setDate("");
+    dispatch(setSelectedDifficulty(""));
+    dispatch(setSelectedHours(""));
   };
 
   const queryClient = useQueryClient();
@@ -232,8 +281,8 @@ function Courses() {
     <>
       <div>
         <motion.div variants={itemVariants}>
-          <div className="flex flex-wrap flex-row justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6 pt-5">
-            <div className="flex flex-row flex-wrap gap-4">
+          <div className="flex flex-wrap flex-col justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6 pt-5">
+            <div className="flex flex-row flex-wrap justify-center gap-4">
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
                   <SelectMantine
@@ -255,6 +304,26 @@ function Courses() {
                     value={review ?? ""}
                     onChange={handleReviewChange}
                     placeholder="Search for a review"
+                  />
+                </Skeleton>
+              </div>
+              <div className="w-full md:w-56">
+                <Skeleton visible={isLoading}>
+                  <SelectMantine
+                    placeHolder="Search Difficulty"
+                    value={difficulty ?? ""}
+                    onChange={handleDifficultyChange}
+                    data={[...difficultyList]}
+                  />
+                </Skeleton>
+              </div>
+              <div className="w-full md:w-56">
+                <Skeleton visible={isLoading}>
+                  <SelectMantine
+                    placeHolder="Search Time Spent"
+                    value={timeSpent ?? ""}
+                    onChange={handleTimeSpentChange}
+                    data={[...sortedTimeSpent]}
                   />
                 </Skeleton>
               </div>

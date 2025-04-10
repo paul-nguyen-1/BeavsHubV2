@@ -80,3 +80,11 @@ export const electives = [
   "493 - Cloud Application Development",
   "496 - Mobile and Cloud Software Development",
 ];
+
+export const difficultyList = ["1", "2", "3", "4", "5"];
+export const sortedTimeSpent = [
+  "0-5 hours",
+  "6-12 hours",
+  "13-18 hours",
+  "18+ hours",
+];
