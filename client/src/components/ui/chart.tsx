@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { BarChart, DonutChart, PieChart } from "@mantine/charts";
-import { Loader, Skeleton, Text } from "@mantine/core";
+import { Skeleton, Text } from "@mantine/core";
 import {
   BarChartDataItem,
   PieChartDataItem,
@@ -173,13 +173,7 @@ export const PieChartMantine = (props: {
           </>
         ) : (
           <div className="flex flex-col justify-center items-center gap-3 md:w-[85vw]">
-            {isLoading || !showNoDataMessage ? (
-              <Loader />
-            ) : (
-              <Text fz="xs" mb="sm" ta="center">
-                No data available to display.
-              </Text>
-            )}
+            {showNoDataMessage && <></>}
           </div>
         )}
       </div>
