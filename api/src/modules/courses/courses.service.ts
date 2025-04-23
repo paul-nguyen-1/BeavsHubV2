@@ -436,6 +436,9 @@ export class CoursesService {
             },
           },
         },
+        { $addFields: { rand: { $rand: {} } } },
+        { $sort: { rand: 1 } },
+
         {
           $group: {
             _id: '$course_name',
