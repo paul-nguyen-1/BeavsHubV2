@@ -37,13 +37,13 @@ const theme = createTheme({
   },
   primaryColor: "primary",
   white: "#F9FAFB",
-  fontFamily: "Inter, sans-serif",
+  fontFamily: "'Open Sans', sans-serif",
   headings: {
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "'Open Sans', sans-serif",
     fontWeight: "600",
     sizes: {
-      h1: { fontSize: "2.125rem", lineHeight: " 1.3" },
-      h2: { fontSize: "1.75rem", lineHeight: " 1.3" },
+      h1: { fontSize: "2.125rem", lineHeight: "1.3" },
+      h2: { fontSize: "1.75rem", lineHeight: "1.3" },
     },
   },
 });

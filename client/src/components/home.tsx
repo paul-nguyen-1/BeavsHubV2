@@ -56,10 +56,10 @@ function Home() {
         className="h-[550px] bg-cover bg-center flex flex-col items-center justify-center text-white"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <div className="flex flex-col items-center max-w-144 relative bottom-15">
-          <h1 className="text-4xl font-bold">Welcome to BeavsHub</h1>
-          <div className="flex flex-col gap-8 justify-center items-center">
-            <h2 className="text-2xl text-center">
+        <div className="flex flex-col items-center max-w-180 relative bottom-15">
+          <h1 className="!text-6xl font-extrabold text-center">Welcome to BeavsHub</h1>
+          <div className="flex flex-col gap-8 justify-center items-center relative bottom-4 md:bottom-3">
+            <h2 className="text-2xl text-center max-w-160 px-10 md:px-0">
               Comprehensive Course Reviews (2000+) and Degree Planning for OSU
               Students
             </h2>
@@ -82,7 +82,9 @@ function Home() {
       </div>
       <div className="flex flex-col items-center">
         <div className="pb-15">
-          <h1 className="relative text-center lg:text-left">Popular Courses</h1>
+          <h1 className="relative text-center lg:text-left font-extrabold">
+            Popular Courses
+          </h1>
           <div className="flex justify-center flex-wrap gap-15">
             {isLoading ? (
               <>
@@ -129,7 +131,7 @@ function Home() {
                         />
                       </div>
                       <p className="text-sm italic text-gray-700 mt-3">
-                        {course.course.course_tips.slice(0, 75)}...
+                        "{course.course.course_tips.slice(0, 75)}..."
                       </p>
                       <div className="flex flex-row justify-between items-center text-sm text-gray-600 mt-4">
                         <span>{course.avg_hours.toFixed(2)} hrs / wk</span>
@@ -144,7 +146,7 @@ function Home() {
         </div>
         <div className="w-full bg-white pt-1 pb-15">
           <div className="w-full max-w-[1280px] mx-auto px-4">
-            <h1 className="relative text-center md:text-left mb-6">
+            <h1 className="relative text-center md:text-left mb-6 font-extrabold">
               Quick Actions
             </h1>
             <div className="flex flex-wrap justify-center gap-4 md:gap-10">
