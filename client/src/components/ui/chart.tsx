@@ -75,7 +75,7 @@ export const BarChartMantine = (props: {
               Most Common Course Pairing
             </Text>
             <BarChart
-              h={300}
+              h={250}
               data={barChartData}
               orientation="vertical"
               dataKey="name"

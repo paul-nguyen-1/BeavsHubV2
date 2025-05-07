@@ -24,6 +24,7 @@ import {
   MultiSelect,
   Select,
   Skeleton,
+  Text,
   Textarea,
 } from "@mantine/core";
 import { motion } from "framer-motion";
@@ -40,6 +41,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
 import { setSelectedDifficulty } from "../hooks/useDifficulty";
 import { setSelectedHours } from "../hooks/useHours";
+import { classType } from "../misc/utils";
 
 interface CourseFormData {
   course_name: string;
@@ -278,10 +280,10 @@ function Courses() {
   });
 
   return (
-    <>
-      <div>
+    <div>
+      <div className="px-4 md:px-25">
         <motion.div variants={itemVariants}>
-          <div className="flex flex-wrap flex-col justify-center items-center gap-4 overflow-hidden md:overflow-visible mb-4 px-6 pt-5">
+          <div className="flex flex-col gap-2.5 overflow-hidden md:overflow-visible mb-4 pt-5">
             <div className="flex flex-row flex-wrap justify-center gap-4">
               <div className="w-full md:w-56">
                 <Skeleton visible={isLoading}>
@@ -458,104 +460,140 @@ function Courses() {
                   required
                 />
               </div>
-              <div className="mt-4">
+              <div>
                 <Button onClick={handleCourseSubmit}>Submit</Button>
               </div>
             </Modal>
-            <div className="flex flex-row flex-wrap gap-4">
+            <div className="flex flex-row flex-wrap justify-between items-center w-full bg-white rounded-lg shadow-md px-4 md:px-10 py-2">
               <div>
-                <Skeleton visible={isLoading}>
-                  <Button onClick={handleClearFilter} color="gray">
-                    Clear Filters
-                  </Button>
-                </Skeleton>
+                <div className="flex flex-row gap-2 items-center">
+                  <Text fz="xl">
+                    {course
+                      ? course.includes("Capstone")
+                        ? "Capstone"
+                        : course.includes("231")
+                          ? "MTH" + course
+                          : "CS" + course
+                      : "Browse All Courses"}
+                  </Text>
+
+                  {course && (
+                    <div
+                      className={`${
+                        classType(course) === "Core"
+                          ? "bg-[#d73f09]"
+                          : "bg-[#f28705]"
+                      } text-white text-sm px-3 py-1 rounded-full w-16 flex justify-center`}
+                    >
+                      {classType(course)}
+                    </div>
+                  )}
+                </div>
+                {data && fetchedChartData && (
+                  <Text fz="sm" color="dimmed">
+                    {data?.pages.reduce(
+                      (count, page) => count + page.length,
+                      0
+                    )}{" "}
+                    of {fetchedChartData.length} course reviews
+                  </Text>
+                )}
               </div>
-              <div>
-                <Skeleton visible={isLoading}>
-                  <Button onClick={open}>New Post</Button>
-                </Skeleton>
+              <div className="flex flex-row flex-wrap gap-4">
+                <div>
+                  <Skeleton visible={isLoading}>
+                    <Button onClick={handleClearFilter} color="gray">
+                      Clear Filters
+                    </Button>
+                  </Skeleton>
+                </div>
+                <div>
+                  <Skeleton visible={isLoading}>
+                    <Button onClick={open}>New Post</Button>
+                  </Skeleton>
+                </div>
               </div>
             </div>
           </div>
         </motion.div>
       </div>
-      <div className="flex md:flex-row flex-col items-center md:items-start justify-center gap-y-8">
-        <div className="flex gap-y-6 md:gap-y-2 flex-col items-center">
-          <div className="flex flex-col md:flex-row gap-6 md:gap-2 mt-2">
-            <PieChartMantine
-              data={fetchedChartData}
-              isLoading={isLoadingCourses}
-            />
-            <DonutChartMantine
+      <div className="mx-auto px-4 lg:px-25">
+        <div className="flex flex-col md:flex-row justify-center md:gap-10 rounded-lg px-4 md:px-0">
+          <div className="flex gap-y-6 md:gap-y-2 flex-col items-center">
+            <div className="flex flex-col md:flex-row">
+              <PieChartMantine
+                data={fetchedChartData}
+                isLoading={isLoadingCourses}
+              />
+              <DonutChartMantine
+                data={fetchedChartData}
+                isLoading={isLoadingCourses}
+              />
+            </div>
+            <BarChartMantine
               data={fetchedChartData}
               isLoading={isLoadingCourses}
             />
           </div>
-          <BarChartMantine
-            data={fetchedChartData}
-            isLoading={isLoadingCourses}
-          />
-        </div>
-        <motion.div
-          className={`flex flex-col items-center px-5 w-full md:w-3/5 mt-2.5 ${
-            status === "pending" ? "opacity-50" : ""
-          }`}
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-        >
-          <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[75vh]">
-            {data && fetchedChartData && (
-              <div className="md:flex absolute justify-end text-xs font-medium mt-[-25px] text-gray-300">
-                {data?.pages.reduce((count, page) => count + page.length, 0)} of{" "}
-                {fetchedChartData.length} course reviews
-              </div>
-            )}
-            {status === "pending" && (
-              <>
-                <Skeleton height={350} mt={8} width="100%" radius="xl" />
-                <Skeleton height={350} mt={8} width="100%" radius="xl" />
-                <Skeleton height={350} mt={8} width="100%" radius="xl" />
-              </>
-            )}
-            {data?.pages.map((page, pageIndex) =>
-              page.map((course: CourseInfo) => (
-                <Skeleton
-                  visible={isLoadingCourses}
-                  key={`${pageIndex}-${course._id}`}
-                >
-                  <div className="w-full flex justify-center">
-                    <motion.div
-                      variants={itemVariants}
-                      className="w-full flex justify-center"
-                    >
-                      <Course
-                        key={`${pageIndex}-${course._id}`}
-                        difficulty={course.course_difficulty}
-                        course={course.course_name}
-                        taken_date={course.course_taken_date}
-                        enjoyability={course.course_enjoyability}
-                        time_spent_per_week={course.course_time_spent_per_week}
-                        timestamp={new Date(course.timestamp).toLocaleString()}
-                        tips={course.course_tips}
-                        pairs={course.pairs}
-                      />
-                    </motion.div>
-                  </div>
-                </Skeleton>
-              ))
-            )}
-            {hasNextPage &&
-              data &&
-              fetchedChartData?.length > data.pages.length * 10 && (
-                <div ref={ref} className="p-5 text-center w-full">
-                  {isFetchingNextPage && <Loader />}
-                </div>
+          <motion.div
+            className={`flex flex-col items-center w-full ${
+              status === "pending" ? "opacity-50" : ""
+            }`}
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+          >
+            <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[70vh]">
+              {status === "pending" && (
+                <>
+                  <Skeleton height={350} mt={8} width="100%" radius="xl" />
+                  <Skeleton height={350} mt={8} width="100%" radius="xl" />
+                  <Skeleton height={350} mt={8} width="100%" radius="xl" />
+                </>
               )}
-          </div>
-        </motion.div>
+              {data?.pages.map((page, pageIndex) =>
+                page.map((course: CourseInfo) => (
+                  <Skeleton
+                    visible={isLoadingCourses}
+                    key={`${pageIndex}-${course._id}`}
+                  >
+                    <div className="w-full flex justify-center">
+                      <motion.div
+                        variants={itemVariants}
+                        className="w-full flex justify-center"
+                      >
+                        <Course
+                          key={`${pageIndex}-${course._id}`}
+                          difficulty={course.course_difficulty}
+                          course={course.course_name}
+                          taken_date={course.course_taken_date}
+                          enjoyability={course.course_enjoyability}
+                          time_spent_per_week={
+                            course.course_time_spent_per_week
+                          }
+                          timestamp={new Date(
+                            course.timestamp
+                          ).toLocaleString()}
+                          tips={course.course_tips}
+                          pairs={course.pairs}
+                        />
+                      </motion.div>
+                    </div>
+                  </Skeleton>
+                ))
+              )}
+              {hasNextPage &&
+                data &&
+                fetchedChartData?.length > data.pages.length * 10 && (
+                  <div ref={ref} className="p-5 text-center w-full">
+                    {isFetchingNextPage && <Loader />}
+                  </div>
+                )}
+            </div>
+          </motion.div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
