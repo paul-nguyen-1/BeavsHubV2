@@ -40,27 +40,29 @@ const ResumeModal: React.FC<ResumeModalProps> = ({ file, onClose }) => {
               Passed Resume Screens
             </p>
             <hr className="border-gray-300 my-3" />
-            {file.companies.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {file.companies.map((company, index) => (
-                  <div
-                    key={index}
-                    className="text-gray-700 text-sm py-1 px-3 rounded-full bg-white shadow-md"
-                  >
-                    {company}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 italic">No companies listed</p>
-            )}
+            <div className="h-full flex justify-between flex-col">
+              {file.companies.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {file.companies.map((company, index) => (
+                    <div
+                      key={index}
+                      className="text-gray-700 text-sm py-1 px-3 rounded-full bg-white shadow-md"
+                    >
+                      {company}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 italic">No companies listed</p>
+              )}
+              <button
+                onClick={onClose}
+                className="self-end bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 md:mt-auto shadow-md mt-12 cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
           </div>
-          <button
-            onClick={onClose}
-            className="self-end bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 md:mt-auto shadow-md mt-12 cursor-pointer"
-          >
-            Close
-          </button>
         </div>
       </div>
     </div>

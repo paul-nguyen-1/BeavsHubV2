@@ -18,7 +18,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useDisclosure } from "@mantine/hooks";
-import { Drawer, Pill, Progress } from "@mantine/core";
+import { Drawer, Pill, Progress, Text } from "@mantine/core";
 import { classType } from "../../misc/utils.js";
 
 const elk = new ELK();
@@ -277,9 +277,13 @@ export const LayoutFlow = () => {
       onNodeMouseEnter={handleNodeMouseEnter}
       onNodeMouseLeave={handleNodeMouseLeave}
       onNodeClick={handleNodeClick}
-      style={{ backgroundColor: "transparent", height: "100%", width: "100%" }}
+      style={{
+        backgroundColor: "transparent",
+        height: "100%",
+        width: "100%",
+      }}
     >
-      <Panel position="top-right">
+      <div className="absolute top-5 md:top-[-15px] right-0 p-4">
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <button
             style={{
@@ -305,8 +309,9 @@ export const LayoutFlow = () => {
             Horizontal Layout
           </button>
         </div>
-      </Panel>
-      <Panel position="top-center" className="flex gap-2">
+      </div>
+
+      <div className="flex flex-row gap-2 justify-center">
         <Pill size="lg">
           Core ({takenCore} / {12})
         </Pill>
@@ -316,7 +321,7 @@ export const LayoutFlow = () => {
         <Pill size="lg">
           Total ({takenCore * 4 + takenElectives * 4} / {60})
         </Pill>
-      </Panel>
+      </div>
       <Background />
       <Drawer
         opened={opened}
@@ -324,57 +329,51 @@ export const LayoutFlow = () => {
         position="right"
         title="Degree Planner"
       >
-        <div style={{ padding: "1rem" }}>
-          <h3 style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
-            Core Classes
-          </h3>
-          <Progress value={percentCore} size="lg" color="orange" radius="xl" />
-          <p style={{ marginTop: "0.5rem" }}>
-            {takenCore} of {coreNodes.length} taken ({percentCore}%)
-          </p>
-          <div style={{ marginTop: "0.5rem", marginBottom: "1.5rem" }}>
-            {coreNodes.map((node) => (
-              <div
-                key={node.id}
-                style={{
-                  padding: "0.5rem",
-                  marginBottom: "0.25rem",
-                  borderRadius: "0.5rem",
-                  backgroundColor: node.taken ? "#bef264" : "#f3f3f3",
-                }}
-              >
-                {node.data?.label}
-              </div>
-            ))}
-          </div>
-          <h3 style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
-            Electives
-          </h3>
-          <Progress
-            value={percentElectives}
-            size="lg"
-            color="orange"
-            radius="xl"
-          />
-          <p style={{ marginTop: "0.5rem" }}>
-            {takenElectives} of {electiveNodes.length} taken ({percentElectives}
-            %)
-          </p>
-          <div style={{ marginTop: "0.5rem" }}>
-            {electiveNodes.map((node) => (
-              <div
-                key={node.id}
-                style={{
-                  padding: "0.5rem",
-                  marginBottom: "0.25rem",
-                  borderRadius: "0.5rem",
-                  backgroundColor: node.taken ? "#bef264" : "#f3f3f3",
-                }}
-              >
-                {node.data?.label}
-              </div>
-            ))}
-          </div>
+        <h3>Core Classes</h3>
+        <Progress value={percentCore} size="lg" color="orange" radius="xl" />
+        <p style={{ marginTop: "0.5rem" }}>
+          {takenCore} of {coreNodes.length} taken ({percentCore}%)
+        </p>
+        <div style={{ marginTop: "0.5rem", marginBottom: "1.5rem" }}>
+          {coreNodes.map((node) => (
+            <div
+              key={node.id}
+              style={{
+                padding: "0.5rem",
+                marginBottom: "0.25rem",
+                borderRadius: "0.5rem",
+                backgroundColor: node.taken ? "#bef264" : "#f3f3f3",
+              }}
+            >
+              {node.data?.label}
+            </div>
+          ))}
+        </div>
+        <h3>Electives</h3>
+        <Progress
+          value={percentElectives}
+          size="lg"
+          color="orange"
+          radius="xl"
+        />
+        <p style={{ marginTop: "0.5rem" }}>
+          {takenElectives} of {electiveNodes.length} taken ({percentElectives}
+          %)
+        </p>
+        <div style={{ marginTop: "0.5rem" }}>
+          {electiveNodes.map((node) => (
+            <div
+              key={node.id}
+              style={{
+                padding: "0.5rem",
+                marginBottom: "0.25rem",
+                borderRadius: "0.5rem",
+                backgroundColor: node.taken ? "#bef264" : "#f3f3f3",
+              }}
+            >
+              {node.data?.label}
+            </div>
+          ))}
         </div>
       </Drawer>
     </ReactFlow>
