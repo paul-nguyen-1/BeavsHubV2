@@ -38,7 +38,7 @@ export function Course(props: CourseCard) {
     <Paper
       withBorder
       radius="md"
-      className={`p-5 w-full flex md:flex-col ${!globalCourse && "cursor-pointer"}`}
+      className={`p-5 w-full flex md:flex-col !bg-white !rounded-lg !shadow-md ${!globalCourse && "cursor-pointer"}`}
       onClick={() => handleCourseChange(course)}
     >
       <div className="w-full flex align-top justify-between">

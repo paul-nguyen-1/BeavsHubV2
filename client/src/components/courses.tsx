@@ -518,9 +518,12 @@ function Courses() {
         </motion.div>
       </div>
       <div className="mx-auto px-4 lg:px-25">
-        <div className="flex flex-col md:flex-row justify-center md:gap-10 rounded-lg px-4 md:px-0">
-          <div className="flex gap-y-6 md:gap-y-2 flex-col items-center">
-            <div className="flex flex-col md:flex-row">
+        <div className="flex flex-col md:flex-row justify-center gap-5 md:gap-10 rounded-lg px-4 md:px-0 h-full md:h-144">
+          <div className="flex flex-col items-center bg-white rounded-lg p-5 shadow-md gap-4">
+            <Text fz="xl" className="text-left w-full">
+              Course Statistics
+            </Text>
+            <div className="flex flex-col md:flex-row gap-4">
               <PieChartMantine
                 data={fetchedChartData}
                 isLoading={isLoadingCourses}
@@ -543,7 +546,7 @@ function Courses() {
             animate="visible"
             variants={containerVariants}
           >
-            <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[70vh]">
+            <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[70vh] ">
               {status === "pending" && (
                 <>
                   <Skeleton height={350} mt={8} width="100%" radius="xl" />

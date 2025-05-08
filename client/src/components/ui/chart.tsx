@@ -67,15 +67,15 @@ export const BarChartMantine = (props: {
     }));
 
   return (
-    <Skeleton visible={isLoading} height={335} width={335}>
+    <Skeleton visible={isLoading} height={250}>
       <div>
         {chartState(barChartData) ? (
-          <>
+          <div className="flex flex-col items-center relative bottom-5 md:bottom-8">
             <Text fz="xs" mb="sm" ta="center">
               Most Common Course Pairing
             </Text>
             <BarChart
-              h={250}
+              h={230}
               data={barChartData}
               orientation="vertical"
               dataKey="name"
@@ -91,7 +91,7 @@ export const BarChartMantine = (props: {
                 style: { cursor: "pointer" },
               })}
             />
-          </>
+          </div>
         ) : null}
       </div>
     </Skeleton>
@@ -141,9 +141,6 @@ export const PieChartMantine = (props: {
       <div className="w-[190px]">
         {chartState(pieChartData) ? (
           <>
-            <Text fz="xs" mb="sm" ta="center">
-              Course Difficulty Rating
-            </Text>
             <PieChart
               data={pieChartData}
               withTooltip
@@ -214,9 +211,6 @@ export const DonutChartMantine = (props: {
       <div className="w-[190px]">
         {chartState(donutChartData) ? (
           <>
-            <Text fz="xs" mb="sm" ta="center">
-              Hours Spent Per Week
-            </Text>
             <DonutChart
               tooltipDataSource="segment"
               mx="auto"
