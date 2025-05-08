@@ -95,7 +95,7 @@ export function Navbar() {
           heightState === "scrollDown" ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="h-[50px] flex flex-wrap justify-between px-5">
+        <div className="h-[50px] flex flex-wrap justify-between px-5 bg-white">
           <div className="flex flex-wrap md:justify-evenly md:w-full">
             <Link to="/">
               <Image src={headerIcon} className="icon" />
