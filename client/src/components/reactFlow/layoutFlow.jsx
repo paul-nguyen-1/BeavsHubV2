@@ -290,6 +290,7 @@ export const LayoutFlow = () => {
               padding: "0.5rem",
               backgroundColor: "#d73f09",
               color: "#fff",
+              zIndex: 1000,
             }}
             className="cursor-pointer"
             onClick={() => onLayout({ direction: "DOWN" })}
@@ -302,6 +303,7 @@ export const LayoutFlow = () => {
               backgroundColor: "#fff",
               color: "#000",
               border: "1px solid black",
+              zIndex: 1000,
             }}
             className="cursor-pointer"
             onClick={() => onLayout({ direction: "RIGHT" })}
