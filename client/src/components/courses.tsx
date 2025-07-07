@@ -524,19 +524,13 @@ function Courses() {
               Course Statistics
             </Text>
             <div className="flex flex-col md:flex-row gap-4">
-              <PieChartMantine
-                data={fetchedChartData}
-                isLoading={isLoadingCourses}
-              />
+              <PieChartMantine data={fetchedChartData} isLoading={isLoading} />
               <DonutChartMantine
                 data={fetchedChartData}
-                isLoading={isLoadingCourses}
+                isLoading={isLoading}
               />
             </div>
-            <BarChartMantine
-              data={fetchedChartData}
-              isLoading={isLoadingCourses}
-            />
+            <BarChartMantine data={fetchedChartData} isLoading={isLoading} />
           </div>
           <motion.div
             className={`flex flex-col items-center w-full ${
