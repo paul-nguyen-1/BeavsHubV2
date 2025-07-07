@@ -94,7 +94,7 @@ const Resume = () => {
       {mutation.isError && (
         <p className="text-red-500 mt-2">Error uploading file. Try again.</p>
       )}
-      <div className="flex flex-wrap justify-center gap-5 mt-5">
+      <div className="flex flex-wrap justify-start gap-5 mt-5">
         {isLoading && <p>Loading resumes...</p>}
         {error && (
           <p className="text-red-500">

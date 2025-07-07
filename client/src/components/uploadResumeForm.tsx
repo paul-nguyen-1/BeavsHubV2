@@ -93,7 +93,7 @@ function UploadResumeForm({ closeForm }: UploadResumeFormProps) {
         clearable
         required
       />
-      <h2 className="mb-4">Passed Screening Companies</h2>
+      <h2>Passed Screening Companies</h2>
       <div className="flex flex-row flex-wrap gap-2">
         {companies.length > 0 &&
           companies.map((company, index) => (
