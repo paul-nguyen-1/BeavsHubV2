@@ -175,7 +175,7 @@ function Courses() {
     return response.json();
   };
 
-  const { data: fetchedChartData, error: chartError } = useQuery({
+  const { data: fetchedChartData, isLoading: isChartLoading, error: chartError } = useQuery({
     queryKey: [
       "chartData",
       debouncedCourse,
@@ -524,19 +524,13 @@ function Courses() {
               Course Statistics
             </Text>
             <div className="flex flex-col md:flex-row gap-4">
-              <PieChartMantine
-                data={fetchedChartData}
-                isLoading={isLoadingCourses}
-              />
+              <PieChartMantine data={fetchedChartData} isLoading={isChartLoading} />
               <DonutChartMantine
                 data={fetchedChartData}
-                isLoading={isLoadingCourses}
+                isLoading={isChartLoading}
               />
             </div>
-            <BarChartMantine
-              data={fetchedChartData}
-              isLoading={isLoadingCourses}
-            />
+            <BarChartMantine data={fetchedChartData} isLoading={isChartLoading} />
           </div>
           <motion.div
             className={`flex flex-col items-center w-full ${
