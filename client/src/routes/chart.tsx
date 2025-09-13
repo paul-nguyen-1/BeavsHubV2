@@ -7,6 +7,7 @@ import type { ApexOptions } from "apexcharts";
 import { Pill, Skeleton } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
+import background from "../assets/Beaver_background.png";
 
 type Row = {
   _id: string;
@@ -199,34 +200,42 @@ function RouteComponent() {
   }, [data, dispatch, navigate]);
 
   return (
-    <Skeleton visible={isLoading} height={520}>
-      <div className="w-full p-4">
-        <ReactApexChart
-          options={options}
-          series={series}
-          type="bubble"
-          height={520}
-        />
-        <div className="mt-4 flex flex-wrap justify-center gap-3">
-          {series[0].data.map((pt) => (
-            <div key={pt.name} className="flex items-center text-xs">
-              <Pill
-                key={pt.name}
-                size="sm"
-                radius="xl"
-                className="flex align-center justify-center gap-2"
-              >
-                <span
-                  className="inline-block relative top-0.5 w-3 h-3 mr-1 rounded-full"
-                  style={{ backgroundColor: pt.fillColor }}
-                />
-                <span>{pt.name.split("-")[0].trim()}</span>
-              </Pill>
-            </div>
-          ))}
+    <>
+      <img
+        src={background}
+        alt="Background"
+        className="hidden md:inline fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-2 object-contain"
+        style={{ width: "600px", height: "auto" }}
+      />
+      <Skeleton visible={isLoading} height={520}>
+        <div className="w-full p-4">
+          <ReactApexChart
+            options={options}
+            series={series}
+            type="bubble"
+            height={520}
+          />
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            {series[0].data.map((pt) => (
+              <div key={pt.name} className="flex items-center text-xs">
+                <Pill
+                  key={pt.name}
+                  size="sm"
+                  radius="xl"
+                  className="flex align-center justify-center gap-2"
+                >
+                  <span
+                    className="inline-block relative top-0.5 w-3 h-3 mr-1 rounded-full"
+                    style={{ backgroundColor: pt.fillColor }}
+                  />
+                  <span>{pt.name.split("-")[0].trim()}</span>
+                </Pill>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </Skeleton>
+      </Skeleton>
+    </>
   );
 }
 
