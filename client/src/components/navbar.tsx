@@ -29,7 +29,7 @@ export function Navbar() {
     { link: "/", label: "Home" },
     { link: "/courses", label: "Courses" },
     { link: "/planner", label: "Degree" },
-    { link: "/resumes", label: "Resume" },
+    // { link: "/resumes", label: "Resume" },
     // { link: "/about", label: "About" },
   ];
 
