@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../misc/const";
 import ReactApexChart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
-import { Skeleton } from "@mantine/core";
+import { Pill, Skeleton } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
 
@@ -207,6 +207,24 @@ function RouteComponent() {
           type="bubble"
           height={520}
         />
+        <div className="mt-4 flex flex-wrap justify-center gap-3">
+          {series[0].data.map((pt) => (
+            <div key={pt.name} className="flex items-center text-xs">
+              <Pill
+                key={pt.name}
+                size="sm"
+                radius="xl"
+                className="flex align-center justify-center gap-2"
+              >
+                <span
+                  className="inline-block relative top-0.5 w-3 h-3 mr-1 rounded-full"
+                  style={{ backgroundColor: pt.fillColor }}
+                />
+                <span>{pt.name.split("-")[0].trim()}</span>
+              </Pill>
+            </div>
+          ))}
+        </div>
       </div>
     </Skeleton>
   );
