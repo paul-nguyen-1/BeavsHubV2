@@ -111,7 +111,7 @@ function Courses() {
     }
 
     const url = debouncedCourse
-      ? `${getAllCourses}/courses/${debouncedCourse}?${params.toString()}`
+      ? `${getAllCourses}/courses/${debouncedCourse.split(" - ")[0]}?${params.toString()}`
       : `${getAllCourses}/courses?${params.toString()}`;
     const response = await fetch(url);
     if (!response.ok) {
