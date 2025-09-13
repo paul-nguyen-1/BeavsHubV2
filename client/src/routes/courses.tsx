@@ -76,10 +76,10 @@ function Course() {
           </div>
         </div>
 
-        <Skeleton visible={isLoading} h={600} radius="lg">
+        <Skeleton visible={isLoading} h={540} radius="lg">
           <div className="rounded-xl ring-1 ring-black/5 overflow-hidden bg-white shadow-sm">
             <ScrollArea
-              h={600}
+              h={540}
               type="auto"
               scrollbarSize={0}
               styles={{
