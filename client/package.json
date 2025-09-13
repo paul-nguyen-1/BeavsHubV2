@@ -28,7 +28,7 @@
     "@wojtekmaj/react-hooks": "^1.22.0",
     "@xyflow/react": "^12.4.3",
     "aws-amplify": "^6.13.1",
-    "axios": "^1.8.2",
+    "axios": "^1.12.0",
     "elkjs": "^0.9.3",
     "leaflet": "^1.9.4",
     "motion": "^12.4.7",
