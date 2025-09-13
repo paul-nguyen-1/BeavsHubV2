@@ -537,9 +537,7 @@ function Courses() {
             />
           </div>
           <motion.div
-            className={`flex flex-col items-center w-full ${
-              status === "pending" ? "opacity-50" : ""
-            }`}
+            className={`${status === "pending" ? "opacity-50" : ""}`}
             initial="hidden"
             animate="visible"
             variants={containerVariants}
