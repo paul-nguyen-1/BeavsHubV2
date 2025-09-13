@@ -544,7 +544,7 @@ function Courses() {
             animate="visible"
             variants={containerVariants}
           >
-            <div className="w-full flex flex-col items-end gap-4 overflow-auto scrollbar-hide md:max-h-[70vh] ">
+            <div className="w-full flex flex-col items-end gap-4 overflow-y-auto no-scrollbar md:max-h-[70vh] ">
               {status === "pending" && (
                 <>
                   <Skeleton height={350} mt={8} width="100%" radius="xl" />
