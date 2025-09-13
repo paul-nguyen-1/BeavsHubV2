@@ -1,4 +1,3 @@
-import * as React from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../misc/const";
@@ -8,6 +7,7 @@ import { Pill, Skeleton } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
 import background from "../assets/Beaver_background.png";
+import { useMemo } from "react";
 
 type Row = {
   _id: string;
@@ -84,7 +84,7 @@ function RouteComponent() {
     w: { config: ApexWithSeries };
   };
 
-  const { series, options } = React.useMemo(() => {
+  const { series, options } = useMemo(() => {
     const points = (data ?? [])
       .map((row) => {
         const courseName = row._id?.trim() || "Unknown";
@@ -138,7 +138,6 @@ function RouteComponent() {
                 config.dataPointIndex
               ];
             if (point && point.name) {
-              console.log(point.name);
               dispatch(setSelectedCourse(point.name));
               navigate({ to: "/reviews" });
             }
@@ -189,7 +188,7 @@ function RouteComponent() {
               <div style="font-weight:600;margin-bottom:6px;">${dot}${point.name}</div>
               <div>Average Hours: ${point.meta.hoursLabel}</div>
               <div>Average Difficulty: ${point.meta.difficultyLabel}</div>
-              <div>Responses: ${point.meta.countLabel}</div>
+              <div>Reviews: ${point.meta.countLabel}</div>
             </div>
           `;
         },
