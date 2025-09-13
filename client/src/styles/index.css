@@ -26,3 +26,7 @@ html,
 body {
   height: 100%;
 }
+
+.apexcharts-series path {
+  cursor: pointer !important;
+}

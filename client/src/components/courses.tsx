@@ -175,7 +175,11 @@ function Courses() {
     return response.json();
   };
 
-  const { data: fetchedChartData, isLoading: isChartLoading, error: chartError } = useQuery({
+  const {
+    data: fetchedChartData,
+    isLoading: isChartLoading,
+    error: chartError,
+  } = useQuery({
     queryKey: [
       "chartData",
       debouncedCourse,
@@ -460,7 +464,7 @@ function Courses() {
                   required
                 />
               </div>
-              <div>
+              <div className="mt-4">
                 <Button onClick={handleCourseSubmit}>Submit</Button>
               </div>
             </Modal>
@@ -471,9 +475,7 @@ function Courses() {
                     {course
                       ? course.includes("Capstone")
                         ? "Capstone"
-                        : course.includes("231")
-                          ? "MTH" + course
-                          : "CS" + course
+                        : course
                       : "Browse All Courses"}
                   </Text>
 
@@ -501,16 +503,12 @@ function Courses() {
               </div>
               <div className="flex flex-row flex-wrap gap-4">
                 <div>
-                  <Skeleton visible={isLoading}>
-                    <Button onClick={handleClearFilter} color="gray">
-                      Clear Filters
-                    </Button>
-                  </Skeleton>
+                  <Button onClick={handleClearFilter} color="gray">
+                    Clear Filters
+                  </Button>
                 </div>
                 <div>
-                  <Skeleton visible={isLoading}>
-                    <Button onClick={open}>New Post</Button>
-                  </Skeleton>
+                  <Button onClick={open}>New Post</Button>
                 </div>
               </div>
             </div>
@@ -524,13 +522,19 @@ function Courses() {
               Course Statistics
             </Text>
             <div className="flex flex-col md:flex-row gap-4">
-              <PieChartMantine data={fetchedChartData} isLoading={isChartLoading} />
+              <PieChartMantine
+                data={fetchedChartData}
+                isLoading={isChartLoading}
+              />
               <DonutChartMantine
                 data={fetchedChartData}
                 isLoading={isChartLoading}
               />
             </div>
-            <BarChartMantine data={fetchedChartData} isLoading={isChartLoading} />
+            <BarChartMantine
+              data={fetchedChartData}
+              isLoading={isChartLoading}
+            />
           </div>
           <motion.div
             className={`flex flex-col items-center w-full ${

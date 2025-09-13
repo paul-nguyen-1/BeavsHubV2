@@ -27,9 +27,11 @@ export function Navbar() {
 
   const mainLinks = [
     { link: "/", label: "Home" },
-    { link: "/courses", label: "Courses" },
+    // { link: "/courses", label: "Courses" },
+    { link: "/reviews", label: "Reviews" },
+    { link: "/chart", label: "Chart" },
     { link: "/planner", label: "Degree" },
-    { link: "/resumes", label: "Resume" },
+    // { link: "/resumes", label: "Resume" },
     // { link: "/about", label: "About" },
   ];
 
