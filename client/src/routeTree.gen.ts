@@ -13,7 +13,9 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ReviewsImport } from './routes/reviews'
 import { Route as CoursesImport } from './routes/courses'
+import { Route as ChartImport } from './routes/chart'
 
 // Create Virtual Routes
 
@@ -49,9 +51,21 @@ const AboutLazyRoute = AboutLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
+const ReviewsRoute = ReviewsImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const CoursesRoute = CoursesImport.update({
   id: '/courses',
   path: '/courses',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ChartRoute = ChartImport.update({
+  id: '/chart',
+  path: '/chart',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -72,11 +86,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/chart': {
+      id: '/chart'
+      path: '/chart'
+      fullPath: '/chart'
+      preLoaderRoute: typeof ChartImport
+      parentRoute: typeof rootRoute
+    }
     '/courses': {
       id: '/courses'
       path: '/courses'
       fullPath: '/courses'
       preLoaderRoute: typeof CoursesImport
+      parentRoute: typeof rootRoute
+    }
+    '/reviews': {
+      id: '/reviews'
+      path: '/reviews'
+      fullPath: '/reviews'
+      preLoaderRoute: typeof ReviewsImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -114,7 +142,9 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/chart': typeof ChartRoute
   '/courses': typeof CoursesRoute
+  '/reviews': typeof ReviewsRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
@@ -123,7 +153,9 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/chart': typeof ChartRoute
   '/courses': typeof CoursesRoute
+  '/reviews': typeof ReviewsRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
@@ -133,7 +165,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/chart': typeof ChartRoute
   '/courses': typeof CoursesRoute
+  '/reviews': typeof ReviewsRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
   '/planner': typeof PlannerLazyRoute
@@ -142,13 +176,31 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/courses' | '/about' | '/login' | '/planner' | '/resumes'
+  fullPaths:
+    | '/'
+    | '/chart'
+    | '/courses'
+    | '/reviews'
+    | '/about'
+    | '/login'
+    | '/planner'
+    | '/resumes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/courses' | '/about' | '/login' | '/planner' | '/resumes'
+  to:
+    | '/'
+    | '/chart'
+    | '/courses'
+    | '/reviews'
+    | '/about'
+    | '/login'
+    | '/planner'
+    | '/resumes'
   id:
     | '__root__'
     | '/'
+    | '/chart'
     | '/courses'
+    | '/reviews'
     | '/about'
     | '/login'
     | '/planner'
@@ -158,7 +210,9 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  ChartRoute: typeof ChartRoute
   CoursesRoute: typeof CoursesRoute
+  ReviewsRoute: typeof ReviewsRoute
   AboutLazyRoute: typeof AboutLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
   PlannerLazyRoute: typeof PlannerLazyRoute
@@ -167,7 +221,9 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  ChartRoute: ChartRoute,
   CoursesRoute: CoursesRoute,
+  ReviewsRoute: ReviewsRoute,
   AboutLazyRoute: AboutLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
   PlannerLazyRoute: PlannerLazyRoute,
@@ -185,7 +241,9 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/chart",
         "/courses",
+        "/reviews",
         "/about",
         "/login",
         "/planner",
@@ -195,8 +253,14 @@ export const routeTree = rootRoute
     "/": {
       "filePath": "index.lazy.tsx"
     },
+    "/chart": {
+      "filePath": "chart.tsx"
+    },
     "/courses": {
       "filePath": "courses.tsx"
+    },
+    "/reviews": {
+      "filePath": "reviews.tsx"
     },
     "/about": {
       "filePath": "about.lazy.tsx"
