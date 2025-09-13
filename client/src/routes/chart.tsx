@@ -139,7 +139,7 @@ function RouteComponent() {
             if (point && point.name) {
               console.log(point.name);
               dispatch(setSelectedCourse(point.name));
-              navigate({ to: "/courses" });
+              navigate({ to: "/reviews" });
             }
           },
         },
