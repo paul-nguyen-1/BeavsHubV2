@@ -537,7 +537,7 @@ function Courses() {
             />
           </div>
           <motion.div
-            className={`${isLoading && "flex flex-col items-center w-full"} ${status === "pending" ? "opacity-50" : ""}`}
+            className={`${isLoadingCourses && "flex flex-col items-center w-full"} ${status === "pending" ? "opacity-50" : ""}`}
             initial="hidden"
             animate="visible"
             variants={containerVariants}
