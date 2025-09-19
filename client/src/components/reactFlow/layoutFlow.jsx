@@ -20,6 +20,9 @@ import "@xyflow/react/dist/style.css";
 import { useDisclosure } from "@mantine/hooks";
 import { Drawer, Pill, Progress, Text } from "@mantine/core";
 import { classType } from "../../misc/utils.js";
+import { Link } from "@tanstack/react-router";
+import { useDispatch } from "react-redux";
+import { setSelectedCourse } from "../../hooks/useCourse.js";
 
 const elk = new ELK();
 const elkOptions = {
@@ -148,6 +151,7 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
 };
 
 export const LayoutFlow = () => {
+  const dispatch = useDispatch();
   const [opened, { open, close }] = useDisclosure(false);
   const { fitView } = useReactFlow();
   const [currentNodeId, setCurrentNodeId] = useState(null);
@@ -347,7 +351,15 @@ export const LayoutFlow = () => {
                 backgroundColor: node.taken ? "#bef264" : "#f3f3f3",
               }}
             >
-              {node.data?.label}
+              <Link
+                key={node.data?.label}
+                to="/reviews"
+                onClick={() =>
+                  dispatch(setSelectedCourse(`CS ${node.data?.label}`))
+                }
+              >
+                {node.data?.label}
+              </Link>
             </div>
           ))}
         </div>
@@ -373,7 +385,15 @@ export const LayoutFlow = () => {
                 backgroundColor: node.taken ? "#bef264" : "#f3f3f3",
               }}
             >
-              {node.data?.label}
+              <Link
+                key={node.data?.label}
+                to="/reviews"
+                onClick={() =>
+                  dispatch(setSelectedCourse(`CS ${node.data?.label}`))
+                }
+              >
+                {node.data?.label}
+              </Link>
             </div>
           ))}
         </div>
