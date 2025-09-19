@@ -100,7 +100,7 @@ function Home() {
                 return (
                   <Link
                     key={course.course._id}
-                    to="/courses"
+                    to="/reviews"
                     onClick={() =>
                       dispatch(setSelectedCourse(course.course.course_name))
                     }
