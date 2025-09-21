@@ -102,11 +102,11 @@ function Home() {
                     dispatch(setSelectedCourse(course.course.course_name))
                   }
                 >
-                  <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[260px] md:h-[300px]">
-                    <Skeleton
-                      visible={isLoading}
-                      className="w-[355px] md:w-[375px] h-[260px] md:h-[300px]"
-                    >
+                  <Skeleton
+                    visible={isLoading}
+                    className="w-[355px] md:w-[375px] h-[260px] md:h-[300px]"
+                  >
+                    <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[260px] md:h-[300px]">
                       <div className="flex justify-between items-center">
                         <h2 className="text-lg font-bold">{courseNumber}</h2>
                         <span
@@ -138,8 +138,8 @@ function Home() {
                         <span>{course.avg_hours.toFixed(2)} hrs / wk</span>
                         <span>{course.count} Reviews</span>
                       </div>
-                    </Skeleton>
-                  </div>
+                    </div>
+                  </Skeleton>
                 </Link>
               );
             })}
