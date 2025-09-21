@@ -17,7 +17,7 @@ import {
 import { setSelectedCourse } from "../hooks/useCourse";
 import { useQuery } from "@tanstack/react-query";
 import { classType, splitString } from "../misc/utils";
-import { Loader, Progress } from "@mantine/core";
+import { Progress, Skeleton } from "@mantine/core";
 import { CourseInfo } from "../misc/types";
 import { Link } from "@tanstack/react-router";
 
@@ -57,7 +57,9 @@ function Home() {
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
         <div className="flex flex-col items-center max-w-180 relative bottom-15">
-          <h1 className="!text-6xl font-extrabold text-center">Welcome to BeavsHub</h1>
+          <h1 className="!text-6xl font-extrabold text-center">
+            Welcome to BeavsHub
+          </h1>
           <div className="flex flex-col gap-8 justify-center items-center relative bottom-4 md:bottom-3">
             <h2 className="text-2xl text-center max-w-160 px-10 md:px-0">
               Comprehensive Course Reviews (2000+) and Degree Planning for OSU
@@ -86,24 +88,23 @@ function Home() {
             Popular Courses
           </h1>
           <div className="flex justify-center flex-wrap gap-15">
-            {isLoading ? (
-              <>
-                <Loader />
-              </>
-            ) : (
-              popularCourses.map((course: PopularCourses) => {
-                const [courseNumber, courseTitle] = splitString(
-                  course.course.course_name,
-                  "-"
-                );
+            {popularCourses.map((course: PopularCourses) => {
+              const [courseNumber, courseTitle] = splitString(
+                course.course.course_name,
+                "-"
+              );
 
-                return (
-                  <Link
-                    key={course.course._id}
-                    to="/reviews"
-                    onClick={() =>
-                      dispatch(setSelectedCourse(course.course.course_name))
-                    }
+              return (
+                <Link
+                  key={course.course._id}
+                  to="/reviews"
+                  onClick={() =>
+                    dispatch(setSelectedCourse(course.course.course_name))
+                  }
+                >
+                  <Skeleton
+                    visible={isLoading}
+                    className="w-[355px] md:w-[375px] h-[260px] md:h-[300px]"
                   >
                     <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[260px] md:h-[300px]">
                       <div className="flex justify-between items-center">
@@ -138,10 +139,10 @@ function Home() {
                         <span>{course.count} Reviews</span>
                       </div>
                     </div>
-                  </Link>
-                );
-              })
-            )}
+                  </Skeleton>
+                </Link>
+              );
+            })}
           </div>
         </div>
         <div className="w-full bg-white pt-1 pb-15">
