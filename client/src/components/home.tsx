@@ -95,16 +95,16 @@ function Home() {
               );
 
               return (
-                <Link
-                  key={course.course._id}
-                  to="/reviews"
-                  onClick={() =>
-                    dispatch(setSelectedCourse(course.course.course_name))
-                  }
+                <Skeleton
+                  visible={isLoading}
+                  className="w-[355px] md:w-[375px] h-[260px] md:h-[300px]"
                 >
-                  <Skeleton
-                    visible={isLoading}
-                    className="w-[355px] md:w-[375px] h-[260px] md:h-[300px]"
+                  <Link
+                    key={course.course._id}
+                    to="/reviews"
+                    onClick={() =>
+                      dispatch(setSelectedCourse(course.course.course_name))
+                    }
                   >
                     <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[260px] md:h-[300px]">
                       <div className="flex justify-between items-center">
@@ -139,8 +139,8 @@ function Home() {
                         <span>{course.count} Reviews</span>
                       </div>
                     </div>
-                  </Skeleton>
-                </Link>
+                  </Link>
+                </Skeleton>
               );
             })}
           </div>
