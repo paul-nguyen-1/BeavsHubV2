@@ -88,23 +88,26 @@ function Home() {
             Popular Courses
           </h1>
           <div className="flex justify-center flex-wrap gap-15">
-            {popularCourses.map((course: PopularCourses) => {
-              const [courseNumber, courseTitle] = splitString(
-                course.course.course_name,
-                "-"
-              );
+            {isLoading ? (
+              <>
+                <Skeleton height={300} width={375} radius="md" />
+                <Skeleton height={300} width={375} radius="md" />
+                <Skeleton height={300} width={375} radius="md" />
+              </>
+            ) : (
+              popularCourses.map((course: PopularCourses) => {
+                const [courseNumber, courseTitle] = splitString(
+                  course.course.course_name,
+                  "-"
+                );
 
-              return (
-                <Link
-                  key={course.course._id}
-                  to="/reviews"
-                  onClick={() =>
-                    dispatch(setSelectedCourse(course.course.course_name))
-                  }
-                >
-                  <Skeleton
-                    visible={isLoading}
-                    className="w-[355px] md:w-[375px] h-[260px] md:h-[300px]"
+                return (
+                  <Link
+                    key={course.course._id}
+                    to="/reviews"
+                    onClick={() =>
+                      dispatch(setSelectedCourse(course.course.course_name))
+                    }
                   >
                     <div className="flex flex-wrap flex-col justify-evenly bg-white drop-shadow-lg hover:opacity-65 rounded-lg p-4 w-[355px] md:w-[375px] h-[260px] md:h-[300px]">
                       <div className="flex justify-between items-center">
@@ -139,10 +142,10 @@ function Home() {
                         <span>{course.count} Reviews</span>
                       </div>
                     </div>
-                  </Skeleton>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })
+            )}
           </div>
         </div>
         <div className="w-full bg-white pt-1 pb-15">
