@@ -11,7 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@aws-amplify/ui-react": "^6.9.1",
+    "@aws-amplify/ui-react": "^6.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mantine/charts": "^7.16.3",
@@ -28,7 +28,7 @@
     "@wojtekmaj/react-hooks": "^1.22.0",
     "@xyflow/react": "^12.4.3",
     "apexcharts": "^5.3.5",
-    "aws-amplify": "^6.16.0",
+    "aws-amplify": "^6.16.2",
     "axios": "^1.12.0",
     "elkjs": "^0.9.3",
     "leaflet": "^1.9.4",
