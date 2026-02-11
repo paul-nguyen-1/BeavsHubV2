@@ -29,7 +29,7 @@
     "@xyflow/react": "^12.4.3",
     "apexcharts": "^5.3.5",
     "aws-amplify": "^6.16.2",
-    "axios": "^1.12.0",
+    "axios": "^1.13.5",
     "elkjs": "^0.9.3",
     "leaflet": "^1.9.4",
     "motion": "^12.4.7",
