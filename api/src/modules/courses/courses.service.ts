@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Model, Query } from 'mongoose';
 import { Course, ParentCourse } from '../../schemas/courses.schema';
 import { HttpService } from '@nestjs/axios';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { ParentCourseDto, CourseDto } from '../../dto/create-course.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { subMonths, subYears } from 'date-fns';
@@ -51,7 +51,7 @@ export class CoursesService {
         obj[header] = row[i];
       });
 
-      const parentId = uuidv4();
+      const parentId = randomUUID();
       const timestamp = new Date(obj['Timestamp 1'] || obj['timestamp 1']);
 
       parentRecords.push({
@@ -92,7 +92,7 @@ export class CoursesService {
           .map((pairCourse) => pairCourse.course_name);
 
         courseRecords.push({
-          _id: uuidv4(),
+          _id: randomUUID(),
           parent_id: parentId,
           timestamp,
           ...course,
@@ -217,8 +217,8 @@ export class CoursesService {
   async createCourse(body: CourseDto): Promise<CourseDto> {
     const newCourse = new this.courseModel({
       ...body,
-      _id: uuidv4(),
-      parent_id: uuidv4(),
+      _id: randomUUID(),
+      parent_id: randomUUID(),
       timestamp: new Date(),
       internal: true,
     });
