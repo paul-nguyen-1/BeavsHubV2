@@ -48,7 +48,7 @@ function SortArrow({ active, asc }: { active: boolean; asc: boolean }) {
 function Course() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortField, setSortField] = useState<SortField>("course");
   const [sortAsc, setSortAsc] = useState(true);
 
