@@ -1,6 +1,8 @@
 import ReactDOM from "react-dom/client";
 import { StrictMode } from "react";
 import { createTheme, MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
@@ -58,6 +60,7 @@ if (!rootElement.innerHTML) {
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <MantineProvider theme={theme}>
+            <Notifications position="bottom-right" />
             <RouterProvider router={router} />
             <Analytics />
           </MantineProvider>

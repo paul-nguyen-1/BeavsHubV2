@@ -17,7 +17,9 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import "./layoutFlow.css";
 import { Drawer, Pill, Progress, Text } from "@mantine/core";
+import { CheckIcon } from "@phosphor-icons/react";
 import { classType } from "../../misc/utils.js";
 import { Link } from "@tanstack/react-router";
 import { useDispatch } from "react-redux";
@@ -154,6 +156,7 @@ export const LayoutFlow = ({ opened, close }) => {
   const { fitView } = useReactFlow();
   const [currentNodeId, setCurrentNodeId] = useState(null);
   const [activeDirection, setActiveDirection] = useState("DOWN");
+  const [notifications, setNotifications] = useState([]);
 
   const storedNodes = localStorage.getItem("flowNodes");
   const storedEdges = localStorage.getItem("flowEdges");
@@ -255,9 +258,15 @@ export const LayoutFlow = ({ opened, close }) => {
       if (isElective && takenElectives >= 3) return;
     }
 
+    const nowTaken = !node.taken;
     setNodes((prev) =>
-      prev.map((n) => (n.id === node.id ? { ...n, taken: !n.taken } : n))
+      prev.map((n) => (n.id === node.id ? { ...n, taken: nowTaken } : n))
     );
+    if (nowTaken) {
+      const id = Date.now();
+      setNotifications((prev) => [...prev, { id, label: node.data?.label }]);
+      setTimeout(() => setNotifications((prev) => prev.filter((t) => t.id !== id)), 3000);
+    }
   };
 
   const coreNodes = nodes.filter(
@@ -290,14 +299,10 @@ export const LayoutFlow = ({ opened, close }) => {
       onNodeMouseEnter={handleNodeMouseEnter}
       onNodeMouseLeave={handleNodeMouseLeave}
       onNodeClick={handleNodeClick}
-      style={{
-        backgroundColor: "transparent",
-        height: "100%",
-        width: "100%",
-      }}
+      className="layout-flow"
     >
       <div className="absolute top-5 md:top-[-15px] right-0 p-4">
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div className="layout-buttons">
           {[
             { label: "Horizontal Layout", direction: "DOWN" },
             { label: "Vertical Layout", direction: "RIGHT" },
@@ -306,29 +311,7 @@ export const LayoutFlow = ({ opened, close }) => {
             return (
               <button
                 key={direction}
-                style={{
-                  padding: "0.5rem",
-                  backgroundColor: isActive ? "#d73f09" : "#fff",
-                  color: isActive ? "#fff" : "#000",
-                  border: "1.5px solid #d3d3d3",
-                  zIndex: 1000,
-                  fontWeight: 600,
-                  borderRadius: "4px",
-                  transition: "background-color 0.15s ease, color 0.15s ease",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = "#f3f4f6";
-                    e.currentTarget.style.color = "#6b7280";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = "#fff";
-                    e.currentTarget.style.color = "#000";
-                  }
-                }}
+                className={`layout-btn${isActive ? " layout-btn--active" : ""}`}
                 onClick={() => {
                   setActiveDirection(direction);
                   onLayout({ direction });
@@ -341,7 +324,7 @@ export const LayoutFlow = ({ opened, close }) => {
         </div>
       </div>
 
-      <div className="flex flex-row gap-2 justify-center" style={{ zIndex: 9999, position: "relative" }}>
+      <div className="flex flex-row gap-2 justify-center pills-row">
         <Pill size="lg">
           Core ({takenCore} / {12})
         </Pill>
@@ -353,6 +336,21 @@ export const LayoutFlow = ({ opened, close }) => {
         </Pill>
       </div>
       <Background />
+
+      <div className="toast-container">
+        {notifications.map((t) => (
+          <div key={t.id} className="toast-item toast-notification">
+            <span className="toast-icon">
+              <CheckIcon size={14} weight="bold" />
+            </span>
+            <div>
+              <p className="toast-title">Course Added</p>
+              <p className="toast-message">{t.label} marked as taken</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <Drawer
         opened={opened}
         onClose={close}
