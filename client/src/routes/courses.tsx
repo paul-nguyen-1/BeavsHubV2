@@ -137,8 +137,6 @@ function Course() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-6xl px-4 py-8">
-
-        {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
             <h1 className="!text-2xl !font-black text-gray-900">Course Reviews</h1>
@@ -147,7 +145,7 @@ function Course() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {viewMode === "grid" && (
               <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl p-1">
                 {sortButtons.map(({ field, label }) => (
@@ -201,8 +199,6 @@ function Course() {
             )}
           </div>
         </div>
-
-        {/* List view */}
         {viewMode === "list" && (
           <Skeleton visible={isLoading} h={540} radius="lg">
             <div className="rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
@@ -365,7 +361,6 @@ function Course() {
           </Skeleton>
         )}
 
-        {/* Grid view */}
         {viewMode === "grid" && (
           isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

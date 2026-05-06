@@ -155,6 +155,7 @@ export const LayoutFlow = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const { fitView } = useReactFlow();
   const [currentNodeId, setCurrentNodeId] = useState(null);
+  const [activeDirection, setActiveDirection] = useState("DOWN");
 
   const storedNodes = localStorage.getItem("flowNodes");
   const storedEdges = localStorage.getItem("flowEdges");
@@ -245,6 +246,17 @@ export const LayoutFlow = () => {
   };
 
   const handleNodeClick = (event, node) => {
+    const isCore =
+      classType(node.id) === "Core" ||
+      node.data.label.toLowerCase().includes("capstone");
+    const isElective = classType(node.id) === "Elective";
+    const alreadyTaken = node.taken;
+
+    if (!alreadyTaken) {
+      if (isCore && takenCore >= 12) return;
+      if (isElective && takenElectives >= 3) return;
+    }
+
     setNodes((prev) =>
       prev.map((n) => (n.id === node.id ? { ...n, taken: !n.taken } : n))
     );
@@ -289,35 +301,50 @@ export const LayoutFlow = () => {
     >
       <div className="absolute top-5 md:top-[-15px] right-0 p-4">
         <div style={{ display: "flex", gap: "0.5rem" }}>
-          <button
-            style={{
-              padding: "0.5rem",
-              backgroundColor: "#d73f09",
-              color: "#fff",
-              zIndex: 1000,
-            }}
-            className="cursor-pointer"
-            onClick={() => onLayout({ direction: "DOWN" })}
-          >
-            Vertical Layout
-          </button>
-          <button
-            style={{
-              padding: "0.5rem",
-              backgroundColor: "#fff",
-              color: "#000",
-              border: "1px solid black",
-              zIndex: 1000,
-            }}
-            className="cursor-pointer"
-            onClick={() => onLayout({ direction: "RIGHT" })}
-          >
-            Horizontal Layout
-          </button>
+          {[
+            { label: "Horizontal Layout", direction: "DOWN" },
+            { label: "Vertical Layout", direction: "RIGHT" },
+          ].map(({ label, direction }) => {
+            const isActive = activeDirection === direction;
+            return (
+              <button
+                key={direction}
+                style={{
+                  padding: "0.5rem",
+                  backgroundColor: isActive ? "#d73f09" : "#fff",
+                  color: isActive ? "#fff" : "#000",
+                  border: "1.5px solid #d3d3d3",
+                  zIndex: 1000,
+                  fontWeight: 600,
+                  borderRadius: "4px",
+                  transition: "background-color 0.15s ease, color 0.15s ease",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = "#f3f4f6";
+                    e.currentTarget.style.color = "#6b7280";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = "#fff";
+                    e.currentTarget.style.color = "#000";
+                  }
+                }}
+                onClick={() => {
+                  setActiveDirection(direction);
+                  onLayout({ direction });
+                }}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <div className="flex flex-row gap-2 justify-center">
+      <div className="flex flex-row gap-2 justify-center" style={{ zIndex: 9999, position: "relative" }}>
         <Pill size="lg">
           Core ({takenCore} / {12})
         </Pill>
