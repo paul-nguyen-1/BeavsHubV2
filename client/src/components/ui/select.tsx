@@ -50,8 +50,8 @@ export default function SelectMantine({
             className="relative left-0.5 cursor-pointer transition-transform hover:scale-110"
             onClick={() => {
               handleInputChange(value);
-              if (routerState.location.pathname !== "/courses") {
-                navigate({ to: "/courses" });
+              if (routerState.location.pathname !== "/reviews") {
+                navigate({ to: "/reviews" });
               }
             }}
           />
