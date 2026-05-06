@@ -137,7 +137,7 @@ export const PieChartMantine = (props: {
   }, [isLoading, pieChartData]);
 
   return (
-    <Skeleton visible={isLoading} height={250}>
+    <Skeleton visible={isLoading} height={250} className="flex justify-center">
       <div className="w-[190px]">
         {chartState(pieChartData) ? (
           <>
@@ -207,7 +207,7 @@ export const DonutChartMantine = (props: {
     color: getColor(index),
   }));
   return (
-    <Skeleton visible={isLoading} height={250}>
+    <Skeleton visible={isLoading} height={250} className="flex justify-center">
       <div className="w-[190px]">
         {chartState(donutChartData) ? (
           <>
