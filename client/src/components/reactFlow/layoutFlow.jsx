@@ -149,7 +149,7 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
     .catch(console.error);
 };
 
-export const LayoutFlow = ({ opened, open, close }) => {
+export const LayoutFlow = ({ opened, close }) => {
   const dispatch = useDispatch();
   const { fitView } = useReactFlow();
   const [currentNodeId, setCurrentNodeId] = useState(null);
@@ -258,7 +258,6 @@ export const LayoutFlow = ({ opened, open, close }) => {
     setNodes((prev) =>
       prev.map((n) => (n.id === node.id ? { ...n, taken: !n.taken } : n))
     );
-    open();
   };
 
   const coreNodes = nodes.filter(
