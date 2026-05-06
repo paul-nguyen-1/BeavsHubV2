@@ -1,13 +1,4 @@
-import {
-  Avatar,
-  Badge,
-  Group,
-  Paper,
-  Text,
-  TypographyStylesProvider,
-} from "@mantine/core";
 import { CourseCard } from "../misc/types";
-import { useMediaQuery } from "@mantine/hooks";
 import user from "../assets/Profile_icon_fill.svg";
 import { classType } from "../misc/utils";
 import { AppDispatch, RootState } from "../../app/store";
@@ -25,74 +16,92 @@ export function Course(props: CourseCard) {
     timestamp,
     pairs,
   } = props;
-  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const dispatch = useDispatch<AppDispatch>();
   const globalCourse = useSelector(
     (state: RootState) => state.useCourse.selectedCourse
   );
-  const handleCourseChange = (value: string | null) => {
-    dispatch(setSelectedCourse(value));
-  };
+
+  const isCore = classType(course) === "Core";
+
+  const stats = [
+    { label: "Difficulty", value: `${difficulty} / 5` },
+    { label: "Hours/wk", value: time_spent_per_week },
+    ...(enjoyability ? [{ label: "Enjoyability", value: enjoyability }] : []),
+    ...(taken_date ? [{ label: "Semester", value: taken_date }] : []),
+  ];
 
   return (
-    <Paper
-      withBorder
-      radius="md"
-      className={`p-5 w-full flex md:flex-col !bg-white !rounded-lg !shadow-md ${!globalCourse && "cursor-pointer"}`}
-      onClick={() => handleCourseChange(course)}
+    <div
+      className={`bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden w-full ${
+        !globalCourse ? "cursor-pointer" : ""
+      }`}
+      onClick={() => dispatch(setSelectedCourse(course))}
     >
-      <div className="w-full flex align-top justify-between">
-        <div className="flex flex-col md:flex-row gap-2">
-          <Avatar
-            src={user}
-            alt="Avatar"
-            radius="xl"
-            className="md:relative md:top-5"
-          />
-          <div className="flex flex-col">
-            <div className="flex flex-col md:flex-row md:gap-1 md:items-center">
-              <Text fz="sm">{isMobile ? course.slice(0, 30) : course}</Text>
-              <Text fz="sm" c="dimmed">
-                @ {new Date(timestamp).toLocaleDateString()}
-              </Text>
+      <div className={`h-1 w-full ${isCore ? "bg-[#d73f09]" : "bg-[#f28705]"}`} />
+
+      <div className="p-5">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+              <img src={user} alt="Avatar" className="w-5 h-5 opacity-40" />
             </div>
-            <Text fz="sm">Difficulty: {difficulty}</Text>
-            {enjoyability && <Text fz="sm">Enjoyability: {enjoyability}</Text>}
-            <Text fz="sm">Time Spent Per Week: {time_spent_per_week}</Text>
-            {taken_date && <Text fz="sm">Semester: {taken_date}</Text>}
-            {pairs.length !== 0 && (
-              <div className="flex flex-row items-center flex-wrap gap-2">
-                <Text size="sm">Course Pair(s):</Text>
-                <Group>
-                  {pairs.map((pair, index) => (
-                    <Badge key={index} radius="xl" size="lg" variant="light">
-                      {pair}
-                    </Badge>
-                  ))}
-                </Group>
-              </div>
-            )}
+            <div>
+              <p className="text-sm font-bold text-gray-900 line-clamp-1">{course}</p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {new Date(timestamp).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="h-full flex flex-col align-top items-end">
-          <div
+          <span
             className={`${
-              classType(course) === "Core" ? "bg-[#d73f09]" : "bg-[#f28705]"
-            } text-white text-xs px-3 py-1 rounded-full w-16 flex justify-center`}
+              isCore ? "bg-[#d73f09]" : "bg-[#f28705]"
+            } text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0 ml-2`}
           >
             {classType(course)}
-          </div>
+          </span>
         </div>
-      </div>
-      <TypographyStylesProvider>
-        <div className="pt-2">
-          {tips == "" ? (
-            <div>No comments were submitted for this post.</div>
+
+        <div className="flex flex-wrap gap-2 mb-4">
+          {stats.map((stat) => (
+            <span
+              key={stat.label}
+              className="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-lg px-3 py-1.5 text-xs"
+            >
+              <span className="text-gray-400 font-medium">{stat.label}</span>
+              <span className="text-gray-800 font-bold">{stat.value}</span>
+            </span>
+          ))}
+        </div>
+
+        <div className="bg-gray-50 rounded-xl px-4 py-3 mb-3">
+          {tips ? (
+            <p className="text-sm text-gray-700 leading-relaxed">{tips}</p>
           ) : (
-            <div>{tips}</div>
+            <p className="text-sm text-gray-400 italic">
+              No comments were submitted for this post.
+            </p>
           )}
         </div>
-      </TypographyStylesProvider>
-    </Paper>
+
+        {pairs.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap pt-1">
+            <span className="text-xs text-gray-400 font-medium">Paired with:</span>
+            {pairs.map((pair, index) => (
+              <span
+                key={index}
+                className="text-xs bg-orange-50 text-[#d73f09] font-semibold px-2.5 py-0.5 rounded-full border border-orange-100"
+              >
+                {pair}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

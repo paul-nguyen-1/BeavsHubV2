@@ -17,7 +17,6 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useDisclosure } from "@mantine/hooks";
 import { Drawer, Pill, Progress, Text } from "@mantine/core";
 import { classType } from "../../misc/utils.js";
 import { Link } from "@tanstack/react-router";
@@ -150,11 +149,11 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
     .catch(console.error);
 };
 
-export const LayoutFlow = () => {
+export const LayoutFlow = ({ opened, open, close }) => {
   const dispatch = useDispatch();
-  const [opened, { open, close }] = useDisclosure(false);
   const { fitView } = useReactFlow();
   const [currentNodeId, setCurrentNodeId] = useState(null);
+  const [activeDirection, setActiveDirection] = useState("DOWN");
 
   const storedNodes = localStorage.getItem("flowNodes");
   const storedEdges = localStorage.getItem("flowEdges");
@@ -245,6 +244,17 @@ export const LayoutFlow = () => {
   };
 
   const handleNodeClick = (event, node) => {
+    const isCore =
+      classType(node.id) === "Core" ||
+      node.data.label.toLowerCase().includes("capstone");
+    const isElective = classType(node.id) === "Elective";
+    const alreadyTaken = node.taken;
+
+    if (!alreadyTaken) {
+      if (isCore && takenCore >= 12) return;
+      if (isElective && takenElectives >= 3) return;
+    }
+
     setNodes((prev) =>
       prev.map((n) => (n.id === node.id ? { ...n, taken: !n.taken } : n))
     );
@@ -289,35 +299,50 @@ export const LayoutFlow = () => {
     >
       <div className="absolute top-5 md:top-[-15px] right-0 p-4">
         <div style={{ display: "flex", gap: "0.5rem" }}>
-          <button
-            style={{
-              padding: "0.5rem",
-              backgroundColor: "#d73f09",
-              color: "#fff",
-              zIndex: 1000,
-            }}
-            className="cursor-pointer"
-            onClick={() => onLayout({ direction: "DOWN" })}
-          >
-            Vertical Layout
-          </button>
-          <button
-            style={{
-              padding: "0.5rem",
-              backgroundColor: "#fff",
-              color: "#000",
-              border: "1px solid black",
-              zIndex: 1000,
-            }}
-            className="cursor-pointer"
-            onClick={() => onLayout({ direction: "RIGHT" })}
-          >
-            Horizontal Layout
-          </button>
+          {[
+            { label: "Horizontal Layout", direction: "DOWN" },
+            { label: "Vertical Layout", direction: "RIGHT" },
+          ].map(({ label, direction }) => {
+            const isActive = activeDirection === direction;
+            return (
+              <button
+                key={direction}
+                style={{
+                  padding: "0.5rem",
+                  backgroundColor: isActive ? "#d73f09" : "#fff",
+                  color: isActive ? "#fff" : "#000",
+                  border: "1.5px solid #d3d3d3",
+                  zIndex: 1000,
+                  fontWeight: 600,
+                  borderRadius: "4px",
+                  transition: "background-color 0.15s ease, color 0.15s ease",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = "#f3f4f6";
+                    e.currentTarget.style.color = "#6b7280";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = "#fff";
+                    e.currentTarget.style.color = "#000";
+                  }
+                }}
+                onClick={() => {
+                  setActiveDirection(direction);
+                  onLayout({ direction });
+                }}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <div className="flex flex-row gap-2 justify-center">
+      <div className="flex flex-row gap-2 justify-center" style={{ zIndex: 9999, position: "relative" }}>
         <Pill size="lg">
           Core ({takenCore} / {12})
         </Pill>
@@ -333,77 +358,98 @@ export const LayoutFlow = () => {
         opened={opened}
         onClose={close}
         position="right"
-        title="Degree Planner"
+        size="sm"
+        title={<span className="font-black text-gray-900">Degree Planner</span>}
       >
-        <h3>Core Classes</h3>
-        <Progress value={percentCore} size="lg" color="orange" radius="xl" />
-        <p style={{ marginTop: "0.5rem" }}>
-          {takenCore} of {coreNodes.length} taken ({percentCore}%)
-        </p>
-        <div style={{ marginTop: "0.5rem", marginBottom: "1.5rem" }}>
-          {coreNodes.map((node) => (
-            <div
-              key={node.id}
-              style={{
-                padding: "0.5rem",
-                marginBottom: "0.25rem",
-                borderRadius: "0.5rem",
-                backgroundColor: node.taken ? "#bef264" : "#f3f3f3",
-              }}
-            >
-              <Link
-                key={node.data?.label}
-                to="/reviews"
-                onClick={() =>
-                  dispatch(setSelectedCourse(`CS ${node.data?.label}`))
-                }
-              >
-                {node.data?.label}
-              </Link>
+        <div className="flex flex-col gap-6">
+
+          {/* Summary pills */}
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { label: "Core", taken: takenCore, total: 12 },
+              { label: "Elective", taken: takenElectives, total: 3 },
+              { label: "Credits", taken: takenCore * 4 + takenElectives * 4, total: 60 },
+            ].map(({ label, taken, total }) => (
+              <div key={label} className="flex flex-col items-center bg-gray-50 border border-gray-100 rounded-xl py-3 px-2">
+                <span className="text-xs text-gray-400 font-medium mb-1">{label}</span>
+                <span className="text-lg font-black text-gray-900">{taken}</span>
+                <span className="text-[10px] text-gray-400">/ {total}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Core section */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-bold text-gray-900">Core Classes</span>
+              <span className="text-xs text-gray-400">{takenCore} / 12</span>
             </div>
-          ))}
-        </div>
-        <h3>Electives</h3>
-        <Progress
-          value={percentElectives}
-          size="lg"
-          color="orange"
-          radius="xl"
-        />
-        <p style={{ marginTop: "0.5rem" }}>
-          {takenElectives} of {electiveNodes.length} taken ({percentElectives}
-          %)
-        </p>
-        <div style={{ marginTop: "0.5rem" }}>
-          {electiveNodes.map((node) => (
-            <div
-              key={node.id}
-              style={{
-                padding: "0.5rem",
-                marginBottom: "0.25rem",
-                borderRadius: "0.5rem",
-                backgroundColor: node.taken ? "#bef264" : "#f3f3f3",
-              }}
-            >
-              <Link
-                key={node.data?.label}
-                to="/reviews"
-                onClick={() =>
-                  dispatch(setSelectedCourse(`CS ${node.data?.label}`))
-                }
-              >
-                {node.data?.label}
-              </Link>
+            <Progress value={percentCore} size="sm" color="#d73f09" radius="xl" mb="sm" />
+            <div className="flex flex-col gap-1.5">
+              {coreNodes.map((node) => (
+                <Link
+                  key={node.id}
+                  to="/reviews"
+                  onClick={() => dispatch(setSelectedCourse(`CS ${node.data?.label}`))}
+                  className="no-underline"
+                >
+                  <div className={`flex items-center justify-between rounded-xl px-3 py-2.5 border transition-all duration-150 ${
+                    node.taken
+                      ? "bg-green-50 border-green-200"
+                      : "bg-gray-50 border-gray-100 hover:bg-orange-50 hover:border-orange-100"
+                  }`}>
+                    <span className={`text-sm font-semibold ${node.taken ? "text-green-700" : "text-gray-800"}`}>
+                      {node.data?.label}
+                    </span>
+                    {node.taken && (
+                      <span className="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">Done</span>
+                    )}
+                  </div>
+                </Link>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Electives section */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-bold text-gray-900">Electives</span>
+              <span className="text-xs text-gray-400">{takenElectives} / 3</span>
+            </div>
+            <Progress value={percentElectives} size="sm" color="#f28705" radius="xl" mb="sm" />
+            <div className="flex flex-col gap-1.5">
+              {electiveNodes.map((node) => (
+                <Link
+                  key={node.id}
+                  to="/reviews"
+                  onClick={() => dispatch(setSelectedCourse(`CS ${node.data?.label}`))}
+                  className="no-underline"
+                >
+                  <div className={`flex items-center justify-between rounded-xl px-3 py-2.5 border transition-all duration-150 ${
+                    node.taken
+                      ? "bg-green-50 border-green-200"
+                      : "bg-gray-50 border-gray-100 hover:bg-orange-50 hover:border-orange-100"
+                  }`}>
+                    <span className={`text-sm font-semibold ${node.taken ? "text-green-700" : "text-gray-800"}`}>
+                      {node.data?.label}
+                    </span>
+                    {node.taken && (
+                      <span className="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">Done</span>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
         </div>
       </Drawer>
     </ReactFlow>
   );
 };
 
-export const LayoutFlowWithProvider = () => (
+export const LayoutFlowWithProvider = ({ opened, open, close }) => (
   <ReactFlowProvider>
-    <LayoutFlow />
+    <LayoutFlow opened={opened} open={open} close={close} />
   </ReactFlowProvider>
 );

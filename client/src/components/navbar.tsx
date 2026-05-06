@@ -7,17 +7,15 @@ import {
   Drawer,
   ScrollArea,
   rem,
-  Image,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import "../styles/navbar.css";
 import { Link, useLocation } from "@tanstack/react-router";
-import headerIcon from "../assets/header.svg";
 
 export function Navbar() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
-  const [heightState, setHeightState] = useState("pageTop");
+  const [hideNav, setHideNav] = useState(false);
   const location = useLocation();
   const linksRef = useRef<(HTMLDivElement | null)[]>([]);
   const [underlineStyle, setUnderlineStyle] = useState({
@@ -31,8 +29,6 @@ export function Navbar() {
     { link: "/reviews", label: "Reviews" },
     { link: "/chart", label: "Chart" },
     { link: "/planner", label: "Degree" },
-    // { link: "/resumes", label: "Resume" },
-    // { link: "/about", label: "About" },
   ];
 
   const activeIndex = mainLinks.findIndex(
@@ -43,22 +39,13 @@ export function Navbar() {
     let lastVal = 0;
     const handleScroll = () => {
       const y = window.scrollY;
-      if (y > lastVal && y > 100) {
-        setHeightState("scrollDown");
-      } else if (y < lastVal) {
-        setHeightState("scrollUp");
-      }
-      if (y === 0) {
-        setHeightState("pageTop");
-      }
+      if (y > lastVal && y > 100) setHideNav(true);
+      else if (y < lastVal) setHideNav(false);
+      if (y === 0) setHideNav(false);
       lastVal = y;
     };
-
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -80,9 +67,7 @@ export function Navbar() {
       ref={(el) => (linksRef.current[index] = el)}
       className="main-link"
       data-active={index === activeIndex ? "true" : undefined}
-      onClick={(event) => {
-        event.preventDefault();
-      }}
+      onClick={(e) => e.preventDefault()}
     >
       <Link to={item.link}>
         <div onClick={closeDrawer}>{item.label}</div>
@@ -91,46 +76,49 @@ export function Navbar() {
   ));
 
   return (
-    <Box pb={40}>
+    <Box pb={64}>
       <header
-        className={`header fixed w-full z-[10] transition-transform duration-700 ease-in-out ${
-          heightState === "scrollDown" ? "-translate-y-full" : "translate-y-0"
+        className={`fixed w-full z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm transition-transform duration-500 ease-in-out ${
+          hideNav ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="h-[50px] flex flex-wrap justify-between px-5 bg-white">
-          <div className="flex flex-wrap md:justify-evenly md:w-full">
-            <Link to="/">
-              <Image src={headerIcon} className="icon" />
-            </Link>
-            <Box className="links" visibleFrom="sm">
-              <Group
-                gap={0}
-                justify="flex-end"
-                className="main-links"
-                style={{ position: "relative" }}
-              >
-                {mainItems}
-                <div className="underline" style={underlineStyle}></div>
-              </Group>
-            </Box>
-            <div></div>
-          </div>
+        <div className="h-16 flex items-center justify-between max-w-4xl mx-auto w-full px-6">
+          <Link to="/" className="no-underline">
+            <span className="font-black text-xl text-gray-900">
+              Beavs<span className="text-[#d73f09]">Hub</span>
+            </span>
+          </Link>
+
+          <Box visibleFrom="sm">
+            <Group
+              gap={0}
+              className="main-links"
+              style={{ position: "relative" }}
+            >
+              {mainItems}
+              <div className="underline" style={underlineStyle} />
+            </Group>
+          </Box>
+
           <Burger
             opened={drawerOpened}
             onClick={toggleDrawer}
             hiddenFrom="sm"
-            className="relative top-2"
+            size="sm"
           />
         </div>
       </header>
+
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
         size="80%"
         padding="md"
         title={
-          <Link to="/">
-            <Image src={headerIcon} className="icon" onClick={closeDrawer} />
+          <Link to="/" className="no-underline" onClick={closeDrawer}>
+            <span className="font-black text-lg text-gray-900">
+              Beavs<span className="text-[#d73f09]">Hub</span>
+            </span>
           </Link>
         }
         hiddenFrom="sm"
