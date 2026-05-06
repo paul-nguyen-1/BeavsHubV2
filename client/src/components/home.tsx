@@ -95,8 +95,8 @@ function Home() {
           </span>
 
           <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-lg leading-relaxed">
-            Course reviews, difficulty ratings, and degree planning - built by
-            OSU students, for OSU students.
+            Honest course reviews, real difficulty ratings, and smart degree
+            planning.
           </p>
 
           <div className="w-full max-w-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-2xl">
