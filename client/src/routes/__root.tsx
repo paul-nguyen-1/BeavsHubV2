@@ -16,24 +16,48 @@ const Footer = () => (
           Created by{" "}
           <span className="font-semibold text-gray-900">Paul Nguyen</span>
         </span>
+        <span className="text-sm text-gray-500">
+          Designed by{" "}
+          <span className="font-semibold text-gray-900">Tanner Nguyen</span>
+        </span>
       </div>
-      <div className="flex items-center gap-5">
-        <a
-          href="https://www.linkedin.com/in/paul-nguyen-swe"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#d73f09] transition-colors"
-        >
-          <LinkedinLogo size={17} weight="fill" />
-          LinkedIn
-        </a>
-        <a
-          href="mailto:paul.nguyen.swe@gmail.com"
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#d73f09] transition-colors"
-        >
-          <EnvelopeSimple size={17} weight="fill" />
-          Contact
-        </a>
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="flex items-center gap-5">
+          <a
+            href="https://www.linkedin.com/in/paul-nguyen-swe"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#d73f09] transition-colors"
+          >
+            <LinkedinLogo size={17} weight="fill" />
+            LinkedIn
+          </a>
+          <a
+            href="mailto:paul.nguyen.swe@gmail.com"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#d73f09] transition-colors"
+          >
+            <EnvelopeSimple size={17} weight="fill" />
+            Contact
+          </a>
+        </div>
+        <div className="flex items-center gap-5">
+          <a
+            href="https://www.linkedin.com/in/tanner-nguyen-1a3170220/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#d73f09] transition-colors"
+          >
+            <LinkedinLogo size={17} weight="fill" />
+            LinkedIn
+          </a>
+          <a
+            href="mailto:tannern3@gmail.com"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#d73f09] transition-colors"
+          >
+            <EnvelopeSimple size={17} weight="fill" />
+            Contact
+          </a>
+        </div>
       </div>
     </div>
   </footer>
