@@ -17,7 +17,7 @@ const Footer = () => (
           <span className="font-semibold text-gray-900">Paul Nguyen</span>
         </span>
         <span className="text-sm text-gray-500">
-          Designed by{" "}
+          Design contributions by{" "}
           <span className="font-semibold text-gray-900">Tanner Nguyen</span>
         </span>
       </div>
