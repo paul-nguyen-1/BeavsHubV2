@@ -33,6 +33,9 @@ canvas {
 :root {
   --mantine-color-primary: #d73f09;
   --custom-gray-heading: #423e3c;
+  --accent: #d73f09;
+  --accent-light: #ff7a50;
+  --glow-orange: rgba(215, 63, 9, 0.28);
 }
 
 html,
@@ -42,4 +45,147 @@ body {
 
 .apexcharts-series path {
   cursor: pointer !important;
+}
+
+/* ---------- Futuristic glossy design system ---------- */
+
+.mesh-bg {
+  position: relative;
+  isolation: isolate;
+  background: #f3f0ea;
+}
+
+.mesh-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      50rem 34rem at 14% -6%,
+      rgba(215, 63, 9, 0.22),
+      transparent 62%
+    ),
+    radial-gradient(
+      42rem 32rem at 88% 4%,
+      rgba(124, 58, 237, 0.14),
+      transparent 65%
+    ),
+    radial-gradient(
+      46rem 34rem at 50% 105%,
+      rgba(215, 63, 9, 0.12),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #f6f2ec 0%, #ede8df 55%, #e9e3d8 100%);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9) inset,
+    0 16px 40px -14px rgba(31, 25, 68, 0.28);
+}
+
+.glass-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 14px 34px -16px rgba(31, 25, 68, 0.24);
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(215, 63, 9, 0.35);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 22px 48px -16px rgba(215, 63, 9, 0.28),
+    0 0 0 1px rgba(215, 63, 9, 0.08);
+}
+
+.glass-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(215, 63, 9, 0.1) 45%,
+    rgba(255, 255, 255, 0.3)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.gradient-text {
+  color: #1c1a17;
+}
+
+.glow-btn {
+  background: #d73f09;
+  transition: background-color 0.2s ease;
+}
+
+.glow-btn:hover {
+  background: #b52f04;
+}
+
+.floating-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.55;
+  pointer-events: none;
+  animation: orb-float 10s ease-in-out infinite;
+}
+
+@keyframes orb-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(0, -18px) scale(1.06);
+  }
+}
+
+.shimmer-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-border::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    rgba(215, 63, 9, 0.55) 12%,
+    transparent 24%
+  );
+  animation: shimmer-spin 4.5s linear infinite;
+}
+
+@keyframes shimmer-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

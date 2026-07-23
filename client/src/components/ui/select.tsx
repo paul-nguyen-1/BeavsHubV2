@@ -1,6 +1,5 @@
-import { Autocomplete, CloseButton, Image } from "@mantine/core";
+import { Autocomplete, CloseButton } from "@mantine/core";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
-import searchIcon from "../../assets/Hero_search_button.svg";
 
 interface SelectMantineProps {
   value: string | null;
@@ -32,6 +31,12 @@ export default function SelectMantine({
     }
   };
 
+  const goToReviews = () => {
+    if (routerState.location.pathname !== "/reviews") {
+      navigate({ to: "/reviews" });
+    }
+  };
+
   return (
     <Autocomplete
       label={label}
@@ -40,26 +45,35 @@ export default function SelectMantine({
       onChange={(value) => {
         handleInputChange(value);
       }}
+      onOptionSubmit={(submitted) => {
+        handleInputChange(submitted);
+        if (isPrimarySelector) goToReviews();
+      }}
+      onKeyDown={
+        isPrimarySelector
+          ? (event) => {
+              if (event.key === "Enter") goToReviews();
+            }
+          : undefined
+      }
       data={data}
+      size={isPrimarySelector ? "sm" : undefined}
+      radius={isPrimarySelector ? "xl" : "lg"}
+      classNames={
+        isPrimarySelector
+          ? {
+              input:
+                "!bg-transparent !border-0 !shadow-none !pl-4 !pr-4 !text-base !text-white placeholder:!text-white/60",
+              dropdown:
+                "!mt-2 !rounded-2xl !border !border-gray-100 !shadow-lg !overflow-hidden",
+              option:
+                "!rounded-lg !mx-1 !text-sm data-[combobox-selected]:!bg-[#d73f09] data-[combobox-selected]:!text-white hover:!bg-orange-50",
+            }
+          : undefined
+      }
       rightSection={
-        isPrimarySelector ? (
-          <Image
-            src={searchIcon}
-            h={32}
-            alt="Search"
-            className="relative left-0.5 cursor-pointer transition-transform hover:scale-110"
-            onClick={() => {
-              handleInputChange(value);
-              if (routerState.location.pathname !== "/reviews") {
-                navigate({ to: "/reviews" });
-              }
-            }}
-          />
-        ) : value ? (
-          <CloseButton
-            aria-label="Clear input"
-            onClick={() => onChange(null)}
-          />
+        !isPrimarySelector && value ? (
+          <CloseButton aria-label="Clear input" onClick={() => onChange(null)} />
         ) : null
       }
     />

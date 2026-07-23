@@ -23,6 +23,11 @@ const getColor = (index: number, reverse?: boolean) => {
   return palette[colorIndex];
 };
 
+export const getDifficultyColor = (diff: number) => {
+  const index = Math.min(Math.max(Math.round(diff) - 1, 0), colorPalette.length - 1);
+  return colorPalette[index];
+};
+
 type ChartDataItem = {
   name: string;
   value: number;
@@ -71,7 +76,15 @@ export const BarChartMantine = (props: {
       <div>
         {chartState(barChartData) ? (
           <div className="flex flex-col items-center relative bottom-5 md:bottom-8">
-            <Text fz="xs" mb="sm" ta="center">
+            <Text
+              fz="xs"
+              fw={700}
+              tt="uppercase"
+              c="dimmed"
+              mb="sm"
+              ta="center"
+              style={{ letterSpacing: "0.06em" }}
+            >
               Most Common Course Pairing
             </Text>
             <BarChart

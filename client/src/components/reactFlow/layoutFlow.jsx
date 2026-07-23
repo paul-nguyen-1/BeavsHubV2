@@ -19,7 +19,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import "./layoutFlow.css";
 import { Drawer, Pill, Progress, Text } from "@mantine/core";
-import { CheckIcon } from "@phosphor-icons/react";
+import { CheckIcon, XIcon } from "@phosphor-icons/react";
 import { classType } from "../../misc/utils.js";
 import { Link } from "@tanstack/react-router";
 import { useDispatch } from "react-redux";
@@ -262,11 +262,12 @@ export const LayoutFlow = ({ opened, close }) => {
     setNodes((prev) =>
       prev.map((n) => (n.id === node.id ? { ...n, taken: nowTaken } : n))
     );
-    if (nowTaken) {
-      const id = Date.now();
-      setNotifications((prev) => [...prev, { id, label: node.data?.label }]);
-      setTimeout(() => setNotifications((prev) => prev.filter((t) => t.id !== id)), 3000);
-    }
+    const id = Date.now();
+    setNotifications((prev) => [
+      ...prev,
+      { id, label: node.data?.label, type: nowTaken ? "added" : "removed" },
+    ]);
+    setTimeout(() => setNotifications((prev) => prev.filter((t) => t.id !== id)), 3000);
   };
 
   const coreNodes = nodes.filter(
@@ -338,17 +339,31 @@ export const LayoutFlow = ({ opened, close }) => {
       <Background />
 
       <div className="toast-container">
-        {notifications.map((t) => (
-          <div key={t.id} className="toast-item toast-notification">
-            <span className="toast-icon">
-              <CheckIcon size={14} weight="bold" />
-            </span>
-            <div>
-              <p className="toast-title">Course Added</p>
-              <p className="toast-message">{t.label} marked as taken</p>
+        {notifications.map((t) => {
+          const isRemoved = t.type === "removed";
+          return (
+            <div
+              key={t.id}
+              className={`toast-item toast-notification${isRemoved ? " toast-notification--removed" : ""}`}
+            >
+              <span className={`toast-icon${isRemoved ? " toast-icon--removed" : ""}`}>
+                {isRemoved ? (
+                  <XIcon size={14} weight="bold" />
+                ) : (
+                  <CheckIcon size={14} weight="bold" />
+                )}
+              </span>
+              <div>
+                <p className="toast-title">
+                  {isRemoved ? "Course Removed" : "Course Added"}
+                </p>
+                <p className="toast-message">
+                  {t.label} {isRemoved ? "removed from taken" : "marked as taken"}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <Drawer

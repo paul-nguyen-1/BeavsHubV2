@@ -1,20 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  Group,
-  Divider,
-  Box,
-  Burger,
-  Drawer,
-  ScrollArea,
-  rem,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { Group, Box } from "@mantine/core";
 import "../styles/navbar.css";
 import { Link, useLocation } from "@tanstack/react-router";
 
 export function Navbar() {
-  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
-    useDisclosure(false);
   const [hideNav, setHideNav] = useState(false);
   const location = useLocation();
   const linksRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -29,6 +18,11 @@ export function Navbar() {
     { link: "/reviews", label: "Reviews" },
     { link: "/chart", label: "Chart" },
     { link: "/planner", label: "Degree" },
+  ];
+
+  const mobileLinks = [
+    { link: "/courses", label: "Courses" },
+    { link: "/reviews", label: "Reviews" },
   ];
 
   const activeIndex = mainLinks.findIndex(
@@ -70,21 +64,34 @@ export function Navbar() {
       onClick={(e) => e.preventDefault()}
     >
       <Link to={item.link}>
-        <div onClick={closeDrawer}>{item.label}</div>
+        <div>{item.label}</div>
+      </Link>
+    </Box>
+  ));
+
+  const mobileItems = mobileLinks.map((item) => (
+    <Box
+      key={item.label}
+      className="main-link"
+      data-active={item.link === location.pathname ? "true" : undefined}
+      onClick={(e) => e.preventDefault()}
+    >
+      <Link to={item.link}>
+        <div>{item.label}</div>
       </Link>
     </Box>
   ));
 
   return (
-    <Box pb={64}>
+    <Box>
       <header
-        className={`fixed w-full z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm transition-transform duration-500 ease-in-out ${
+        className={`fixed inset-x-0 top-0 z-[100] bg-white border-b border-black/[0.06] transition-transform duration-500 ease-in-out ${
           hideNav ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="h-16 flex items-center justify-between max-w-4xl mx-auto w-full px-6">
+        <div className="h-14 flex items-center justify-between max-w-6xl mx-auto w-full px-6">
           <Link to="/" className="no-underline">
-            <span className="font-black text-xl text-gray-900">
+            <span className="font-bold text-[15px] tracking-tight text-gray-900">
               Beavs<span className="text-[#d73f09]">Hub</span>
             </span>
           </Link>
@@ -95,40 +102,16 @@ export function Navbar() {
               className="main-links"
               style={{ position: "relative" }}
             >
+              <div className="pill-indicator" style={underlineStyle} />
               {mainItems}
-              <div className="underline" style={underlineStyle} />
             </Group>
           </Box>
 
-          <Burger
-            opened={drawerOpened}
-            onClick={toggleDrawer}
-            hiddenFrom="sm"
-            size="sm"
-          />
+          <Box hiddenFrom="sm">
+            <Group gap={4}>{mobileItems}</Group>
+          </Box>
         </div>
       </header>
-
-      <Drawer
-        opened={drawerOpened}
-        onClose={closeDrawer}
-        size="80%"
-        padding="md"
-        title={
-          <Link to="/" className="no-underline" onClick={closeDrawer}>
-            <span className="font-black text-lg text-gray-900">
-              Beavs<span className="text-[#d73f09]">Hub</span>
-            </span>
-          </Link>
-        }
-        hiddenFrom="sm"
-        zIndex={1000000}
-      >
-        <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
-          <Divider my="sm" />
-          {mainItems}
-        </ScrollArea>
-      </Drawer>
     </Box>
   );
 }

@@ -16,9 +16,10 @@ import {
 import { setSelectedCourse } from "../hooks/useCourse";
 import { useQuery } from "@tanstack/react-query";
 import { classType, splitString } from "../misc/utils";
-import { Progress, Skeleton } from "@mantine/core";
+import { Skeleton } from "@mantine/core";
 import { CourseInfo } from "../misc/types";
 import { Link } from "@tanstack/react-router";
+import { getDifficultyColor } from "./ui/chart";
 
 interface PopularCourses {
   avg_difficulty: number;
@@ -82,24 +83,40 @@ function Home() {
   const popularCourses = data?.slice(0, 3) ?? [];
 
   return (
-    <div className="bg-gray-50">
+    <div>
+      {/* Hero */}
       <div
-        className="relative h-[450px] bg-cover bg-center flex pt-20 justify-center"
+        className="relative overflow-hidden h-[520px] bg-cover bg-center flex justify-center"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/70 to-[#fafafa]" />
 
-        <div className="relative z-10 flex flex-col items-center px-6 text-center max-w-3xl mx-auto w-full">
-          <span className="inline-block mb-6 px-6 py-2.5 rounded-full text-sm font-bold tracking-widest uppercase bg-[#d73f09]/20 text-[#ff7a50] border border-[#d73f09]/40 backdrop-blur-sm">
-            Oregon State University
-          </span>
+        <div
+          className="floating-orb"
+          style={{
+            width: 420,
+            height: 420,
+            top: -110,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "#d73f09",
+            opacity: 0.22,
+          }}
+        />
 
-          <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-lg leading-relaxed">
-            Honest course reviews, real difficulty ratings, and smart degree
-            planning.
+        <div className="relative z-10 flex flex-col items-center px-6 text-center max-w-3xl mx-auto w-full pt-24">
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-5 leading-[1.05] tracking-tight">
+            Figure out your next class
+            <br />
+            before your <span className="text-[#ff7a50]">friends</span> do
+          </h1>
+
+          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-lg leading-relaxed">
+            Real difficulty ratings and workload tips from students who've
+            actually sat through the class.
           </p>
 
-          <div className="w-full max-w-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-2xl">
+          <div className="w-full max-w-lg glass rounded-2xl p-1.5">
             <SelectMantine
               placeHolder="Search for a course (e.g. CS 161)"
               value={course}
@@ -116,100 +133,121 @@ function Home() {
         </div>
       </div>
 
-      <div className="py-10 px-6 max-w-[1280px] mx-auto">
-        <div className="mb-10">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#d73f09] mb-2">
-            Trending
-          </p>
-          <h2 className="!text-3xl md:!text-4xl !font-black text-gray-900">
-            Popular Courses
-          </h2>
-        </div>
+      <div className="bg-[#fafafa]">
+        {/* Popular courses */}
+        <div className="py-20 px-6 max-w-5xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-2">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#d73f09] mb-2">
+                Trending
+              </p>
+              <h2 className="text-3xl font-bold text-gray-900">
+                Popular courses
+              </h2>
+            </div>
+            <Link
+              to="/courses"
+              className="text-sm font-medium text-gray-400 hover:text-gray-900 no-underline transition-colors sm:mb-1"
+            >
+              Browse all
+            </Link>
+          </div>
 
-        <div className="flex flex-wrap justify-center lg:justify-start gap-6">
           {isLoading ? (
-            <>
-              <Skeleton height={280} width={375} radius="lg" />
-              <Skeleton height={280} width={375} radius="lg" />
-              <Skeleton height={280} width={375} radius="lg" />
-            </>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <Skeleton height={230} radius="lg" />
+              <Skeleton height={230} radius="lg" />
+              <Skeleton height={230} radius="lg" />
+            </div>
           ) : (
-            popularCourses.map((item: PopularCourses) => {
-              const [courseNumber, courseTitle] = splitString(
-                item.course.course_name,
-                "-",
-              );
-              const isCore = classType(courseNumber) === "Core";
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {popularCourses.map((item: PopularCourses) => {
+                const [courseNumber, courseTitle] = splitString(
+                  item.course.course_name,
+                  "-",
+                );
+                const isCore = classType(courseNumber) === "Core";
+                const diffColor = getDifficultyColor(item.avg_difficulty);
 
-              return (
-                <Link
-                  key={item.course._id}
-                  to="/reviews"
-                  onClick={() =>
-                    dispatch(setSelectedCourse(item.course.course_name))
-                  }
-                  className="group no-underline"
-                >
-                  <div className="relative flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 w-[355px] md:w-[375px] h-[270px] md:h-[280px] overflow-hidden border border-gray-100">
-                    <div
-                      className={`h-1 w-full ${isCore ? "bg-[#d73f09]" : "bg-[#f28705]"}`}
-                    />
-                    <div className="flex flex-col flex-1 p-5">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="!text-base !font-black text-gray-900">
-                          {courseNumber}
-                        </h3>
-                        <span
-                          className={`${isCore ? "bg-[#d73f09]" : "bg-[#f28705]"} text-white text-[10px] font-bold px-2.5 py-1 rounded-full`}
-                        >
-                          {classType(courseNumber)}
-                        </span>
-                      </div>
-
-                      <p className="text-sm font-semibold text-gray-700 mb-3">
-                        {courseTitle}
-                      </p>
-
-                      <p className="text-xs text-gray-500 italic flex-1 line-clamp-2">
-                        "{item.course.course_tips.slice(0, 90)}..."
-                      </p>
-
-                      <div className="mt-auto pt-4 border-t border-gray-100">
-                        <div className="flex justify-between text-xs text-gray-500 mb-2">
-                          <span>Difficulty</span>
-                          <span className="font-bold text-gray-800">
-                            {item.avg_difficulty.toFixed(1)} / 5
+                return (
+                  <Link
+                    key={item.course._id}
+                    to="/reviews"
+                    onClick={() =>
+                      dispatch(setSelectedCourse(item.course.course_name))
+                    }
+                    className="group no-underline flex"
+                  >
+                    <div className="flex flex-col w-full bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
+                      <div
+                        className="h-[3px] w-full"
+                        style={{ backgroundColor: diffColor }}
+                      />
+                      <div className="p-6 flex flex-col flex-1">
+                        <div className="flex items-baseline gap-2 mb-1">
+                          <span className="font-mono text-lg font-bold text-gray-900 tracking-tight">
+                            {courseNumber}
+                          </span>
+                          <span
+                            className={`text-[11px] font-semibold ${
+                              isCore ? "text-[#d73f09]" : "text-[#b25a00]"
+                            }`}
+                          >
+                            {classType(courseNumber)}
                           </span>
                         </div>
-                        <Progress
-                          value={item.avg_difficulty * 20}
-                          color={isCore ? "#d73f09" : "#f28705"}
-                          size="sm"
-                          radius="xl"
-                        />
-                        <div className="flex justify-between text-xs text-gray-500 mt-3">
-                          <span>{item.avg_hours.toFixed(1)} hrs / week</span>
-                          <span className="font-semibold">
-                            {item.count} Reviews
-                          </span>
+                        <p className="text-sm font-medium text-gray-600 mb-3">
+                          {courseTitle}
+                        </p>
+                        <p className="text-sm text-gray-400 italic leading-relaxed line-clamp-2 flex-1">
+                          "{item.course.course_tips}"
+                        </p>
+
+                        <div className="grid grid-cols-3 mt-5 pt-4 border-t border-gray-100">
+                          <div>
+                            <div
+                              className="text-sm font-bold tabular-nums"
+                              style={{ color: diffColor }}
+                            >
+                              {item.avg_difficulty.toFixed(1)}
+                            </div>
+                            <div className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">
+                              Difficulty
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-sm font-bold text-gray-800 tabular-nums">
+                              {item.avg_hours.toFixed(1)}
+                            </div>
+                            <div className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">
+                              Hrs / wk
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-sm font-bold text-gray-800 tabular-nums">
+                              {item.count}
+                            </div>
+                            <div className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">
+                              Reviews
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              );
-            })
+                  </Link>
+                );
+              })}
+            </div>
           )}
         </div>
-      </div>
 
-      <div className="bg-gray-50 py-10 px-6 border-t border-gray-200">
-        <div className="max-w-[1280px] mx-auto">
-          <div className="mb-12 text-center">
+        {/* Beyond reviews */}
+        <div className="pb-20 px-6 max-w-5xl mx-auto">
+          <div className="text-center mb-10">
             <p className="text-xs font-bold uppercase tracking-widest text-[#d73f09] mb-2">
               Explore
             </p>
-            <h2 className="!text-3xl md:!text-4xl !font-black text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900">
               Everything You Need
             </h2>
             <p className="text-gray-500 mt-3 max-w-md mx-auto text-sm leading-relaxed">
@@ -229,9 +267,9 @@ function Home() {
                     ? "noopener noreferrer"
                     : undefined
                 }
-                className="group flex flex-col gap-4 bg-white hover:bg-orange-50 border border-gray-200 hover:border-[#d73f09]/40 rounded-2xl p-6 transition-all duration-300 no-underline shadow-sm hover:shadow-md"
+                className="group flex flex-col gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 no-underline"
               >
-                <div className="w-11 h-11 rounded-xl bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
                   <img
                     src={feature.image}
                     alt={feature.alt}
@@ -242,16 +280,19 @@ function Home() {
                     }}
                   />
                 </div>
-                <div>
-                  <h3 className="!text-sm !font-bold text-gray-900 mb-1">
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-[15px] font-bold text-gray-900 mb-1">
                     {feature.header}
                   </h3>
-                  <p className="text-gray-500 text-xs leading-relaxed">
+                  <p className="text-gray-500 text-sm leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
-                <span className="text-[#d73f09] text-xs font-semibold mt-auto group-hover:underline">
-                  Learn more →
+                <span className="text-sm font-semibold text-[#d73f09] inline-flex items-center gap-1">
+                  Learn more
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
                 </span>
               </a>
             ))}
