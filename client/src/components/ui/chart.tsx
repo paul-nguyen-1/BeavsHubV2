@@ -145,6 +145,7 @@ export const PieChartMantine = (props: {
       }, 1000);
       return () => clearTimeout(timer);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- resets a display flag with no external side effects; pre-existing pattern, not worth restructuring right now
       setShowNoDataMessage(false);
     }
   }, [isLoading, pieChartData]);
