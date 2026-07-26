@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../misc/const";
-import { ScrollArea, Table, Skeleton, Badge, Progress } from "@mantine/core";
+import { ScrollArea, Table, Skeleton, Badge } from "@mantine/core";
 import { useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
 import { classType } from "../misc/utils";
+import { getDifficultyColor } from "../components/ui/chart";
 
 type SortField = "course" | "reviews" | "difficulty" | "hours";
 
@@ -38,9 +39,15 @@ const GridIcon = () => (
 );
 
 function SortArrow({ active, asc }: { active: boolean; asc: boolean }) {
+  if (!active) {
+    return <span className="ml-1 text-[10px] text-gray-300">↕</span>;
+  }
   return (
-    <span className={`ml-1 text-[10px] ${active ? "text-[#d73f09]" : "text-gray-300"}`}>
-      {active ? (asc ? "↑" : "↓") : "↕"}
+    <span
+      className="ml-1 inline-block text-[10px] text-white transition-transform duration-200 ease-out"
+      style={{ transform: asc ? "rotate(0deg)" : "rotate(180deg)" }}
+    >
+      ↑
     </span>
   );
 }
@@ -80,12 +87,14 @@ function Course() {
     const mapped = items.map((review) => {
       const course_name = review._id?.trim() || "Unknown";
       const code = course_name.split("-")[0]?.trim() || course_name;
+      const title = course_name.split("-").slice(1).join("-").trim();
       const count = num(review.count);
       const diff = num(review.avg_difficulty);
       const hrs = num(review.avg_hours);
       return {
         key: course_name,
         code,
+        title,
         course_name,
         count,
         diff,
@@ -129,25 +138,30 @@ function Course() {
 
   const sortButtons: { field: SortField; label: string }[] = [
     { field: "course", label: "Course" },
-    { field: "reviews", label: "Reviews" },
     { field: "difficulty", label: "Difficulty" },
     { field: "hours", label: "Hours" },
+    { field: "reviews", label: "Reviews" },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div className="min-h-screen bg-[#fafafa]">
+      <div className="mx-auto max-w-6xl px-4 pt-28 pb-16">
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
           <div>
-            <h1 className="!text-2xl !font-black text-gray-900">Course Reviews</h1>
-            <p className="text-sm text-gray-400 mt-0.5">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#d73f09] mb-2">
+              Course Reviews
+            </p>
+            <h1 className="text-3xl md:text-4xl font-black text-gray-900">
+              Browse Courses
+            </h1>
+            <p className="text-sm text-gray-500 mt-2">
               Real student feedback on difficulty, workload, and tips
             </p>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
             {viewMode === "grid" && (
-              <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl p-1">
+              <div className="flex items-center gap-1 bg-white border border-gray-100 shadow-sm rounded-xl p-1">
                 {sortButtons.map(({ field, label }) => (
                   <button
                     key={field}
@@ -160,14 +174,19 @@ function Course() {
                   >
                     {label}
                     {sortField === field && (
-                      <span className="text-[10px]">{sortAsc ? "↑" : "↓"}</span>
+                      <span
+                        className="inline-block text-[10px] transition-transform duration-200 ease-out"
+                        style={{ transform: sortAsc ? "rotate(0deg)" : "rotate(180deg)" }}
+                      >
+                        ↑
+                      </span>
                     )}
                   </button>
                 ))}
               </div>
             )}
 
-            <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl p-1">
+            <div className="flex items-center gap-1 bg-white border border-gray-100 shadow-sm rounded-xl p-1">
               <button
                 onClick={() => setViewMode("list")}
                 className={`p-2 rounded-lg transition-all ${
@@ -201,7 +220,7 @@ function Course() {
         </div>
         {viewMode === "list" && (
           <Skeleton visible={isLoading} h={540} radius="lg">
-            <div className="rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <ScrollArea
                 h={540}
                 type="auto"
@@ -250,26 +269,50 @@ function Course() {
                   <Table.Thead>
                     <Table.Tr>
                       <Table.Th style={{ width: 110 }} onClick={() => handleSort("course")}>
-                        <span className={`inline-flex items-center gap-0.5 rounded px-1 py-0.5 transition-colors select-none hover:bg-orange-50 ${sortField === "course" ? "text-[#d73f09]" : "hover:text-gray-900"}`}>
+                        <span
+                          className={`inline-flex items-center gap-0.5 rounded-md px-2 py-1 transition-colors select-none ${
+                            sortField === "course"
+                              ? "bg-[#d73f09] text-white"
+                              : "text-gray-500 hover:bg-orange-50 hover:text-gray-900"
+                          }`}
+                        >
                           Course
                           <SortArrow active={sortField === "course"} asc={sortAsc} />
                         </span>
                       </Table.Th>
                       <Table.Th>Course Name</Table.Th>
                       <Table.Th style={{ width: 110, textAlign: "right" }} onClick={() => handleSort("reviews")}>
-                        <span className={`inline-flex items-center gap-0.5 rounded px-1 py-0.5 transition-colors select-none hover:bg-orange-50 ${sortField === "reviews" ? "text-[#d73f09]" : "hover:text-gray-900"}`}>
+                        <span
+                          className={`inline-flex items-center gap-0.5 rounded-md px-2 py-1 transition-colors select-none ${
+                            sortField === "reviews"
+                              ? "bg-[#d73f09] text-white"
+                              : "text-gray-500 hover:bg-orange-50 hover:text-gray-900"
+                          }`}
+                        >
                           Reviews
                           <SortArrow active={sortField === "reviews"} asc={sortAsc} />
                         </span>
                       </Table.Th>
                       <Table.Th style={{ width: 140, textAlign: "right" }} onClick={() => handleSort("difficulty")}>
-                        <span className={`inline-flex items-center gap-0.5 rounded px-1 py-0.5 transition-colors select-none hover:bg-orange-50 ${sortField === "difficulty" ? "text-[#d73f09]" : "hover:text-gray-900"}`}>
+                        <span
+                          className={`inline-flex items-center gap-0.5 rounded-md px-2 py-1 transition-colors select-none ${
+                            sortField === "difficulty"
+                              ? "bg-[#d73f09] text-white"
+                              : "text-gray-500 hover:bg-orange-50 hover:text-gray-900"
+                          }`}
+                        >
                           Avg Difficulty
                           <SortArrow active={sortField === "difficulty"} asc={sortAsc} />
                         </span>
                       </Table.Th>
                       <Table.Th style={{ width: 120, textAlign: "right" }} onClick={() => handleSort("hours")}>
-                        <span className={`inline-flex items-center gap-0.5 rounded px-1 py-0.5 transition-colors select-none hover:bg-orange-50 ${sortField === "hours" ? "text-[#d73f09]" : "hover:text-gray-900"}`}>
+                        <span
+                          className={`inline-flex items-center gap-0.5 rounded-md px-2 py-1 transition-colors select-none ${
+                            sortField === "hours"
+                              ? "bg-[#d73f09] text-white"
+                              : "text-gray-500 hover:bg-orange-50 hover:text-gray-900"
+                          }`}
+                        >
                           Avg Hours
                           <SortArrow active={sortField === "hours"} asc={sortAsc} />
                         </span>
@@ -318,10 +361,10 @@ function Course() {
                                 className="tabular-nums"
                                 color={
                                   review.diff >= 3.5
-                                    ? "red"
+                                    ? "#d03b3b"
                                     : review.diff >= 2.5
-                                      ? "yellow"
-                                      : "green"
+                                      ? "#fab219"
+                                      : "#0ca30c"
                                 }
                               >
                                 {review.diffLabel}
@@ -339,10 +382,10 @@ function Course() {
                                 className="tabular-nums"
                                 color={
                                   review.hrs >= 15
-                                    ? "red"
+                                    ? "#d03b3b"
                                     : review.hrs >= 10
-                                      ? "yellow"
-                                      : "teal"
+                                      ? "#fab219"
+                                      : "#0ca30c"
                                 }
                               >
                                 {review.hrsLabel}
@@ -376,48 +419,97 @@ function Course() {
                   <button
                     key={review.key}
                     onClick={() => handleRowClick(review.course_name)}
-                    className="text-left group"
+                    className="text-left group flex w-full"
                   >
-                    <div className="flex flex-col bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 overflow-hidden border border-gray-100 h-[210px]">
+                    <div className="flex flex-col w-full bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
                       <div
-                        className={`h-1 w-full ${isCore ? "bg-[#d73f09]" : "bg-[#f28705]"}`}
+                        className="h-[3px] w-full"
+                        style={{
+                          backgroundColor:
+                            review.diff > 0
+                              ? getDifficultyColor(review.diff)
+                              : "#e5e1d8",
+                        }}
                       />
-                      <div className="flex flex-col flex-1 p-4">
-                        <div className="flex justify-between items-start mb-1.5">
-                          <h3 className="text-sm font-black text-gray-900">
-                            {review.code}
-                          </h3>
+                      <div className="p-4 pb-3">
+                        <div className="flex items-start justify-between">
+                          <div className="min-w-0">
+                            <h3 className="text-base font-black text-gray-900 leading-tight">
+                              {review.code}
+                            </h3>
+                            <p className="text-xs font-medium text-gray-500 truncate mt-0.5">
+                              {review.title || review.course_name}
+                            </p>
+                          </div>
                           <span
                             className={`${
                               isCore ? "bg-[#d73f09]" : "bg-[#f28705]"
-                            } text-white text-[10px] font-bold px-2 py-0.5 rounded-full`}
+                            } shrink-0 text-white text-[10px] font-bold px-2 py-0.5 rounded-full ml-2`}
                           >
                             {classType(review.code)}
                           </span>
                         </div>
-                        <p className="text-xs font-semibold text-gray-600 flex-1 line-clamp-2">
-                          {review.course_name}
-                        </p>
-                        <div className="mt-auto pt-3 border-t border-gray-100">
-                          <div className="flex justify-between text-xs text-gray-400 mb-1.5">
-                            <span>Difficulty</span>
-                            <span className="font-bold text-gray-700">
-                              {review.diff > 0 ? `${review.diffLabel} / 5` : "—"}
-                            </span>
+
+                        <div className="grid grid-cols-3 mt-4 pt-3 border-t border-gray-100">
+                          <div>
+                            <div
+                              className={`text-sm font-black tabular-nums ${
+                                sortField === "difficulty"
+                                  ? "text-[#d73f09]"
+                                  : "text-gray-800"
+                              }`}
+                            >
+                              {review.diffLabel}
+                            </div>
+                            <div
+                              className={`text-[9px] font-semibold uppercase tracking-wide mt-0.5 ${
+                                sortField === "difficulty"
+                                  ? "text-[#d73f09]"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              Difficulty
+                            </div>
                           </div>
-                          <Progress
-                            value={review.diff * 20}
-                            color={isCore ? "#d73f09" : "#f28705"}
-                            size="sm"
-                            radius="xl"
-                          />
-                          <div className="flex justify-between text-xs text-gray-400 mt-2">
-                            <span>
-                              {review.hrs > 0 ? `${review.hrsLabel} hrs/wk` : "—"}
-                            </span>
-                            <span className="font-semibold text-gray-600">
-                              {review.count} reviews
-                            </span>
+                          <div>
+                            <div
+                              className={`text-sm font-black tabular-nums ${
+                                sortField === "hours"
+                                  ? "text-[#d73f09]"
+                                  : "text-gray-800"
+                              }`}
+                            >
+                              {review.hrsLabel}
+                            </div>
+                            <div
+                              className={`text-[9px] font-semibold uppercase tracking-wide mt-0.5 ${
+                                sortField === "hours"
+                                  ? "text-[#d73f09]"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              Hrs / wk
+                            </div>
+                          </div>
+                          <div>
+                            <div
+                              className={`text-sm font-black tabular-nums ${
+                                sortField === "reviews"
+                                  ? "text-[#d73f09]"
+                                  : "text-gray-800"
+                              }`}
+                            >
+                              {review.count}
+                            </div>
+                            <div
+                              className={`text-[9px] font-semibold uppercase tracking-wide mt-0.5 ${
+                                sortField === "reviews"
+                                  ? "text-[#d73f09]"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              Reviews
+                            </div>
                           </div>
                         </div>
                       </div>

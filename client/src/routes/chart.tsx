@@ -1,7 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../misc/const";
-import ReactApexChart from "react-apexcharts";
+import * as ReactApexChartModule from "react-apexcharts";
+import { resolveDefaultExport } from "../misc/utils";
+
+const ReactApexChart = resolveDefaultExport<typeof import("react-apexcharts").default>(
+  ReactApexChartModule
+);
 import type { ApexOptions } from "apexcharts";
 import { Pill, Skeleton } from "@mantine/core";
 import { useDispatch } from "react-redux";

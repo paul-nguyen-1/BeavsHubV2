@@ -228,7 +228,7 @@ function Courses() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-6">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-20 pb-6">
 
         <Drawer
           opened={filterOpened}

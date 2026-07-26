@@ -70,6 +70,15 @@
   color: #059669;
 }
 
+.toast-notification--removed {
+  border-color: #fecaca;
+}
+
+.toast-icon--removed {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
 .toast-title {
   margin: 0;
   font-size: 0.75rem;
