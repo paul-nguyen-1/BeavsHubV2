@@ -1,107 +1,88 @@
 import { CourseCard } from "../misc/types";
-import user from "../assets/Profile_icon_fill.svg";
-import { classType } from "../misc/utils";
+import { classType, splitString, termAbbrev } from "../misc/utils";
 import { AppDispatch, RootState } from "../../app/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
 
 export function Course(props: CourseCard) {
-  const {
-    course,
-    difficulty,
-    time_spent_per_week,
-    taken_date,
-    enjoyability,
-    tips,
-    timestamp,
-    pairs,
-  } = props;
+  const { course, difficulty, time_spent_per_week, taken_date, tips, timestamp, pairs } = props;
 
   const dispatch = useDispatch<AppDispatch>();
   const globalCourse = useSelector(
     (state: RootState) => state.useCourse.selectedCourse
   );
 
-  const isCore = classType(course) === "Core";
-
-  const stats = [
-    { label: "Difficulty", value: `${difficulty} / 5` },
-    { label: "Hours/wk", value: time_spent_per_week },
-    ...(enjoyability ? [{ label: "Enjoyability", value: enjoyability }] : []),
-    ...(taken_date ? [{ label: "Semester", value: taken_date }] : []),
-  ];
+  const [code, title] = splitString(course, " - ");
+  const type = classType(course);
 
   return (
     <div
-      className={`bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden w-full ${
-        !globalCourse ? "cursor-pointer" : ""
-      }`}
+      className={`py-6 border-b border-gray-200 ${!globalCourse ? "cursor-pointer" : ""}`}
       onClick={() => dispatch(setSelectedCourse(course))}
     >
-      <div className={`h-1 w-full ${isCore ? "bg-[#d73f09]" : "bg-[#f28705]"}`} />
-
-      <div className="p-5">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-              <img src={user} alt="Avatar" className="w-5 h-5 opacity-40" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900 line-clamp-1">{course}</p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {new Date(timestamp).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </p>
-            </div>
-          </div>
-          <span
-            className={`${
-              isCore ? "bg-[#d73f09]" : "bg-[#f28705]"
-            } text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0 ml-2`}
-          >
-            {classType(course)}
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-baseline gap-2.5 flex-wrap min-w-0">
+          <span className="font-mono font-black text-lg text-gray-900 shrink-0">
+            {code}
           </span>
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-4">
-          {stats.map((stat) => (
-            <span
-              key={stat.label}
-              className="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-lg px-3 py-1.5 text-xs"
-            >
-              <span className="text-gray-400 font-medium">{stat.label}</span>
-              <span className="text-gray-800 font-bold">{stat.value}</span>
+          <span className="font-bold text-gray-900">{title || course}</span>
+          {type !== "N/A" && (
+            <span className="font-mono text-[11px] uppercase tracking-widest text-gray-500 shrink-0">
+              {type}
             </span>
-          ))}
-        </div>
-
-        <div className="bg-gray-50 rounded-xl px-4 py-3 mb-3">
-          {tips ? (
-            <p className="text-sm text-gray-700 leading-relaxed">{tips}</p>
-          ) : (
-            <p className="text-sm text-gray-400 italic">
-              No comments were submitted for this post.
-            </p>
           )}
         </div>
+        <span className="text-sm text-gray-400 shrink-0">
+          {new Date(timestamp).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </span>
+      </div>
 
-        {pairs.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap pt-1">
-            <span className="text-xs text-gray-400 font-medium">Paired with:</span>
-            {pairs.map((pair, index) => (
-              <span
-                key={index}
-                className="text-xs bg-orange-50 text-[#d73f09] font-semibold px-2.5 py-0.5 rounded-full border border-orange-100"
-              >
-                {pair}
-              </span>
-            ))}
-          </div>
+      <div className="flex flex-wrap gap-x-6 gap-y-1 mt-2 mb-3 font-mono text-[11px] uppercase tracking-widest text-gray-500">
+        <span>
+          Difficulty <b className="text-gray-900">{difficulty} / 5</b>
+        </span>
+        <span>
+          Hours / wk{" "}
+          <b className="text-gray-900">{time_spent_per_week?.replace(" hours", "")}</b>
+        </span>
+        {taken_date && (
+          <span>
+            Term <b className="text-gray-900">{termAbbrev(taken_date)}</b>
+          </span>
         )}
       </div>
+
+      {tips ? (
+        <p className="text-gray-700 leading-relaxed border-l-2 border-gray-200 pl-4">
+          {tips}
+        </p>
+      ) : (
+        <p className="text-gray-400 italic border-l-2 border-gray-200 pl-4">
+          No comments were submitted for this post.
+        </p>
+      )}
+
+      {pairs.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap mt-3">
+          <span className="text-sm text-gray-500 font-medium">Paired with:</span>
+          {pairs.map((pair) => (
+            <button
+              key={pair}
+              onClick={(e) => {
+                e.stopPropagation();
+                dispatch(setSelectedCourse(pair));
+              }}
+              className="text-xs bg-orange-50 text-[#d73f09] font-semibold px-2.5 py-0.5 rounded-full border border-orange-100 hover:bg-orange-100 transition-colors"
+            >
+              {pair}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

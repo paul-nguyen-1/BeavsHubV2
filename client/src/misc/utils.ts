@@ -9,7 +9,7 @@ export const splitString = (
 };
 
 export const classType = (className: string) => {
-  const id = className.replace("CS", "").trim();
+  const id = className.replace(/^[A-Za-z]+\s*/, "").trim();
   if (coreClasses.some((core) => core.startsWith(id))) {
     return "Core";
   } else if (electives.some((elective) => elective.startsWith(id))) {
@@ -17,6 +17,24 @@ export const classType = (className: string) => {
   } else {
     return "N/A";
   }
+};
+
+const seasonAbbreviations: Record<string, string> = {
+  spring: "SP",
+  summer: "SU",
+  winter: "WI",
+  fall: "FA",
+};
+
+export const truncate = (text: string, maxLength: number) => {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trimEnd()}...`;
+};
+
+export const termAbbrev = (taken_date: string) => {
+  const [season, year] = taken_date.trim().split(" ");
+  const abbrev = seasonAbbreviations[season?.toLowerCase()] ?? season;
+  return year ? `${abbrev} ${year}` : abbrev;
 };
 
 /**

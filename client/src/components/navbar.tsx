@@ -85,11 +85,11 @@ export function Navbar() {
   return (
     <Box>
       <header
-        className={`fixed inset-x-0 top-0 z-[100] bg-white border-b border-black/[0.06] transition-transform duration-500 ease-in-out ${
+        className={`fixed inset-x-0 top-0 z-[100] backdrop-blur-md backdrop-saturate-150 border-b border-black/[0.06] transition-transform duration-500 ease-in-out ${
           hideNav ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="h-14 flex items-center justify-between max-w-6xl mx-auto w-full px-6">
+        <div className="h-14 flex items-center justify-between max-w-7xl mx-auto w-full px-6">
           <Link to="/" className="no-underline">
             <span className="font-bold text-[15px] tracking-tight text-gray-900">
               Beavs<span className="text-[#d73f09]">Hub</span>

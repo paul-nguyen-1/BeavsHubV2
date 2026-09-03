@@ -3,6 +3,7 @@
   align-items: center;
   gap: 4px !important;
   position: relative;
+  margin-right: -16px;
 }
 
 .main-link {
@@ -11,7 +12,7 @@
   font-size: 0.8125rem;
   font-weight: 500;
   color: #6b7280;
-  padding: 6px 14px;
+  padding: 6px 16px;
   cursor: pointer;
   transition: color 0.2s ease;
   letter-spacing: 0.01em;

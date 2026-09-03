@@ -79,6 +79,15 @@
   color: #dc2626;
 }
 
+.toast-notification--limit {
+  border-color: #fde68a;
+}
+
+.toast-icon--limit {
+  background: #fef3c7;
+  color: #d97706;
+}
+
 .toast-title {
   margin: 0;
   font-size: 0.75rem;

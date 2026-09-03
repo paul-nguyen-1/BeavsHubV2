@@ -43,7 +43,7 @@ function RouteComponent() {
             I'm a Computer Science student at Oregon State University,
             passionate about making tech that actually helps people. I created
             BeavsHub as a way to give back to the community that’s shaped my
-            experience today — and to make your journey a little smoother along
+            experience today, and to make your journey a little smoother along
             the way.
           </p>
         </div>
