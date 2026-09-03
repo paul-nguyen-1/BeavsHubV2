@@ -237,7 +237,7 @@ function RouteComponent() {
         className="hidden md:inline fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-2 object-contain"
         style={{ width: "600px", height: "auto" }}
       />
-      <div className="flex-1 min-h-0 flex flex-col max-w-7xl mx-auto w-full px-6 pt-20 pb-6">
+      <div className="flex-1 min-h-0 flex flex-col w-full px-18 pt-20 pb-6">
         <div className="shrink-0 mb-4">
           <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500">
             Difficulty Chart

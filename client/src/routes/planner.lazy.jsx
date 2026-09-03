@@ -30,7 +30,7 @@ function Planner() {
       </div>
 
       <div className="hidden md:block h-full">
-        <div className="w-full px-6 pt-20 pb-5">
+        <div className="w-full px-18 pt-20 pb-5">
           <div className="flex flex-row flex-wrap items-center justify-between gap-4 w-full bg-white border border-gray-200 px-6 py-5">
             <div className="flex flex-col">
               <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500">

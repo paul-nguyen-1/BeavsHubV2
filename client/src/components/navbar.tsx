@@ -43,7 +43,7 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    const handle = requestAnimationFrame(() => {
+    const updateUnderline = () => {
       const link = linksRef.current[activeIndex];
       if (link) {
         setUnderlineStyle({
@@ -51,8 +51,16 @@ export function Navbar() {
           width: `${link.offsetWidth}px`,
         });
       }
-    });
-    return () => cancelAnimationFrame(handle);
+    };
+    const handle = requestAnimationFrame(updateUnderline);
+    // Zooming reflows text without changing the route, so the active link's
+    // offset/width need recomputing whenever the window resizes (zoom fires
+    // a resize event), not just on navigation.
+    window.addEventListener("resize", updateUnderline);
+    return () => {
+      cancelAnimationFrame(handle);
+      window.removeEventListener("resize", updateUnderline);
+    };
   }, [activeIndex]);
 
   const mainItems = mainLinks.map((item, index) => (
@@ -89,7 +97,7 @@ export function Navbar() {
           hideNav ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="h-14 flex items-center justify-between max-w-7xl mx-auto w-full px-6">
+        <div className="h-14 flex items-center justify-between w-full px-18">
           <Link to="/" className="no-underline">
             <span className="font-bold text-[15px] tracking-tight text-gray-900">
               Beavs<span className="text-[#d73f09]">Hub</span>
@@ -108,7 +116,9 @@ export function Navbar() {
           </Box>
 
           <Box hiddenFrom="sm">
-            <Group gap={4}>{mobileItems}</Group>
+            <Group gap={0} className="main-links">
+              {mobileItems}
+            </Group>
           </Box>
         </div>
       </header>

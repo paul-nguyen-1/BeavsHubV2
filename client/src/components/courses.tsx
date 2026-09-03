@@ -82,7 +82,8 @@ function Courses() {
   const [debouncedCourse] = useDebouncedValue(course, 200);
   const [debouncedReview] = useDebouncedValue(review, 200);
   const [opened, { open, close }] = useDisclosure(false);
-  const [filterOpened, { open: openFilter, close: closeFilter }] = useDisclosure(false);
+  const [filterOpened, { open: openFilter, close: closeFilter }] =
+    useDisclosure(false);
   const [formData, setFormData] = useState({
     course_name: "",
     course_difficulty: "",
@@ -319,7 +320,7 @@ function Courses() {
 
   return (
     <div className="min-h-screen bg-[#f7f5f0]">
-      <div className="max-w-7xl mx-auto px-6 pt-20 pb-12">
+      <div className="px-18 pt-20 pb-12">
 
         <Drawer
           opened={filterOpened}

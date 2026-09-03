@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../misc/const";
 import { Skeleton } from "@mantine/core";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
 import { classType } from "../misc/utils";
@@ -64,6 +64,15 @@ function Course() {
   const [sortField, setSortField] = useState<SortField>("course");
   const [sortAsc, setSortAsc] = useState(true);
   const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<"All" | "Core" | "Elective">(
+    "All"
+  );
+
+  const sortButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [sortIndicatorStyle, setSortIndicatorStyle] = useState({
+    transform: "translateX(0px)",
+    width: "0px",
+  });
 
   const fetchTableData = async (): Promise<Row[]> => {
     const response = await fetch(`${getAllCourses}/courses/frequency`);
@@ -84,6 +93,35 @@ function Course() {
       setSortAsc(field === "course");
     }
   };
+
+  const sortButtons: { field: SortField; label: string }[] = [
+    { field: "course", label: "Course" },
+    { field: "difficulty", label: "Difficulty" },
+    { field: "hours", label: "Hours" },
+    { field: "reviews", label: "Reviews" },
+  ];
+
+  const activeSortIndex = sortButtons.findIndex(
+    (button) => button.field === sortField
+  );
+
+  useEffect(() => {
+    const updateIndicator = () => {
+      const button = sortButtonRefs.current[activeSortIndex];
+      if (button) {
+        setSortIndicatorStyle({
+          transform: `translateX(${button.offsetLeft}px)`,
+          width: `${button.offsetWidth}px`,
+        });
+      }
+    };
+    const handle = requestAnimationFrame(updateIndicator);
+    window.addEventListener("resize", updateIndicator);
+    return () => {
+      cancelAnimationFrame(handle);
+      window.removeEventListener("resize", updateIndicator);
+    };
+  }, [activeSortIndex]);
 
   const rows = useMemo(() => {
     const items = Array.isArray(data) ? data : [];
@@ -139,30 +177,27 @@ function Course() {
 
   const filteredRows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return rows;
-    return rows.filter(
-      (row) =>
+    return rows.filter((row) => {
+      if (typeFilter !== "All" && classType(row.code) !== typeFilter) {
+        return false;
+      }
+      if (!q) return true;
+      return (
         row.code.toLowerCase().includes(q) ||
         row.title.toLowerCase().includes(q) ||
-        row.course_name.toLowerCase().includes(q),
-    );
-  }, [rows, query]);
+        row.course_name.toLowerCase().includes(q)
+      );
+    });
+  }, [rows, query, typeFilter]);
 
   const handleRowClick = (course_name: string) => {
     dispatch(setSelectedCourse(course_name));
     navigate({ to: "/reviews" });
   };
 
-  const sortButtons: { field: SortField; label: string }[] = [
-    { field: "course", label: "Course" },
-    { field: "difficulty", label: "Difficulty" },
-    { field: "hours", label: "Hours" },
-    { field: "reviews", label: "Reviews" },
-  ];
-
   return (
     <div className="min-h-screen bg-[#f7f5f0]">
-      <div className="mx-auto max-w-7xl px-6 pt-20 pb-12">
+      <div className="px-18 pt-20 pb-12">
         <div className="flex flex-col mb-6">
           <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500">
             Course Reviews
@@ -176,7 +211,7 @@ function Course() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pb-4 mb-6 border-b border-gray-900">
+        <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 pb-4 mb-6 border-b border-gray-900">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -201,60 +236,88 @@ function Course() {
             </button>
           </form>
 
-          <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-widest">
-            <span className="text-gray-500">Sort</span>
-            {sortButtons.map(({ field, label }) => {
-              const active = sortField === field;
-              return (
-                <button
-                  key={field}
-                  onClick={() => handleSort(field)}
-                  className={`flex items-center gap-1 pb-0.5 border-b-2 !uppercase transition-colors ${
-                    active
-                      ? "text-gray-900 font-bold border-[#d73f09]"
-                      : "text-gray-500 hover:text-gray-900 border-transparent"
-                  }`}
-                >
-                  {label}
-                  {active && <SortArrow asc={sortAsc} />}
-                </button>
-              );
-            })}
-          </div>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+            <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-widest">
+              <span className="text-sm font-bold text-gray-500">Sort</span>
+              <div className="relative flex items-center gap-4">
+                <div
+                  className="absolute bottom-0 left-0 h-0.5 bg-[#d73f09] rounded-full transition-all duration-300 ease-out"
+                  style={sortIndicatorStyle}
+                />
+                {sortButtons.map(({ field, label }, index) => {
+                  const active = sortField === field;
+                  return (
+                    <button
+                      key={field}
+                      ref={(el) => (sortButtonRefs.current[index] = el)}
+                      onClick={() => handleSort(field)}
+                      className={`flex items-center gap-1 pb-0.5 !uppercase transition-colors ${
+                        active
+                          ? "text-gray-900 font-bold"
+                          : "text-gray-500 hover:text-gray-900"
+                      }`}
+                    >
+                      {label}
+                      {active && <SortArrow asc={sortAsc} />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-          <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest">
-            <span className="text-gray-500">View</span>
-            <button
-              onClick={() => setViewMode("list")}
-              aria-label="List view"
-              title="List view"
-              className={`transition-colors ${
-                viewMode === "list"
-                  ? "text-[#d73f09]"
-                  : "text-gray-400 hover:text-gray-700"
-              }`}
-            >
-              <ListIcon />
-            </button>
-            <button
-              onClick={() => setViewMode("cards")}
-              aria-label="Cards view"
-              title="Cards view"
-              className={`transition-colors ${
-                viewMode === "cards"
-                  ? "text-[#d73f09]"
-                  : "text-gray-400 hover:text-gray-700"
-              }`}
-            >
-              <GridIcon />
-            </button>
-          </div>
+            <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-widest">
+              <span className="text-sm font-bold text-gray-500">Type</span>
+              <div className="flex border border-gray-300">
+                {(["All", "Core", "Elective"] as const).map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setTypeFilter(type)}
+                    className={`px-3 py-1.5 !uppercase transition-colors ${
+                      typeFilter === type
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-500 hover:text-gray-900"
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-          {!isLoading && (
-            <span className="text-sm text-gray-600">
-              {rows.length} courses
-            </span>
-          )}
+            <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest">
+              <span className="text-sm font-bold text-gray-500">View</span>
+              <button
+                onClick={() => setViewMode("list")}
+                aria-label="List view"
+                title="List view"
+                className={`transition-colors ${
+                  viewMode === "list"
+                    ? "text-[#d73f09]"
+                    : "text-gray-400 hover:text-gray-700"
+                }`}
+              >
+                <ListIcon />
+              </button>
+              <button
+                onClick={() => setViewMode("cards")}
+                aria-label="Cards view"
+                title="Cards view"
+                className={`transition-colors ${
+                  viewMode === "cards"
+                    ? "text-[#d73f09]"
+                    : "text-gray-400 hover:text-gray-700"
+                }`}
+              >
+                <GridIcon />
+              </button>
+            </div>
+
+            {!isLoading && (
+              <span className="text-sm text-gray-600">
+                {filteredRows.length} of {rows.length} courses
+              </span>
+            )}
+          </div>
         </div>
 
         {isLoading ? (

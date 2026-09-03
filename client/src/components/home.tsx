@@ -203,7 +203,7 @@ function Home() {
       </div>
 
       {/* Trending courses */}
-      <div className="py-20 px-6 max-w-7xl mx-auto">
+      <div className="py-20 px-18">
         <div className="flex items-end justify-between mb-8">
           <h2 className="text-3xl font-bold text-gray-900">
             Trending courses
@@ -278,7 +278,7 @@ function Home() {
       </div>
 
       {/* Latest from students */}
-      <div className="pb-20 px-6 max-w-7xl mx-auto">
+      <div className="pb-20 px-18">
         <h2 className="text-3xl font-bold text-gray-900 pb-4 border-b border-gray-300 mb-8">
           Latest from students
         </h2>
