@@ -89,7 +89,7 @@ export function Navbar() {
           hideNav ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="h-14 flex items-center justify-between max-w-6xl mx-auto w-full px-6">
+        <div className="h-14 flex items-center justify-between max-w-7xl mx-auto w-full px-6">
           <Link to="/" className="no-underline">
             <span className="font-bold text-[15px] tracking-tight text-gray-900">
               Beavs<span className="text-[#d73f09]">Hub</span>

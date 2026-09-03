@@ -15,8 +15,9 @@ import {
 } from "../misc/const";
 import { CourseInfo } from "../misc/types";
 import { Course } from "./course";
+import { ReviewStats } from "./reviewStats";
 import { useInView } from "react-intersection-observer";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   Drawer,
@@ -27,14 +28,10 @@ import {
   Skeleton,
   Textarea,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { motion } from "framer-motion";
 import SelectMantine from "./ui/select";
 import { MantineInput } from "./ui/input";
-import {
-  BarChartMantine,
-  PieChartMantine,
-  DonutChartMantine,
-} from "./ui/chart";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { AppDispatch, RootState } from "../../app/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,6 +39,21 @@ import { setSelectedCourse } from "../hooks/useCourse";
 import { setSelectedDifficulty } from "../hooks/useDifficulty";
 import { setSelectedHours } from "../hooks/useHours";
 import { classType } from "../misc/utils";
+
+const getFieldClassNames = (hasError?: boolean) => ({
+  label:
+    "!font-mono !text-[11px] !font-bold !uppercase !tracking-widest !text-gray-500 !mb-1.5",
+  input: `!rounded-none !border !text-gray-900 !shadow-none ${
+    hasError
+      ? "!border-red-500 focus:!border-red-500"
+      : "!border-gray-300 focus:!border-gray-900"
+  }`,
+  error: "!text-red-600 !text-xs !mt-1",
+  dropdown: "!rounded-none !border !border-gray-900 !shadow-lg",
+  option:
+    "!rounded-none data-[combobox-selected]:!bg-[#d73f09] data-[combobox-selected]:!text-white hover:!bg-orange-50",
+  pill: "!rounded-none !bg-gray-900 !text-white",
+});
 
 interface CourseFormData {
   course_name: string;
@@ -80,6 +92,12 @@ function Courses() {
     course_taken_date: "",
     pairs: [],
   });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const courseNameRef = useRef<HTMLInputElement>(null);
+  const difficultyRef = useRef<HTMLInputElement>(null);
+  const timeSpentRef = useRef<HTMLInputElement>(null);
+  const tipsRef = useRef<HTMLTextAreaElement>(null);
+  const takenDateRef = useRef<HTMLDivElement>(null);
 
   const { ref, inView } = useInView();
 
@@ -89,10 +107,8 @@ function Courses() {
     if (debouncedReview) params.append("course_tips", debouncedReview);
     if (difficulty) params.append("difficulty", difficulty);
     if (timeSpent) params.append("time_spent", timeSpent);
-    if (course === "419 (Legacy)/467 - Capstone")
-      dispatch(setSelectedCourse("Capstone"));
     const url = debouncedCourse
-      ? `${getAllCourses}/courses/${debouncedCourse.split(" - ")[0]}?${params.toString()}`
+      ? `${getAllCourses}/courses/${encodeURIComponent(debouncedCourse.split(" - ")[0])}?${params.toString()}`
       : `${getAllCourses}/courses?${params.toString()}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Failed to fetch courses data");
@@ -182,9 +198,75 @@ function Courses() {
     dispatch(setSelectedDifficulty(value));
   const handleTimeSpentChange = (value: string | null) =>
     dispatch(setSelectedHours(value));
-  const handleCourseInputChange = (name: string, value: string | string[]) =>
+  const handleCourseInputChange = (name: string, value: string | string[]) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
-  const handleCourseSubmit = () => mutation.mutate(formData);
+    setFormErrors((prev) => {
+      if (!prev[name]) return prev;
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
+  };
+
+  const handleCourseSubmit = () => {
+    const [takenSeason, takenYear] = formData.course_taken_date.split(" ");
+    const requiredFields: {
+      key: string;
+      label: string;
+      valid: boolean;
+      ref: React.RefObject<HTMLElement>;
+    }[] = [
+      {
+        key: "course_name",
+        label: "a course name",
+        valid: Boolean(formData.course_name),
+        ref: courseNameRef,
+      },
+      {
+        key: "course_difficulty",
+        label: "a difficulty rating",
+        valid: Boolean(formData.course_difficulty),
+        ref: difficultyRef,
+      },
+      {
+        key: "course_time_spent_per_week",
+        label: "time spent per week",
+        valid: Boolean(formData.course_time_spent_per_week),
+        ref: timeSpentRef,
+      },
+      {
+        key: "course_tips",
+        label: "course tips",
+        valid: Boolean(formData.course_tips.trim()),
+        ref: tipsRef,
+      },
+      {
+        key: "course_taken_date",
+        label: "the term and year taken",
+        valid: Boolean(takenSeason) && Boolean(takenYear),
+        ref: takenDateRef,
+      },
+    ];
+
+    const firstInvalid = requiredFields.find((field) => !field.valid);
+    if (firstInvalid) {
+      setFormErrors({ [firstInvalid.key]: "This field is required" });
+      firstInvalid.ref.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      firstInvalid.ref.current?.focus();
+      notifications.show({
+        title: "Missing information",
+        message: `Please add ${firstInvalid.label} before submitting.`,
+        color: "red",
+      });
+      return;
+    }
+
+    setFormErrors({});
+    mutation.mutate(formData);
+  };
   const handleClearFilter = () => {
     dispatch(setSelectedCourse(""));
     setReview("");
@@ -208,7 +290,6 @@ function Courses() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["chartData", course, review] });
       close();
       setFormData({
@@ -220,15 +301,25 @@ function Courses() {
         course_taken_date: "",
         pairs: [],
       });
+      notifications.show({
+        title: "Review submitted",
+        message: "Thanks for sharing your experience with the class.",
+        color: "green",
+      });
     },
-    onError: () => alert("Error creating course. Please try again."),
+    onError: () =>
+      notifications.show({
+        title: "Something went wrong",
+        message: "Couldn't submit your review. Please try again.",
+        color: "red",
+      }),
   });
 
   const reviewCount = data?.pages.reduce((n, page) => n + page.length, 0) ?? 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-20 pb-6">
+    <div className="min-h-screen bg-[#f7f5f0]">
+      <div className="max-w-7xl mx-auto px-6 pt-20 pb-12">
 
         <Drawer
           opened={filterOpened}
@@ -283,16 +374,19 @@ function Courses() {
           </div>
         </Drawer>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-4 mb-5">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-black text-xl text-gray-900">
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+          <div className="flex flex-col">
+            <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500">
+              Student Reviews
+            </p>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-none !m-0">
                 {course
                   ? course.includes("Capstone")
                     ? "Capstone"
                     : course
-                  : "Browse All Reviews"}
-              </span>
+                  : "Browse all reviews"}
+              </h1>
               {course && (
                 <span
                   className={`${
@@ -304,24 +398,45 @@ function Courses() {
               )}
             </div>
             {data && fetchedChartData && (
-              <p className="text-sm text-gray-400 mt-0.5">
-                {reviewCount} of {fetchedChartData.length} reviews
+              <p className="text-sm text-gray-500 mt-1">
+                Showing {reviewCount} of {fetchedChartData.length.toLocaleString()}
               </p>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="default" size="sm" onClick={openFilter}>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={openFilter}
+              className="border border-gray-300 bg-white text-gray-900 text-sm font-semibold px-5 h-11 hover:border-gray-900 transition-colors"
+            >
               Filters
-            </Button>
-            <Button size="sm" color="#d73f09" onClick={open}>
-              New Post
-            </Button>
+            </button>
+            <button
+              onClick={open}
+              className="bg-gray-900 hover:bg-black text-white text-sm font-semibold px-5 h-11 transition-colors"
+            >
+              Write a review
+            </button>
           </div>
         </div>
 
-        <Modal opened={opened} onClose={close} title="Create New Course Review">
-          <div className="flex flex-col gap-4">
+        <Modal
+          opened={opened}
+          onClose={close}
+          radius={0}
+          title={
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-gray-900">
+              Create New Course Review
+            </span>
+          }
+          classNames={{
+            content: "!rounded-none",
+            header: "!border-b !border-gray-200 !pb-4",
+            body: "!p-0",
+          }}
+        >
+          <div className="flex flex-col gap-4 pt-2 pb-1 px-[var(--mantine-spacing-md)] max-h-[55vh] overflow-y-auto">
             <Select
+              ref={courseNameRef}
               value={formData.course_name}
               onChange={(v) => handleCourseInputChange("course_name", v ?? "")}
               label="Course Name"
@@ -332,9 +447,13 @@ function Courses() {
                 ...upperDivisionOne,
                 ...upperDivisionTwo,
               ]}
+              radius={0}
+              error={formErrors.course_name}
+              classNames={getFieldClassNames(Boolean(formErrors.course_name))}
               clearable
             />
             <Select
+              ref={difficultyRef}
               label="Course Difficulty (1-5)"
               placeholder="Enter Course Difficulty"
               data={["1", " 2", "3", "4", "5"]}
@@ -344,9 +463,13 @@ function Courses() {
                 if (!isNaN(n))
                   handleCourseInputChange("course_difficulty", n.toString());
               }}
+              radius={0}
+              error={formErrors.course_difficulty}
+              classNames={getFieldClassNames(Boolean(formErrors.course_difficulty))}
               clearable
             />
             <Select
+              ref={timeSpentRef}
               label="Time Spent Per Week"
               placeholder="E.g., 0-5 hours"
               data={["0-5 hours", "6-12 hours", "13-18 hours", "18+ hours"]}
@@ -354,6 +477,11 @@ function Courses() {
               onChange={(v) =>
                 handleCourseInputChange("course_time_spent_per_week", v ?? "")
               }
+              radius={0}
+              error={formErrors.course_time_spent_per_week}
+              classNames={getFieldClassNames(
+                Boolean(formErrors.course_time_spent_per_week)
+              )}
             />
             <Select
               value={formData.course_enjoyability}
@@ -363,9 +491,12 @@ function Courses() {
               label="Course Enjoyability"
               placeholder="Select Course Enjoyability"
               data={["Enjoyable", "Neutral", "Not Enjoyable"]}
+              radius={0}
+              classNames={getFieldClassNames()}
               clearable
             />
             <Textarea
+              ref={tipsRef}
               placeholder="Enter Tips for the Course"
               label="Course Tips"
               autosize
@@ -374,34 +505,48 @@ function Courses() {
               onChange={(e) =>
                 handleCourseInputChange("course_tips", e.target.value)
               }
+              radius={0}
+              error={formErrors.course_tips}
+              classNames={getFieldClassNames(Boolean(formErrors.course_tips))}
             />
-            <div className="flex gap-4 w-full">
-              <Select
-                className="w-full"
-                label="Course Taken Date"
-                placeholder="Select term"
-                data={["Spring", "Summer", "Winter", "Fall"]}
-                value={formData.course_taken_date.split(" ")[0] || ""}
-                onChange={(season) =>
-                  handleCourseInputChange(
-                    "course_taken_date",
-                    `${season} ${formData.course_taken_date.split(" ")[1] || ""}`.trim()
-                  )
-                }
-                clearable
-              />
-              <MantineInput
-                label="Year"
-                placeholder="E.g., 2025"
-                value={formData.course_taken_date.split(" ")[1] || ""}
-                onChange={(e) => {
-                  const year = e.target.value.slice(0, 4);
-                  handleCourseInputChange(
-                    "course_taken_date",
-                    `${formData.course_taken_date.split(" ")[0] || ""} ${year}`.trim()
-                  );
-                }}
-              />
+            <div>
+              <div ref={takenDateRef} className="flex gap-4 w-full">
+                <Select
+                  className="w-full"
+                  label="Course Taken Date"
+                  placeholder="Select term"
+                  data={["Spring", "Summer", "Winter", "Fall"]}
+                  value={formData.course_taken_date.split(" ")[0] || ""}
+                  onChange={(season) =>
+                    handleCourseInputChange(
+                      "course_taken_date",
+                      `${season} ${formData.course_taken_date.split(" ")[1] || ""}`.trim()
+                    )
+                  }
+                  radius={0}
+                  classNames={getFieldClassNames(Boolean(formErrors.course_taken_date))}
+                  clearable
+                />
+                <MantineInput
+                  label="Year"
+                  placeholder="E.g., 2025"
+                  value={formData.course_taken_date.split(" ")[1] || ""}
+                  onChange={(e) => {
+                    const year = e.target.value.slice(0, 4);
+                    handleCourseInputChange(
+                      "course_taken_date",
+                      `${formData.course_taken_date.split(" ")[0] || ""} ${year}`.trim()
+                    );
+                  }}
+                  radius={0}
+                  classNames={getFieldClassNames(Boolean(formErrors.course_taken_date))}
+                />
+              </div>
+              {formErrors.course_taken_date && (
+                <p className="text-red-600 text-xs mt-1">
+                  Please select both a term and a year.
+                </p>
+              )}
             </div>
             <MultiSelect
               label="Course Pairs"
@@ -416,44 +561,39 @@ function Courses() {
               onChange={(selected) =>
                 handleCourseInputChange("pairs", selected)
               }
+              radius={0}
+              classNames={getFieldClassNames()}
               clearable
-              required
             />
           </div>
-          <div className="mt-4">
-            <Button color="#d73f09" onClick={handleCourseSubmit}>
+          <div className="px-[var(--mantine-spacing-md)] pb-[var(--mantine-spacing-md)] pt-4 border-t border-gray-200">
+            <button
+              onClick={handleCourseSubmit}
+              className="w-full bg-gray-900 hover:bg-black text-white text-sm font-semibold px-5 h-11 transition-colors"
+            >
               Submit
-            </Button>
+            </button>
           </div>
         </Modal>
 
-        <div className="flex flex-col md:flex-row gap-5">
-
-          <div className="flex-shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col gap-4">
-            <p className="font-bold text-gray-900 text-sm">Course Statistics</p>
-            <div className="flex flex-col md:flex-row gap-4">
-              <PieChartMantine data={fetchedChartData} isLoading={isChartLoading} />
-              <DonutChartMantine data={fetchedChartData} isLoading={isChartLoading} />
-            </div>
-            <BarChartMantine data={fetchedChartData} isLoading={isChartLoading} />
-          </div>
+        <div className="flex flex-col md:flex-row gap-12 items-stretch md:h-[70vh] md:min-h-[520px]">
 
           <motion.div
-            className="flex-1 min-w-0"
+            className="flex-1 min-w-0 border-t border-gray-900 md:h-full"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
           >
             <div
-              className={`flex flex-col gap-3 overflow-y-auto no-scrollbar md:max-h-[72vh] ${
+              className={`h-full overflow-y-auto no-scrollbar ${
                 status === "pending" ? "opacity-60" : ""
               }`}
             >
               {status === "pending" && (
                 <>
-                  <Skeleton height={180} radius="lg" />
-                  <Skeleton height={180} radius="lg" />
-                  <Skeleton height={180} radius="lg" />
+                  <Skeleton height={160} radius="sm" my="lg" />
+                  <Skeleton height={160} radius="sm" my="lg" />
+                  <Skeleton height={160} radius="sm" my="lg" />
                 </>
               )}
 
@@ -462,7 +602,7 @@ function Courses() {
                   <Skeleton
                     visible={isLoadingCourses}
                     key={`${pageIndex}-${courseItem._id}`}
-                    radius="lg"
+                    radius="sm"
                   >
                     <motion.div variants={itemVariants}>
                       <Course
@@ -490,6 +630,8 @@ function Courses() {
                 )}
             </div>
           </motion.div>
+
+          <ReviewStats data={fetchedChartData} isLoading={isChartLoading} />
         </div>
       </div>
     </div>

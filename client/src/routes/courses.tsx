@@ -1,14 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "../misc/const";
-import { ScrollArea, Table, Skeleton, Badge } from "@mantine/core";
+import { Skeleton } from "@mantine/core";
 import { useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
 import { classType } from "../misc/utils";
-import { getDifficultyColor } from "../components/ui/chart";
 
 type SortField = "course" | "reviews" | "difficulty" | "hours";
+type ViewMode = "list" | "cards";
 
 type Row = {
   _id: string;
@@ -20,6 +20,14 @@ type Row = {
 export const Route = createFileRoute("/courses")({
   component: Course,
 });
+
+function TypeBadge({ code }: { code: string }) {
+  return (
+    <span className="font-mono text-[11px] uppercase tracking-widest text-gray-500 shrink-0">
+      {classType(code)}
+    </span>
+  );
+}
 
 const ListIcon = () => (
   <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
@@ -38,13 +46,10 @@ const GridIcon = () => (
   </svg>
 );
 
-function SortArrow({ active, asc }: { active: boolean; asc: boolean }) {
-  if (!active) {
-    return <span className="ml-1 text-[10px] text-gray-300">↕</span>;
-  }
+function SortArrow({ asc }: { asc: boolean }) {
   return (
     <span
-      className="ml-1 inline-block text-[10px] text-white transition-transform duration-200 ease-out"
+      className="inline-block text-base font-bold leading-none transition-transform duration-200 ease-out"
       style={{ transform: asc ? "rotate(0deg)" : "rotate(180deg)" }}
     >
       ↑
@@ -55,9 +60,10 @@ function SortArrow({ active, asc }: { active: boolean; asc: boolean }) {
 function Course() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [sortField, setSortField] = useState<SortField>("course");
   const [sortAsc, setSortAsc] = useState(true);
+  const [query, setQuery] = useState("");
 
   const fetchTableData = async (): Promise<Row[]> => {
     const response = await fetch(`${getAllCourses}/courses/frequency`);
@@ -99,8 +105,8 @@ function Course() {
         count,
         diff,
         hrs,
-        diffLabel: diff > 0 ? diff.toFixed(2) : "—",
-        hrsLabel: hrs > 0 ? hrs.toFixed(1) : "—",
+        diffLabel: diff > 0 ? diff.toFixed(2) : "N/A",
+        hrsLabel: hrs > 0 ? hrs.toFixed(1) : "N/A",
       };
     });
 
@@ -131,6 +137,17 @@ function Course() {
     });
   }, [data, sortField, sortAsc]);
 
+  const filteredRows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter(
+      (row) =>
+        row.code.toLowerCase().includes(q) ||
+        row.title.toLowerCase().includes(q) ||
+        row.course_name.toLowerCase().includes(q),
+    );
+  }, [rows, query]);
+
   const handleRowClick = (course_name: string) => {
     dispatch(setSelectedCourse(course_name));
     navigate({ to: "/reviews" });
@@ -144,381 +161,213 @@ function Course() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
-      <div className="mx-auto max-w-6xl px-4 pt-28 pb-16">
-        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-[#d73f09] mb-2">
-              Course Reviews
-            </p>
-            <h1 className="text-3xl md:text-4xl font-black text-gray-900">
-              Browse Courses
-            </h1>
-            <p className="text-sm text-gray-500 mt-2">
-              Real student feedback on difficulty, workload, and tips
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {viewMode === "grid" && (
-              <div className="flex items-center gap-1 bg-white border border-gray-100 shadow-sm rounded-xl p-1">
-                {sortButtons.map(({ field, label }) => (
-                  <button
-                    key={field}
-                    onClick={() => handleSort(field)}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                      sortField === field
-                        ? "bg-[#d73f09] text-white"
-                        : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
-                    }`}
-                  >
-                    {label}
-                    {sortField === field && (
-                      <span
-                        className="inline-block text-[10px] transition-transform duration-200 ease-out"
-                        style={{ transform: sortAsc ? "rotate(0deg)" : "rotate(180deg)" }}
-                      >
-                        ↑
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <div className="flex items-center gap-1 bg-white border border-gray-100 shadow-sm rounded-xl p-1">
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-2 rounded-lg transition-all ${
-                  viewMode === "list"
-                    ? "bg-[#d73f09] text-white"
-                    : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"
-                }`}
-                title="List view"
-              >
-                <ListIcon />
-              </button>
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg transition-all ${
-                  viewMode === "grid"
-                    ? "bg-[#d73f09] text-white"
-                    : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"
-                }`}
-                title="Grid view"
-              >
-                <GridIcon />
-              </button>
-            </div>
-
-            {!isLoading && (
-              <span className="text-sm text-gray-400 font-medium">
-                {rows.length} courses
-              </span>
-            )}
-          </div>
+    <div className="min-h-screen bg-[#f7f5f0]">
+      <div className="mx-auto max-w-7xl px-6 pt-20 pb-12">
+        <div className="flex flex-col mb-6">
+          <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500">
+            Course Reviews
+          </p>
+          <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-none !m-0">
+            Browse courses
+          </h1>
+          <p className="text-sm text-gray-500 leading-relaxed mt-1">
+            Difficulty, weekly hours, and workload notes from students who took
+            the class.
+          </p>
         </div>
-        {viewMode === "list" && (
-          <Skeleton visible={isLoading} h={540} radius="lg">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <ScrollArea
-                h={540}
-                type="auto"
-                scrollbarSize={0}
-                styles={{
-                  viewport: { background: "var(--mantine-color-body)" },
-                }}
-              >
-                <Table
-                  striped
-                  highlightOnHover
-                  withColumnBorders={false}
-                  verticalSpacing="sm"
-                  horizontalSpacing="lg"
-                  className="min-w-full"
-                  styles={{
-                    table: { borderCollapse: "separate", borderSpacing: 0 },
-                    thead: {
-                      position: "sticky",
-                      top: 0,
-                      zIndex: 2,
-                      background:
-                        "color-mix(in oklab, var(--mantine-color-body) 85%, white)",
-                      backdropFilter: "saturate(180%) blur(6px)",
-                      boxShadow: "inset 0 -1px 0 rgba(0,0,0,0.06)",
-                    },
-                    th: {
-                      fontSize: "0.72rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                      color: "var(--mantine-color-dimmed)",
-                      fontWeight: 600,
-                      paddingTop: 10,
-                      paddingBottom: 10,
-                      background: "transparent",
-                      userSelect: "none",
-                      cursor: "pointer",
-                    },
-                    td: {
-                      fontSize: "0.92rem",
-                      color: "var(--mantine-color-text)",
-                    },
-                    tr: { transition: "background 120ms ease" },
-                  }}
+
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pb-4 mb-6 border-b border-gray-900">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (filteredRows.length > 0) {
+                handleRowClick(filteredRows[0].course_name);
+              }
+            }}
+            className="flex w-full sm:flex-1 sm:min-w-[320px] max-w-xl border border-gray-300 bg-white"
+          >
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Filter by code, title, or keyword"
+              className="flex-1 min-w-0 h-12 px-4 text-base text-gray-900 placeholder:text-gray-400 bg-transparent outline-none"
+            />
+            <button
+              type="submit"
+              className="shrink-0 bg-gray-900 hover:bg-black text-white text-sm font-semibold px-6 transition-colors"
+            >
+              Search
+            </button>
+          </form>
+
+          <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-widest">
+            <span className="text-gray-500">Sort</span>
+            {sortButtons.map(({ field, label }) => {
+              const active = sortField === field;
+              return (
+                <button
+                  key={field}
+                  onClick={() => handleSort(field)}
+                  className={`flex items-center gap-1 pb-0.5 border-b-2 !uppercase transition-colors ${
+                    active
+                      ? "text-gray-900 font-bold border-[#d73f09]"
+                      : "text-gray-500 hover:text-gray-900 border-transparent"
+                  }`}
                 >
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th style={{ width: 110 }} onClick={() => handleSort("course")}>
-                        <span
-                          className={`inline-flex items-center gap-0.5 rounded-md px-2 py-1 transition-colors select-none ${
-                            sortField === "course"
-                              ? "bg-[#d73f09] text-white"
-                              : "text-gray-500 hover:bg-orange-50 hover:text-gray-900"
-                          }`}
-                        >
-                          Course
-                          <SortArrow active={sortField === "course"} asc={sortAsc} />
-                        </span>
-                      </Table.Th>
-                      <Table.Th>Course Name</Table.Th>
-                      <Table.Th style={{ width: 110, textAlign: "right" }} onClick={() => handleSort("reviews")}>
-                        <span
-                          className={`inline-flex items-center gap-0.5 rounded-md px-2 py-1 transition-colors select-none ${
-                            sortField === "reviews"
-                              ? "bg-[#d73f09] text-white"
-                              : "text-gray-500 hover:bg-orange-50 hover:text-gray-900"
-                          }`}
-                        >
-                          Reviews
-                          <SortArrow active={sortField === "reviews"} asc={sortAsc} />
-                        </span>
-                      </Table.Th>
-                      <Table.Th style={{ width: 140, textAlign: "right" }} onClick={() => handleSort("difficulty")}>
-                        <span
-                          className={`inline-flex items-center gap-0.5 rounded-md px-2 py-1 transition-colors select-none ${
-                            sortField === "difficulty"
-                              ? "bg-[#d73f09] text-white"
-                              : "text-gray-500 hover:bg-orange-50 hover:text-gray-900"
-                          }`}
-                        >
-                          Avg Difficulty
-                          <SortArrow active={sortField === "difficulty"} asc={sortAsc} />
-                        </span>
-                      </Table.Th>
-                      <Table.Th style={{ width: 120, textAlign: "right" }} onClick={() => handleSort("hours")}>
-                        <span
-                          className={`inline-flex items-center gap-0.5 rounded-md px-2 py-1 transition-colors select-none ${
-                            sortField === "hours"
-                              ? "bg-[#d73f09] text-white"
-                              : "text-gray-500 hover:bg-orange-50 hover:text-gray-900"
-                          }`}
-                        >
-                          Avg Hours
-                          <SortArrow active={sortField === "hours"} asc={sortAsc} />
-                        </span>
-                      </Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
+                  {label}
+                  {active && <SortArrow asc={sortAsc} />}
+                </button>
+              );
+            })}
+          </div>
 
-                  <Table.Tbody className="[&>tr]:border-0 [&>tr+tr]:border-t [&>tr+tr]:border-gray-100">
-                    {rows.length === 0 && !isLoading ? (
-                      <Table.Tr>
-                        <Table.Td colSpan={5}>
-                          <div className="flex items-center justify-center py-14 text-center">
-                            <div>
-                              <p className="font-semibold text-gray-700">No reviews yet</p>
-                              <p className="text-sm text-gray-400 mt-1">
-                                When students add reviews, they'll show up here.
-                              </p>
-                            </div>
-                          </div>
-                        </Table.Td>
-                      </Table.Tr>
-                    ) : (
-                      rows.map((review) => (
-                        <Table.Tr
-                          key={review.key}
-                          className="cursor-pointer"
-                          onClick={() => handleRowClick(review.course_name)}
-                        >
-                          <Table.Td>
-                            <span className="font-semibold tabular-nums">
-                              {review.code}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="text-gray-800">
-                            {review.course_name}
-                          </Table.Td>
-                          <Table.Td style={{ textAlign: "right" }}>
-                            <span className="tabular-nums">{review.count}</span>
-                          </Table.Td>
-                          <Table.Td style={{ textAlign: "right" }}>
-                            {review.diff > 0 ? (
-                              <Badge
-                                variant="light"
-                                radius="sm"
-                                size="sm"
-                                className="tabular-nums"
-                                color={
-                                  review.diff >= 3.5
-                                    ? "#d03b3b"
-                                    : review.diff >= 2.5
-                                      ? "#fab219"
-                                      : "#0ca30c"
-                                }
-                              >
-                                {review.diffLabel}
-                              </Badge>
-                            ) : (
-                              "—"
-                            )}
-                          </Table.Td>
-                          <Table.Td style={{ textAlign: "right" }}>
-                            {review.hrs > 0 ? (
-                              <Badge
-                                variant="light"
-                                radius="sm"
-                                size="sm"
-                                className="tabular-nums"
-                                color={
-                                  review.hrs >= 15
-                                    ? "#d03b3b"
-                                    : review.hrs >= 10
-                                      ? "#fab219"
-                                      : "#0ca30c"
-                                }
-                              >
-                                {review.hrsLabel}
-                              </Badge>
-                            ) : (
-                              "—"
-                            )}
-                          </Table.Td>
-                        </Table.Tr>
-                      ))
-                    )}
-                  </Table.Tbody>
-                </Table>
-              </ScrollArea>
-            </div>
-          </Skeleton>
-        )}
+          <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest">
+            <span className="text-gray-500">View</span>
+            <button
+              onClick={() => setViewMode("list")}
+              aria-label="List view"
+              title="List view"
+              className={`transition-colors ${
+                viewMode === "list"
+                  ? "text-[#d73f09]"
+                  : "text-gray-400 hover:text-gray-700"
+              }`}
+            >
+              <ListIcon />
+            </button>
+            <button
+              onClick={() => setViewMode("cards")}
+              aria-label="Cards view"
+              title="Cards view"
+              className={`transition-colors ${
+                viewMode === "cards"
+                  ? "text-[#d73f09]"
+                  : "text-gray-400 hover:text-gray-700"
+              }`}
+            >
+              <GridIcon />
+            </button>
+          </div>
 
-        {viewMode === "grid" && (
-          isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <Skeleton key={i} height={200} radius="lg" />
+          {!isLoading && (
+            <span className="text-sm text-gray-600">
+              {rows.length} courses
+            </span>
+          )}
+        </div>
+
+        {isLoading ? (
+          <div className="flex flex-col gap-3">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} height={64} radius="sm" />
+            ))}
+          </div>
+        ) : filteredRows.length === 0 ? (
+          <div className="py-16 text-center">
+            <p className="font-semibold text-gray-900">No courses match</p>
+            <p className="text-sm text-gray-600 mt-1">
+              Try a different code, title, or keyword.
+            </p>
+          </div>
+        ) : viewMode === "list" ? (
+          <div className="w-full overflow-x-auto">
+            <div className="min-w-[700px] md:h-[70vh] md:min-h-[420px] overflow-y-auto no-scrollbar">
+              <div className="grid grid-cols-[160px_1fr_90px_100px_90px_90px] gap-4 pb-3 border-b border-gray-300 font-mono text-[11px] uppercase tracking-widest text-gray-500 sticky top-0 bg-[#f7f5f0]">
+                <span>Course</span>
+                <span>Title</span>
+                <span>Type</span>
+                <span className="text-right">Difficulty</span>
+                <span className="text-right">Hrs / wk</span>
+                <span className="text-right">Reviews</span>
+              </div>
+              {filteredRows.map((row) => (
+                <button
+                  key={row.key}
+                  onClick={() => handleRowClick(row.course_name)}
+                  className="grid grid-cols-[160px_1fr_90px_100px_90px_90px] gap-4 items-center w-full text-left py-5 border-b border-gray-200 hover:bg-[#efece2] transition-colors group"
+                >
+                  <span className="font-mono font-bold text-gray-900 group-hover:text-[#d73f09] transition-colors">
+                    {row.code}
+                  </span>
+                  <span className="font-bold text-gray-900 group-hover:text-[#d73f09] transition-colors truncate">
+                    {row.title || row.course_name}
+                  </span>
+                  <TypeBadge code={row.code} />
+                  <span className="text-right font-mono font-bold tabular-nums text-gray-900">
+                    {row.diffLabel}
+                  </span>
+                  <span className="text-right font-mono font-bold tabular-nums text-gray-900">
+                    {row.hrsLabel}
+                  </span>
+                  <span className="text-right font-mono tabular-nums text-gray-600">
+                    {row.count}
+                  </span>
+                </button>
               ))}
+              <div className="flex items-center justify-between pt-4 font-mono text-[11px] uppercase tracking-widest text-gray-500">
+                <span>End of list</span>
+                <span>
+                  {filteredRows.length} of {rows.length} courses
+                </span>
+              </div>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {rows.map((review) => {
-                const isCore = classType(review.code) === "Core";
-                return (
-                  <button
-                    key={review.key}
-                    onClick={() => handleRowClick(review.course_name)}
-                    className="text-left group flex w-full"
-                  >
-                    <div className="flex flex-col w-full bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
-                      <div
-                        className="h-[3px] w-full"
-                        style={{
-                          backgroundColor:
-                            review.diff > 0
-                              ? getDifficultyColor(review.diff)
-                              : "#e5e1d8",
-                        }}
-                      />
-                      <div className="p-4 pb-3">
-                        <div className="flex items-start justify-between">
-                          <div className="min-w-0">
-                            <h3 className="text-base font-black text-gray-900 leading-tight">
-                              {review.code}
-                            </h3>
-                            <p className="text-xs font-medium text-gray-500 truncate mt-0.5">
-                              {review.title || review.course_name}
-                            </p>
-                          </div>
-                          <span
-                            className={`${
-                              isCore ? "bg-[#d73f09]" : "bg-[#f28705]"
-                            } shrink-0 text-white text-[10px] font-bold px-2 py-0.5 rounded-full ml-2`}
-                          >
-                            {classType(review.code)}
-                          </span>
-                        </div>
+          </div>
+        ) : (
+          <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filteredRows.map((row) => (
+                <button
+                  key={row.key}
+                  onClick={() => handleRowClick(row.course_name)}
+                  className="text-left group bg-white border border-gray-200 hover:border-gray-900 focus-visible:border-gray-900 focus:outline-none transition-colors p-6 flex flex-col"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <span className="font-mono font-black text-lg text-gray-900 group-hover:text-[#d73f09] group-focus-visible:text-[#d73f09] transition-colors">
+                      {row.code}
+                    </span>
+                    <TypeBadge code={row.code} />
+                  </div>
+                  <p className="font-bold text-gray-900 group-hover:text-[#d73f09] group-focus-visible:text-[#d73f09] transition-colors mb-6">
+                    {row.title || row.course_name}
+                  </p>
 
-                        <div className="grid grid-cols-3 mt-4 pt-3 border-t border-gray-100">
-                          <div>
-                            <div
-                              className={`text-sm font-black tabular-nums ${
-                                sortField === "difficulty"
-                                  ? "text-[#d73f09]"
-                                  : "text-gray-800"
-                              }`}
-                            >
-                              {review.diffLabel}
-                            </div>
-                            <div
-                              className={`text-[9px] font-semibold uppercase tracking-wide mt-0.5 ${
-                                sortField === "difficulty"
-                                  ? "text-[#d73f09]"
-                                  : "text-gray-400"
-                              }`}
-                            >
-                              Difficulty
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              className={`text-sm font-black tabular-nums ${
-                                sortField === "hours"
-                                  ? "text-[#d73f09]"
-                                  : "text-gray-800"
-                              }`}
-                            >
-                              {review.hrsLabel}
-                            </div>
-                            <div
-                              className={`text-[9px] font-semibold uppercase tracking-wide mt-0.5 ${
-                                sortField === "hours"
-                                  ? "text-[#d73f09]"
-                                  : "text-gray-400"
-                              }`}
-                            >
-                              Hrs / wk
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              className={`text-sm font-black tabular-nums ${
-                                sortField === "reviews"
-                                  ? "text-[#d73f09]"
-                                  : "text-gray-800"
-                              }`}
-                            >
-                              {review.count}
-                            </div>
-                            <div
-                              className={`text-[9px] font-semibold uppercase tracking-wide mt-0.5 ${
-                                sortField === "reviews"
-                                  ? "text-[#d73f09]"
-                                  : "text-gray-400"
-                              }`}
-                            >
-                              Reviews
-                            </div>
-                          </div>
-                        </div>
+                  <div className="grid grid-cols-3 gap-2 pt-4 mt-auto border-t border-gray-200 text-center">
+                    <div>
+                      <div className="font-mono font-bold tabular-nums text-gray-900 group-hover:text-[#d73f09] group-focus-visible:text-[#d73f09] transition-colors">
+                        {row.diffLabel}
+                      </div>
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-gray-500 mt-0.5">
+                        Difficulty
                       </div>
                     </div>
-                  </button>
-                );
-              })}
+                    <div>
+                      <div className="font-mono font-bold tabular-nums text-gray-900 group-hover:text-[#d73f09] group-focus-visible:text-[#d73f09] transition-colors">
+                        {row.hrsLabel}
+                      </div>
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-gray-500 mt-0.5">
+                        Hrs / wk
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-mono font-bold tabular-nums text-gray-900 group-hover:text-[#d73f09] group-focus-visible:text-[#d73f09] transition-colors">
+                        {row.count}
+                      </div>
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-gray-500 mt-0.5">
+                        Reviews
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))}
             </div>
-          )
+            <div className="flex items-center justify-between pt-8 font-mono text-[11px] uppercase tracking-widest text-gray-500">
+              <span>End of list</span>
+              <span>
+                {filteredRows.length} of {rows.length} courses
+              </span>
+            </div>
+          </div>
         )}
       </div>
     </div>

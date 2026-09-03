@@ -58,14 +58,14 @@ export default function SelectMantine({
       }
       data={data}
       size={isPrimarySelector ? "sm" : undefined}
-      radius={isPrimarySelector ? "xl" : "lg"}
+      radius={isPrimarySelector ? 0 : "lg"}
       classNames={
         isPrimarySelector
           ? {
               input:
-                "!bg-transparent !border-0 !shadow-none !pl-4 !pr-4 !text-base !text-white placeholder:!text-white/60",
+                "!bg-transparent !border-0 !shadow-none !pl-4 !pr-4 !h-12 !text-base !text-gray-900 placeholder:!text-gray-400",
               dropdown:
-                "!mt-2 !rounded-2xl !border !border-gray-100 !shadow-lg !overflow-hidden",
+                "!mt-2 !rounded-lg !border !border-gray-100 !shadow-lg !overflow-hidden",
               option:
                 "!rounded-lg !mx-1 !text-sm data-[combobox-selected]:!bg-[#d73f09] data-[combobox-selected]:!text-white hover:!bg-orange-50",
             }

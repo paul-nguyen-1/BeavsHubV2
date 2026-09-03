@@ -17,6 +17,7 @@ export class CoursesController {
     @Query('date') date?: string,
     @Query('difficulty') difficulty?: string,
     @Query('time_spent') time_spent?: string,
+    @Query('require_text') requireText?: string,
   ): Promise<CourseDto[]> {
     await this.courseService.refreshCourseReviews();
     return await this.courseService.findAll(
@@ -25,6 +26,7 @@ export class CoursesController {
       date,
       difficulty,
       time_spent,
+      requireText,
     );
   }
 

@@ -19,7 +19,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import "./layoutFlow.css";
 import { Drawer, Pill, Progress, Text } from "@mantine/core";
-import { CheckIcon, XIcon } from "@phosphor-icons/react";
+import { CheckIcon, XIcon, WarningIcon } from "@phosphor-icons/react";
 import { classType } from "../../misc/utils.js";
 import { Link } from "@tanstack/react-router";
 import { useDispatch } from "react-redux";
@@ -246,6 +246,12 @@ export const LayoutFlow = ({ opened, close }) => {
     setCurrentNodeId(null);
   };
 
+  const showLimitNotification = (message) => {
+    const id = Date.now();
+    setNotifications((prev) => [...prev, { id, type: "limit", message }]);
+    setTimeout(() => setNotifications((prev) => prev.filter((t) => t.id !== id)), 3000);
+  };
+
   const handleNodeClick = (event, node) => {
     const isCore =
       classType(node.id) === "Core" ||
@@ -254,8 +260,14 @@ export const LayoutFlow = ({ opened, close }) => {
     const alreadyTaken = node.taken;
 
     if (!alreadyTaken) {
-      if (isCore && takenCore >= 12) return;
-      if (isElective && takenElectives >= 3) return;
+      if (isCore && takenCore >= 12) {
+        showLimitNotification("Core course limit reached (12 / 12)");
+        return;
+      }
+      if (isElective && takenElectives >= 3) {
+        showLimitNotification("Elective course limit reached (3 / 3)");
+        return;
+      }
     }
 
     const nowTaken = !node.taken;
@@ -341,13 +353,17 @@ export const LayoutFlow = ({ opened, close }) => {
       <div className="toast-container">
         {notifications.map((t) => {
           const isRemoved = t.type === "removed";
+          const isLimit = t.type === "limit";
+          const variant = isLimit ? "limit" : isRemoved ? "removed" : "";
           return (
             <div
               key={t.id}
-              className={`toast-item toast-notification${isRemoved ? " toast-notification--removed" : ""}`}
+              className={`toast-item toast-notification${variant ? ` toast-notification--${variant}` : ""}`}
             >
-              <span className={`toast-icon${isRemoved ? " toast-icon--removed" : ""}`}>
-                {isRemoved ? (
+              <span className={`toast-icon${variant ? ` toast-icon--${variant}` : ""}`}>
+                {isLimit ? (
+                  <WarningIcon size={14} weight="bold" />
+                ) : isRemoved ? (
                   <XIcon size={14} weight="bold" />
                 ) : (
                   <CheckIcon size={14} weight="bold" />
@@ -355,10 +371,12 @@ export const LayoutFlow = ({ opened, close }) => {
               </span>
               <div>
                 <p className="toast-title">
-                  {isRemoved ? "Course Removed" : "Course Added"}
+                  {isLimit ? "Limit Reached" : isRemoved ? "Course Removed" : "Course Added"}
                 </p>
                 <p className="toast-message">
-                  {t.label} {isRemoved ? "removed from taken" : "marked as taken"}
+                  {isLimit
+                    ? t.message
+                    : `${t.label} ${isRemoved ? "removed from taken" : "marked as taken"}`}
                 </p>
               </div>
             </div>

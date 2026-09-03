@@ -13,6 +13,7 @@ export const lowerDivisionTwo = [
   "231 - Elements of Discrete Mathematics",
   "261 - Data Structures",
   "271 - Computer Architecture & Assembly Language",
+  "274 - Intro to Systems Programming",
   "290 - Web Development",
 ];
 
@@ -53,6 +54,7 @@ export const coreClasses = [
   "231 - Elements of Discrete Mathematics",
   "261 - Data Structures",
   "271 - Computer Architecture & Assembly Language",
+  "274 - Intro to Systems Programming",
   "290 - Web Development",
   "325 - Analysis of Algorithms",
   "340 - Introduction to Databases",

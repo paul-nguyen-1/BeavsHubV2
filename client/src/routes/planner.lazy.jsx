@@ -12,7 +12,7 @@ function Planner() {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div style={{ width: "100vw", height: "100vh" }} className="mt-10">
       <img
         src={background}
         alt="Background"

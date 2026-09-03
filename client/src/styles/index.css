@@ -47,6 +47,10 @@ body {
   cursor: pointer !important;
 }
 
+button:not(:disabled) {
+  cursor: pointer;
+}
+
 /* ---------- Futuristic glossy design system ---------- */
 
 .mesh-bg {
