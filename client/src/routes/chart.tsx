@@ -8,11 +8,11 @@ const ReactApexChart = resolveDefaultExport<typeof import("react-apexcharts").de
   ReactApexChartModule
 );
 import type { ApexOptions } from "apexcharts";
-import { Pill, Skeleton } from "@mantine/core";
+import { Skeleton } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { setSelectedCourse } from "../hooks/useCourse";
 import background from "../assets/Beaver_background.png";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Row = {
   _id: string;
@@ -57,6 +57,32 @@ export const Route = createFileRoute("/chart")({
 function RouteComponent() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const [chartHeight, setChartHeight] = useState(420);
+
+  // Belt-and-suspenders: keep this page locked to one screen even if a
+  // tooltip or other overlay momentarily overflows the flex layout (e.g.
+  // rounding at non-100% browser zoom).
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = chartContainerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const height = entry.contentRect.height;
+      if (height > 0) setChartHeight(height);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const fetchChartData = async (): Promise<Row[]> => {
     const response = await fetch(`${getAllCourses}/courses/frequency`);
     if (!response.ok) throw new Error("Failed to fetch chart data");
@@ -129,7 +155,7 @@ function RouteComponent() {
     const options: ApexOptions = {
       chart: {
         type: "bubble",
-        height: 520,
+        height: chartHeight,
         toolbar: { show: false },
         zoom: { enabled: false },
         events: {
@@ -201,45 +227,60 @@ function RouteComponent() {
     };
 
     return { series, options };
-  }, [data, dispatch, navigate]);
+  }, [data, dispatch, navigate, chartHeight]);
 
   return (
-    <>
+    <div className="h-screen flex flex-col overflow-hidden bg-[#f7f5f0]">
       <img
         src={background}
         alt="Background"
         className="hidden md:inline fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-2 object-contain"
         style={{ width: "600px", height: "auto" }}
       />
-      <div className="w-full p-4">
-        <Skeleton visible={isLoading} height={520}>
-          <ReactApexChart
-            options={options}
-            series={series}
-            type="bubble"
-            height={520}
-          />
-        </Skeleton>
-        <div className="mt-4 flex flex-wrap justify-center gap-3">
+      <div className="flex-1 min-h-0 flex flex-col max-w-7xl mx-auto w-full px-6 pt-20 pb-6">
+        <div className="shrink-0 mb-4">
+          <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500">
+            Difficulty Chart
+          </p>
+          <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight leading-none !m-0">
+            Difficulty vs. hours
+          </h1>
+          <p className="text-sm text-gray-500 mt-2 max-w-lg">
+            Each bubble is a course, sized by review count. Click one to jump
+            to its reviews.
+          </p>
+        </div>
+
+        <div
+          ref={chartContainerRef}
+          className="flex-1 min-h-0 bg-white border border-gray-200 p-4 md:p-6"
+        >
+          <Skeleton visible={isLoading} className="h-full">
+            <ReactApexChart
+              options={options}
+              series={series}
+              type="bubble"
+              height={chartHeight}
+            />
+          </Skeleton>
+        </div>
+
+        <div className="shrink-0 mt-3 flex flex-wrap content-start gap-2">
           {series[0].data.map((pt) => (
-            <div key={pt.name} className="flex items-center text-xs">
-              <Pill
-                key={pt.name}
-                size="sm"
-                radius="xl"
-                className="flex align-center justify-center gap-2"
-              >
-                <span
-                  className="inline-block relative top-0.5 w-3 h-3 mr-1 rounded-full"
-                  style={{ backgroundColor: pt.fillColor }}
-                />
-                <span>{pt.name.split("-")[0].trim()}</span>
-              </Pill>
-            </div>
+            <span
+              key={pt.name}
+              className="inline-flex items-center gap-1.5 text-xs bg-orange-50 text-gray-700 font-medium px-2.5 py-1 rounded-full border border-orange-100"
+            >
+              <span
+                className="inline-block w-2 h-2 rounded-full shrink-0"
+                style={{ backgroundColor: pt.fillColor }}
+              />
+              {pt.name.split("-")[0].trim()}
+            </span>
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
