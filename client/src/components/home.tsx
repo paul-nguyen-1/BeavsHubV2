@@ -224,9 +224,9 @@ function Home() {
           </div>
         ) : (
           <div className="w-full">
-            <div className="grid grid-cols-[64px_1fr_70px_70px_70px] sm:grid-cols-[90px_1fr_110px_100px_100px] gap-2 sm:gap-4 pb-3 border-b border-gray-300 font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-gray-500">
+            <div className="grid grid-cols-[64px_1fr_70px_70px] sm:grid-cols-[90px_1fr_110px_100px_100px] gap-2 sm:gap-4 pb-3 border-b border-gray-300 font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-gray-500">
               <span>Course</span>
-              <span>Title</span>
+              <span className="hidden sm:block">Title</span>
               <span className="text-right">Difficulty</span>
               <span className="text-right">Hrs / wk</span>
               <span className="text-right">Reviews</span>
@@ -245,12 +245,12 @@ function Home() {
                   onClick={() =>
                     dispatch(setSelectedCourse(item.course.course_name))
                   }
-                  className="grid grid-cols-[64px_1fr_70px_70px_70px] sm:grid-cols-[90px_1fr_110px_100px_100px] gap-2 sm:gap-4 items-baseline py-5 border-b border-gray-200 no-underline group"
+                  className="grid grid-cols-[64px_1fr_70px_70px] sm:grid-cols-[90px_1fr_110px_100px_100px] gap-2 sm:gap-4 items-baseline py-5 border-b border-gray-200 no-underline group"
                 >
                   <span className="font-mono font-bold text-gray-900 text-sm sm:text-base">
                     CS {stripCoursePrefix(courseNumber)}
                   </span>
-                  <span className="min-w-0">
+                  <span className="hidden sm:block min-w-0">
                     <span className="block font-bold text-gray-900 group-hover:text-[#d73f09] transition-colors">
                       {courseTitle.trim()}
                     </span>

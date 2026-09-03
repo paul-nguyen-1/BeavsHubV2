@@ -16,8 +16,8 @@ const footerColumns = [
     links: [
       { label: "Courses", to: "/courses" },
       { label: "Reviews", to: "/reviews" },
-      { label: "Difficulty chart", to: "/chart" },
-      { label: "Degree path", to: "/planner" },
+      { label: "Difficulty chart", to: "/chart", hideOnMobile: true },
+      { label: "Degree path", to: "/planner", hideOnMobile: true },
     ],
   },
   {
@@ -73,7 +73,14 @@ const Footer = () => (
             </p>
             <ul className="flex flex-col gap-2.5 list-none p-0 m-0">
               {column.links.map((item) => (
-                <li key={item.label}>
+                <li
+                  key={item.label}
+                  className={
+                    "hideOnMobile" in item && item.hideOnMobile
+                      ? "hidden sm:block"
+                      : undefined
+                  }
+                >
                   {"to" in item ? (
                     <Link
                       to={item.to}
