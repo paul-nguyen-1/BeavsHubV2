@@ -82,7 +82,8 @@ function Courses() {
   const [debouncedCourse] = useDebouncedValue(course, 200);
   const [debouncedReview] = useDebouncedValue(review, 200);
   const [opened, { open, close }] = useDisclosure(false);
-  const [filterOpened, { open: openFilter, close: closeFilter }] = useDisclosure(false);
+  const [filterOpened, { open: openFilter, close: closeFilter }] =
+    useDisclosure(false);
   const [formData, setFormData] = useState({
     course_name: "",
     course_difficulty: "",

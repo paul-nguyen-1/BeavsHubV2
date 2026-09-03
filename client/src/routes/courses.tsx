@@ -64,6 +64,9 @@ function Course() {
   const [sortField, setSortField] = useState<SortField>("course");
   const [sortAsc, setSortAsc] = useState(true);
   const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<"All" | "Core" | "Elective">(
+    "All"
+  );
 
   const sortButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [sortIndicatorStyle, setSortIndicatorStyle] = useState({
@@ -174,14 +177,18 @@ function Course() {
 
   const filteredRows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return rows;
-    return rows.filter(
-      (row) =>
+    return rows.filter((row) => {
+      if (typeFilter !== "All" && classType(row.code) !== typeFilter) {
+        return false;
+      }
+      if (!q) return true;
+      return (
         row.code.toLowerCase().includes(q) ||
         row.title.toLowerCase().includes(q) ||
-        row.course_name.toLowerCase().includes(q),
-    );
-  }, [rows, query]);
+        row.course_name.toLowerCase().includes(q)
+      );
+    });
+  }, [rows, query, typeFilter]);
 
   const handleRowClick = (course_name: string) => {
     dispatch(setSelectedCourse(course_name));
@@ -258,6 +265,25 @@ function Course() {
               </div>
             </div>
 
+            <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-widest">
+              <span className="text-sm font-bold text-gray-500">Type</span>
+              <div className="flex border border-gray-300">
+                {(["All", "Core", "Elective"] as const).map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setTypeFilter(type)}
+                    className={`px-3 py-1.5 !uppercase transition-colors ${
+                      typeFilter === type
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-500 hover:text-gray-900"
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest">
               <span className="text-sm font-bold text-gray-500">View</span>
               <button
@@ -288,7 +314,7 @@ function Course() {
 
             {!isLoading && (
               <span className="text-sm text-gray-600">
-                {rows.length} courses
+                {filteredRows.length} of {rows.length} courses
               </span>
             )}
           </div>
