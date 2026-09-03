@@ -46,7 +46,7 @@ const footerColumns = [
 
 const Footer = () => (
   <footer className="w-full border-t border-black/[0.06] bg-[#f7f5f0]">
-    <div className="max-w-7xl mx-auto px-6 py-14">
+    <div className="px-18 py-14">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-10">
         <div className="col-span-2 sm:col-span-1">
           <span className="text-base font-bold tracking-tight text-gray-900">

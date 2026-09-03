@@ -162,7 +162,7 @@ function Course() {
 
   return (
     <div className="min-h-screen bg-[#f7f5f0]">
-      <div className="mx-auto max-w-7xl px-6 pt-20 pb-12">
+      <div className="px-18 pt-20 pb-12">
         <div className="flex flex-col mb-6">
           <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500">
             Course Reviews

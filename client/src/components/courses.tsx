@@ -319,7 +319,7 @@ function Courses() {
 
   return (
     <div className="min-h-screen bg-[#f7f5f0]">
-      <div className="max-w-7xl mx-auto px-6 pt-20 pb-12">
+      <div className="px-18 pt-20 pb-12">
 
         <Drawer
           opened={filterOpened}

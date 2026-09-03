@@ -7,7 +7,7 @@ export const Route = createLazyFileRoute("/about")({
 
 function RouteComponent() {
   return (
-    <div className="px-4 py-16 max-w-7xl mx-auto">
+    <div className="px-4 py-16">
       <h2 className="text-4xl font-extrabold text-center text-[#D73F09] mb-4">
         Discover Oregon State with BeavsHub
       </h2>
