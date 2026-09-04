@@ -89,8 +89,8 @@ function Home() {
     <div className="bg-[#f7f5f0]">
       {/* Hero */}
       <div className="grid grid-cols-1 lg:grid-cols-2 border-b border-black/[0.06]">
-        <div className="flex flex-col justify-center px-6 sm:px-10 lg:pl-16 xl:pl-24 lg:pr-10 py-16 lg:py-24">
-          <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500 mb-5">
+        <div className="flex flex-col justify-center px-6 sm:px-10 lg:pl-16 xl:pl-24 lg:pr-10 py-16 lg:py-20">
+          <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500 pt-4">
             Oregon State · Computer Science
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6 leading-[1.05] tracking-tight max-w-lg">
@@ -101,8 +101,8 @@ function Home() {
             actually been through the class.
           </p>
 
-          <div className="flex w-full max-w-lg border border-gray-300 bg-white">
-            <div className="flex-1 min-w-0">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-0 w-full max-w-lg sm:border sm:border-gray-300 sm:bg-white">
+            <div className="min-w-0 sm:flex-1 border border-gray-300 bg-white sm:border-0 sm:bg-transparent">
               <SelectMantine
                 placeHolder="Search a course - CS 161, discrete, capstone"
                 value={course}
@@ -118,7 +118,7 @@ function Home() {
             </div>
             <button
               onClick={() => navigate({ to: "/reviews" })}
-              className="shrink-0 bg-gray-900 hover:bg-black text-white text-sm font-semibold px-6 transition-colors"
+              className="shrink-0 bg-gray-900 hover:bg-black text-white text-sm font-semibold px-6 h-12 sm:h-auto transition-colors"
             >
               Search
             </button>
@@ -141,7 +141,7 @@ function Home() {
           </div>
         </div>
 
-        <div className="hidden lg:flex flex-col bg-[#efece2] px-10 xl:px-14 py-16 lg:py-24 min-h-[420px]">
+        <div className="flex flex-col bg-[#efece2] border-t border-black/[0.06] lg:border-t-0 px-6 sm:px-10 xl:px-14 py-10 lg:py-24 lg:min-h-[420px]">
           <div className="flex items-baseline justify-between mb-6">
             <p className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500">
               Heaviest workload
@@ -195,7 +195,7 @@ function Home() {
 
           <Link
             to="/chart"
-            className="mt-8 text-sm text-gray-700 hover:text-gray-900 no-underline transition-colors"
+            className="invisible md:visible mt-8 text-sm text-gray-700 hover:text-gray-900 transition-colors underline"
           >
             See the full difficulty chart
           </Link>
@@ -203,16 +203,17 @@ function Home() {
       </div>
 
       {/* Trending courses */}
-      <div className="py-20 px-18">
-        <div className="flex items-end justify-between mb-8">
+      <div className="py-20 px-6 sm:px-10 lg:px-18">
+        <div className="flex items-end justify-between pb-4 mb-8 border-b border-gray-300 sm:pb-0 sm:border-0">
           <h2 className="text-3xl font-bold text-gray-900">
             Trending courses
           </h2>
           <Link
             to="/courses"
-            className="text-sm text-gray-600 hover:text-gray-900 no-underline transition-colors"
+            className="text-sm text-gray-600 underline decoration-gray-300 underline-offset-4 hover:text-gray-900 hover:decoration-gray-900 transition-colors"
           >
-            All {data?.length ?? 0} courses
+            All {data?.length ?? 0}
+            <span className="hidden sm:inline"> courses</span>
           </Link>
         </div>
 
@@ -224,9 +225,9 @@ function Home() {
           </div>
         ) : (
           <div className="w-full">
-            <div className="grid grid-cols-[64px_1fr_70px_70px] sm:grid-cols-[90px_1fr_110px_100px_100px] gap-2 sm:gap-4 pb-3 border-b border-gray-300 font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-gray-500">
+            <div className="hidden sm:grid sm:grid-cols-[90px_1fr_110px_100px_100px] sm:gap-4 pb-3 border-b border-gray-300 font-mono text-[11px] uppercase tracking-widest text-gray-500">
               <span>Course</span>
-              <span className="hidden sm:block">Title</span>
+              <span>Title</span>
               <span className="text-right">Difficulty</span>
               <span className="text-right">Hrs / wk</span>
               <span className="text-right">Reviews</span>
@@ -245,31 +246,67 @@ function Home() {
                   onClick={() =>
                     dispatch(setSelectedCourse(item.course.course_name))
                   }
-                  className="grid grid-cols-[64px_1fr_70px_70px] sm:grid-cols-[90px_1fr_110px_100px_100px] gap-2 sm:gap-4 items-baseline py-5 border-b border-gray-200 no-underline group"
+                  className="block no-underline group border-b border-gray-200"
                 >
-                  <span className="font-mono font-bold text-gray-900 text-sm sm:text-base">
-                    CS {stripCoursePrefix(courseNumber)}
-                  </span>
-                  <span className="hidden sm:block min-w-0">
-                    <span className="block font-bold text-gray-900 group-hover:text-[#d73f09] transition-colors">
-                      {courseTitle.trim()}
-                    </span>
-                    <span className="block text-sm text-gray-600 mt-0.5">
+                  {/* Mobile layout */}
+                  <div className="sm:hidden py-5">
+                    <div className="flex items-baseline gap-2 mb-1.5 min-w-0">
+                      <span className="font-mono font-bold text-gray-900 text-base shrink-0">
+                        CS {stripCoursePrefix(courseNumber)}
+                      </span>
+                      <span className="font-bold text-gray-900 truncate group-hover:text-[#d73f09] transition-colors">
+                        {courseTitle.trim()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">
                       {truncate(item.course.course_tips, 300)}
+                    </p>
+                    <div className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-widest text-gray-500">
+                      <span>
+                        Diff{" "}
+                        <span
+                          className="font-bold tabular-nums"
+                          style={{ color: diffColor }}
+                        >
+                          {item.avg_difficulty.toFixed(1)}
+                        </span>
+                      </span>
+                      <span>
+                        Hrs{" "}
+                        <span className="font-bold text-gray-800 tabular-nums">
+                          {item.avg_hours.toFixed(1)}
+                        </span>
+                      </span>
+                      <span>{item.count} Reviews</span>
+                    </div>
+                  </div>
+
+                  {/* Tablet / desktop layout */}
+                  <div className="hidden sm:grid sm:grid-cols-[90px_1fr_110px_100px_100px] gap-4 items-baseline py-5">
+                    <span className="font-mono font-bold text-gray-900 text-base">
+                      CS {stripCoursePrefix(courseNumber)}
                     </span>
-                  </span>
-                  <span
-                    className="text-right font-bold font-mono tabular-nums"
-                    style={{ color: diffColor }}
-                  >
-                    {item.avg_difficulty.toFixed(1)}
-                  </span>
-                  <span className="text-right font-bold font-mono tabular-nums text-gray-800">
-                    {item.avg_hours.toFixed(1)}
-                  </span>
-                  <span className="text-right font-mono tabular-nums text-gray-600">
-                    {item.count}
-                  </span>
+                    <span className="min-w-0">
+                      <span className="block font-bold text-gray-900 group-hover:text-[#d73f09] transition-colors">
+                        {courseTitle.trim()}
+                      </span>
+                      <span className="block text-sm text-gray-600 mt-0.5">
+                        {truncate(item.course.course_tips, 300)}
+                      </span>
+                    </span>
+                    <span
+                      className="text-right font-bold font-mono tabular-nums"
+                      style={{ color: diffColor }}
+                    >
+                      {item.avg_difficulty.toFixed(1)}
+                    </span>
+                    <span className="text-right font-bold font-mono tabular-nums text-gray-800">
+                      {item.avg_hours.toFixed(1)}
+                    </span>
+                    <span className="text-right font-mono tabular-nums text-gray-600">
+                      {item.count}
+                    </span>
+                  </div>
                 </Link>
               );
             })}
@@ -278,7 +315,7 @@ function Home() {
       </div>
 
       {/* Latest from students */}
-      <div className="pb-20 px-18">
+      <div className="pb-20 px-6 sm:px-10 lg:px-18">
         <h2 className="text-3xl font-bold text-gray-900 pb-4 border-b border-gray-300 mb-8">
           Latest from students
         </h2>

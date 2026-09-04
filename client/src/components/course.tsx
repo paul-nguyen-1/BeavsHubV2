@@ -12,7 +12,9 @@ export function Course(props: CourseCard) {
     (state: RootState) => state.useCourse.selectedCourse
   );
 
-  const [code, title] = splitString(course, " - ");
+  const [codeRaw, titleRaw] = splitString(course, "-");
+  const code = codeRaw?.trim() ?? course;
+  const title = titleRaw?.trim();
   const type = classType(course);
 
   return (
@@ -43,15 +45,19 @@ export function Course(props: CourseCard) {
 
       <div className="flex flex-wrap gap-x-6 gap-y-1 mt-2 mb-3 font-mono text-[11px] uppercase tracking-widest text-gray-500">
         <span>
-          Difficulty <b className="text-gray-900">{difficulty} / 5</b>
+          <span className="sm:hidden">Diff</span>
+          <span className="hidden sm:inline">Difficulty</span>{" "}
+          <b className="text-gray-900">{difficulty} / 5</b>
         </span>
         <span>
-          Hours / wk{" "}
+          <span className="sm:hidden">Hrs</span>
+          <span className="hidden sm:inline">Hours / wk</span>{" "}
           <b className="text-gray-900">{time_spent_per_week?.replace(" hours", "")}</b>
         </span>
         {taken_date && (
           <span>
-            Term <b className="text-gray-900">{termAbbrev(taken_date)}</b>
+            <span className="hidden sm:inline">Term </span>
+            <b className="text-gray-900">{termAbbrev(taken_date)}</b>
           </span>
         )}
       </div>
