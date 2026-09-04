@@ -320,7 +320,7 @@ function Courses() {
 
   return (
     <div className="min-h-screen bg-[#f7f5f0]">
-      <div className="px-18 pt-20 pb-12">
+      <div className="px-6 sm:px-10 lg:px-18 pt-20 pb-12">
 
         <Drawer
           opened={filterOpened}
@@ -404,16 +404,16 @@ function Courses() {
               </p>
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               onClick={openFilter}
-              className="border border-gray-300 bg-white text-gray-900 text-sm font-semibold px-5 h-11 hover:border-gray-900 transition-colors"
+              className="flex-1 sm:flex-none border border-gray-300 bg-white text-gray-900 text-sm font-semibold px-5 h-11 hover:border-gray-900 transition-colors"
             >
               Filters
             </button>
             <button
               onClick={open}
-              className="bg-gray-900 hover:bg-black text-white text-sm font-semibold px-5 h-11 transition-colors"
+              className="flex-1 sm:flex-none bg-gray-900 hover:bg-black text-white text-sm font-semibold px-5 h-11 transition-colors"
             >
               Write a review
             </button>
@@ -580,7 +580,7 @@ function Courses() {
         <div className="flex flex-col md:flex-row gap-12 items-stretch md:h-[70vh] md:min-h-[520px]">
 
           <motion.div
-            className="flex-1 min-w-0 border-t border-gray-900 md:h-full"
+            className="order-2 md:order-1 flex-1 min-w-0 border-t border-gray-900 md:h-full"
             initial="hidden"
             animate="visible"
             variants={containerVariants}

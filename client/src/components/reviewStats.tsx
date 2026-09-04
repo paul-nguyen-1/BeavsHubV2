@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { CourseInfo } from "../misc/types";
 import { Skeleton } from "@mantine/core";
 import { AppDispatch } from "../../app/store";
@@ -13,6 +15,46 @@ const hoursColors = ["#BFDBFE", "#93C5FD", "#60A5FA", "#3B82F6"];
 const pairingColor = "#d73f09";
 
 type StatRow = { label: string; count: number; color: string; onClick: () => void };
+
+function AccordionSection({
+  title,
+  defaultOpen,
+  children,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  return (
+    <div className="border-b border-gray-200 last:border-b-0">
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className="flex items-center justify-between w-full px-5 py-4 text-left"
+      >
+        <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-gray-500">
+          {title}
+        </span>
+        <span className="text-lg text-gray-400 leading-none">
+          {open ? "−" : "+"}
+        </span>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 pb-5">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 function StatBar({ rows }: { rows: StatRow[] }) {
   const max = Math.max(1, ...rows.map((row) => row.count));
@@ -86,35 +128,57 @@ export function ReviewStats({
     }));
 
   return (
-    <div className="w-full md:w-[300px] shrink-0 md:h-full overflow-y-auto no-scrollbar flex flex-col gap-8">
-      <Skeleton visible={isLoading}>
-        <div>
-          <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-4">
-            Difficulty Distribution
-          </p>
-          <StatBar rows={difficultyRows} />
-        </div>
-      </Skeleton>
+    <div className="order-1 md:order-2 w-full md:w-[300px] shrink-0 md:h-full overflow-y-auto no-scrollbar flex flex-col gap-8">
+      {/* Mobile accordion */}
+      <div className="sm:hidden border border-gray-200 bg-[#efece2]">
+        <Skeleton visible={isLoading}>
+          <AccordionSection title="Difficulty Distribution" defaultOpen>
+            <StatBar rows={difficultyRows} />
+          </AccordionSection>
+        </Skeleton>
 
-      <Skeleton visible={isLoading}>
-        <div>
-          <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-4">
-            Hours Per Week
-          </p>
+        <AccordionSection title="Hours Per Week">
           <StatBar rows={hoursRows} />
-        </div>
-      </Skeleton>
+        </AccordionSection>
 
-      {pairingRows.length > 0 && (
+        {pairingRows.length > 0 && (
+          <AccordionSection title="Most Common Pairings">
+            <StatBar rows={pairingRows} />
+          </AccordionSection>
+        )}
+      </div>
+
+      {/* Tablet / desktop flat layout */}
+      <div className="hidden sm:flex flex-col gap-8">
         <Skeleton visible={isLoading}>
           <div>
             <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-4">
-              Most Common Pairings
+              Difficulty Distribution
             </p>
-            <StatBar rows={pairingRows} />
+            <StatBar rows={difficultyRows} />
           </div>
         </Skeleton>
-      )}
+
+        <Skeleton visible={isLoading}>
+          <div>
+            <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-4">
+              Hours Per Week
+            </p>
+            <StatBar rows={hoursRows} />
+          </div>
+        </Skeleton>
+
+        {pairingRows.length > 0 && (
+          <Skeleton visible={isLoading}>
+            <div>
+              <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-4">
+                Most Common Pairings
+              </p>
+              <StatBar rows={pairingRows} />
+            </div>
+          </Skeleton>
+        )}
+      </div>
 
       <div className="pt-6 border-t border-gray-200">
         <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-3">

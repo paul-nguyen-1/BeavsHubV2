@@ -46,9 +46,9 @@ const footerColumns = [
 
 const Footer = () => (
   <footer className="w-full border-t border-black/[0.06] bg-[#f7f5f0]">
-    <div className="px-18 py-14">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-10">
-        <div className="col-span-2 sm:col-span-1">
+    <div className="px-6 sm:px-10 lg:px-18 py-14">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-6 sm:gap-x-10 gap-y-10">
+        <div className="col-span-3 sm:col-span-1">
           <span className="text-base font-bold tracking-tight text-gray-900">
             Beavs<span className="text-[#d73f09]">Hub</span>
           </span>
